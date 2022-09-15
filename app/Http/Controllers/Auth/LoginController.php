@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+// use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Laravel\Socialite\Facades\Socialite;
+use App\User;
 
 class LoginController extends Controller
 {
@@ -35,5 +39,46 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+    public function redirect(){
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function callback(Request $request){
+        try{
+            $user = Socialite::driver('google')->stateless()->user();
+        }catch(\Exception $e){
+            return redirect()->route('Login')->withErrors($e->getMessage());
+        }
+
+        $user_exist = User::where('email',$user->email)->first();
+
+        // NOT FOUND
+        if(!$user_exist){
+            $user_exist = new User(array(
+                'name' => $user->name,
+                'username' => explode("@",$user->email)[0],
+                'google_id' => $user->id,
+                'foto_profil' => $user->avatar,
+                'email' => $user->email,
+                'regis_date' => now(),    
+            ));
+            $user_exist->save();
+        }
+
+        $request->session()->put('username', $user_exist->username);
+
+        if(empty($user_exist->rolemapping()->first())){
+            $request->session()->put('role',"student");
+        }else{
+            $request->session()->put('role', $user_exist->rolemapping()->first()->role()->first()->role_name);
+        }
+        $request->session()->put('name', $user_exist->name);
+        $request->session()->put('user_id', $user_exist->id);
+        $request->session()->put('foto', $user_exist->foto_profil);
+        $request->session()->put('isLoggedIn', 'Ya');
+        $request->session()->put('isItMaintenance', 'aktif');
+        // $request->session()->put('isItMaintenance', 'maintenance');
+        return redirect()->route('getHome');
     }
 }

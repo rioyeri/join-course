@@ -10,6 +10,11 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::group(['prefix' => 'google', 'namespace' => 'Auth', 'as' => 'google.'], function(){
+    Route::get('/', 'LoginController@redirect')->name('redirect');
+    Route::get('callback', 'LoginController@callback')->name('callback');
+});
 // Route::get('/testuser','TestController@index');
 Route::get('/','HomeController@index')->name('getHome');
 Route::get('/login','HomeController@index2')->name('getHome2');
@@ -25,6 +30,9 @@ Route::get('maintenance', 'HomeController@maintenance')->name('maintenance');
 // invitation
 Route::get('/invitation/{invitation_id}/kepada:{receiver}', 'InvitationController@getInvitation')->name('getInvitation');
 Route::post('/sendMessageInvitation/{invitation_id}/', 'InvitationController@sendMessage')->name('sendMessageInvitation');
+
+// Template
+Route::get('pilihtemplate', 'TemplateController@index');
 
 Route::middleware(['checkUser'])->group(function () {
     // Account

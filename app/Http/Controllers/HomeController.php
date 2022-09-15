@@ -3,70 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Exceptions\Handler;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 
-use App\User;
-use App\Jadwal;
-use App\AboutUs;
-use App\Link;
-use App\Profile;
-use App\Banner;
-use App\Gallery;
-use App\GalleryTag;
-use App\Role;
-use App\RoleMapping;
-use App\MenuMapping;
+use App\Models\User;
 
 class HomeController extends Controller
 {
     public function index(Request $request){
-        // $status = "maintenance";
-        if(session('isItMaintenance') == "maintenance"){
-            $request->session()->flush();
-            return view('welcome.maintenance');
-        }
-
-        if ($request->session()->has('isLoggedIn')) {
-            $role = session('role');
-
-            // Get User Profile
-            $user = User::where('id',session('user_id'))->first();
-
-            $page = "dashboard";
-
-            $birth = User::getBirthday();
-
-            // die("asu");
-            return view('welcome.welcome',compact('user','birth','page'));
-            // return view('welcome.maintenance');
-        }else{
-            // // About US
-            // $aboutus = AboutUs::where('id', 3)->first()->description;
-            // $sejarah = AboutUs::where('id', 2)->first();
-            // $gembala = AboutUs::where('id', 1)->first();
-
-            // // footer
-            // $profil = Profile::where('id', 1)->first();
-
-            // // Jadwal
-            // $jadwals = Jadwal::orderBy('day', 'asc')->get();
-
-            // // Link
-            // $links = Link::all();
-
-            // // Banner
-            // $banners = Banner::orderBy('urutan', 'asc')->get();
-
-            // // Galleries
-            // $galleries = json_decode(json_encode(Gallery::getGalleries()),FALSE);
-            // $gallery_tags = GalleryTag::GroupBy('tag_name')->get();
-
-            // return view('landingpage.index', compact('aboutus','sejarah','gembala','jadwals','profil','links','banners','galleries','gallery_tags'));
-            return view('welcome.comingsoon');
-        }
+        return view('landingpage.content.main');
     }
 
     public function index2(Request $request){
@@ -84,6 +29,9 @@ class HomeController extends Controller
     }
 
     public function login(Request $request){
+        echo "<pre>";
+        print_r($request->all());
+        die;
         // Validate
         $validator = Validator::make($request->all(), [
             'username' => 'required',
