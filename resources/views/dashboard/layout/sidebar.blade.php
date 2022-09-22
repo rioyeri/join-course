@@ -2,19 +2,36 @@
 MAIN SIDEBAR MENU
 *********************************************************************************************************************************************************** -->
 <!--sidebar start-->
+@php
+    use App\Models\MenuMapping;
+@endphp
 <aside>
     <div id="sidebar" class="nav-collapse">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
-            <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-            <h5 class="centered">Sam Soffes</h5>
+            <p class="centered"><a href="profile.html"><img src="{{ asset(session('foto')) }}" class="img-circle" width="80"></a></p>
+            <h5 class="centered">{{ session('username') }}</h5>
+            <h6 class="centered">{{ session('name') }}</h6>
             <li class="mt">
                 <a class="active" href="index.html">
                     <i class="fa fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-            <li class="sub-menu">
+            @foreach (MenuMapping::getHeadModul(session('role_id')) as $modul)
+                <li class="sub-menu">
+                    <a href="javascript:void(0);">
+                        <i class="{{$modul->modul_icon}}"></i>
+                        <span>{{$modul->modul_desc}}</span> <span class="menu-arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        @foreach (MenuMapping::getModul(session('role_id'),$modul->modul_id) as $sub)
+                            <li><a href="{{route(''.$sub->submodul_page.'')}}">{{$sub->submodul_desc}}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
+            @endforeach
+            {{-- <li class="sub-menu">
                 <a href="javascript:;">
                     <i class="fa fa-desktop"></i>
                     <span>UI Elements</span>
@@ -115,7 +132,7 @@ MAIN SIDEBAR MENU
                     <i class="fa fa-map-marker"></i>
                     <span>Google Maps </span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
         <!-- sidebar menu end-->
     </div>

@@ -7,7 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Laravel\Socialite\Facades\Socialite;
-use App\User;
+use App\Models\User;
+use App\Models\RoleMapping;
 
 class LoginController extends Controller
 {
@@ -48,7 +49,7 @@ class LoginController extends Controller
         try{
             $user = Socialite::driver('google')->stateless()->user();
         }catch(\Exception $e){
-            return redirect()->route('Login')->withErrors($e->getMessage());
+            return redirect()->route('getHome')->withErrors($e->getMessage());
         }
 
         $user_exist = User::where('email',$user->email)->first();
@@ -66,16 +67,22 @@ class LoginController extends Controller
             $user_exist->save();
         }
 
-        $request->session()->put('username', $user_exist->username);
-
-        if(empty($user_exist->rolemapping()->first())){
-            $request->session()->put('role',"student");
-        }else{
-            $request->session()->put('role', $user_exist->rolemapping()->first()->role()->first()->role_name);
+        if($user_exist->password == ""){
+            return redirect()->route('createPassword', ['id' => $user_exist->id]);
         }
+
+        if(substr($user_exist->foto_profil,0,4) == "http"){
+            $foto = $user_exist->foto_profil;
+        }else{
+            $foto = asset('dashboard/assets/users/photos/'.$user_exist->foto_profil);
+        }
+
+        $request->session()->put('username', $user_exist->username);
+        $request->session()->put('role', $user_exist->rolemapping()->first()->role()->first()->role_name);
+        $request->session()->put('role_id', $user_exist->rolemapping()->first()->role_id);
         $request->session()->put('name', $user_exist->name);
         $request->session()->put('user_id', $user_exist->id);
-        $request->session()->put('foto', $user_exist->foto_profil);
+        $request->session()->put('foto', $foto);
         $request->session()->put('isLoggedIn', 'Ya');
         $request->session()->put('isItMaintenance', 'aktif');
         // $request->session()->put('isItMaintenance', 'maintenance');

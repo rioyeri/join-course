@@ -6,6 +6,7 @@
 <script class="include" type="text/javascript" src="{{ asset('dashboard/lib/jquery.dcjqaccordion.2.7.js') }}"></script>
 <script src="{{ asset('dashboard/lib/jquery.scrollTo.min.js') }}"></script>
 <script src="{{ asset('dashboard/lib/jquery.nicescroll.js') }}" type="text/javascript"></script>
+
 <!-- Toastr js -->
 <script src="{{ asset('dashboard/additionalplugins/toastr/toastr.min.js') }}"></script>
 
@@ -27,6 +28,12 @@
         // Display a success toast, with a title
         toastr.warning(status, 'Warning!')
     </script>
+@elseif(session('failed'))
+<script>
+    var status = "{{session('failed')}}";
+    // Display a success toast, with a title
+    toastr.error(status, 'Login Gagal')
+</script>
 @endif
 @if ($errors->any())
     @php

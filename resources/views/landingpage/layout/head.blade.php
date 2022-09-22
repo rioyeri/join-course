@@ -22,6 +22,11 @@
   <link href="{{ asset('landingpage/assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
   <link href="{{ asset('landingpage/assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
 
+  <!-- Notification css (Toastr) -->
+  <link href="{{ asset('dashboard/additionalplugins/toastr/toastr.min.css') }}" rel="stylesheet" type="text/css" />
+
+  <!--external css-->
+  <link href="{{ asset('dashboard/lib/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="{{ asset('landingpage/assets/css/main.css') }}" rel="stylesheet">
 

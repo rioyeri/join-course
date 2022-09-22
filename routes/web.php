@@ -17,12 +17,15 @@ Route::group(['prefix' => 'google', 'namespace' => 'Auth', 'as' => 'google.'], f
 });
 // Route::get('/testuser','TestController@index');
 Route::get('/','HomeController@index')->name('getHome');
-Route::get('/login','HomeController@index2')->name('getHome2');
+// Route::get('/login','HomeController@index2')->name('getHome2');
+Route::get('/login', 'HomeController@get_login')->name('get_login');
 Route::post('login','HomeController@login')->name('Login');
 Route::get('/register', 'HomeController@get_register')->name('get_register');
 Route::post('register', 'HomeController@post_register')->name('post_register');
 // User Helper
 Route::get('checkUsernameAvailability','UserController@checkUsernameAvailability')->name('checkUsernameAvailability');
+Route::get('password/{id}/create', 'UserController@createPassword')->name('createPassword');
+Route::post('password/{id}/store', 'UserController@storePassword')->name('storePassword');
 
 // maintenance
 Route::get('maintenance', 'HomeController@maintenance')->name('maintenance');
@@ -71,8 +74,6 @@ Route::middleware(['checkUser'])->group(function () {
         'submodul' => 'SubModulController',
         // Role Management
         'role' => 'RoleController',
-        // Jadwal
-        'jadwal' => 'JadwalController',
         // Gallery
         'gallery' => 'GalleryController',
         // Link
@@ -81,20 +82,12 @@ Route::middleware(['checkUser'])->group(function () {
         'aboutus' => 'AboutUsController',
         // Banner
         'banner' => 'BannerController',
-        // Day
-        'days' => 'DaysController',
         // Sosmed
         'sosmed' => 'SosmedController',
-        // Wedding Invitation
-        'invitation' => 'InvitationController',
-        // Event
-        'event' => 'EventController',
-        // Gift
-        'giftbox' => 'GiftboxController',
-        // Complement
-        'complement' => 'ComplementController',
-        // Quote
-        'quote' => 'QuoteController',
+        // Course
+        'course' => 'CourseController',
+        // Course Payment
+        'coursepayment' => 'CoursePaymentController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');

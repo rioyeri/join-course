@@ -4,11 +4,11 @@
         <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
     </div>
     <!--logo start-->
-    <a href="index.html" class="logo"><b>DASH<span>IO</span></b></a>
+    <a href="index.html" class="logo"><b>Flash <span>Academia</span></b></a>
     <!--logo end-->
     <div class="nav notify-row" id="top_menu">
         <!--  notification start -->
-        <ul class="nav top-menu">
+        {{-- <ul class="nav top-menu">
             <!-- settings start -->
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#"><i class="fa fa-tasks"></i><span class="badge bg-theme">4</span></a>
@@ -174,12 +174,12 @@
                 </ul>
             </li>
             <!-- notification dropdown end -->
-        </ul>
+        </ul> --}}
         <!--  notification end -->
     </div>
     <div class="top-menu">
         <ul class="nav pull-right top-menu">
-            <li><a class="logout" href="login.html">Logout</a></li>
+            <li><a class="logout" href="{{ route('Logout') }}">Logout</a></li>
         </ul>
     </div>
 </header>

@@ -16,9 +16,8 @@ class User extends Model
         'password', 'bck_pass',
     ];
 
-
     public function rolemapping(){
-        return $this->belongsTo('App\RoleMapping','username','username');
+        return $this->belongsTo('App\Models\RoleMapping','username','username');
     }
 
     public static function getBirthday(){

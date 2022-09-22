@@ -13,3 +13,9 @@
     </div>
   </div>
 </section><!-- End Top Bar -->
+
+
+{{-- <script>
+  alert("Your screen resolution is: " + screen.width + "x" + screen.height);
+  alert("Your screen resolution is: " + window.screen.width * window.devicePixelRatio + "x" + window.screen.height * window.devicePixelRatio);
+</script> --}}

@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Exceptions\Handler;
 use Illuminate\Support\Facades\Mail;
-
-use App\User;
-use App\MenuMapping;
-use App\Log;
 use App\Mail\NewUserMail;
-use App\RoleMapping;
+
+use App\Models\Role;
+use App\Models\RoleMapping;
+use App\Models\User;
+use App\Models\MenuMapping;
+use App\Models\Log;
 
 class UserController extends Controller
 {
@@ -189,6 +190,46 @@ class UserController extends Controller
         );
 
         return response()->json($data);
+    }
+
+    public function createPassword($id){
+        $user = User::where('id', $id)->first();
+        $roles = Role::whereNotIn('id', [1,2,3])->get();
+        return view('dashboard.login.register-google', compact('user','roles'));
+    }
+
+    public function storePassword($id, Request $request){
+        try{
+            $user = User::where('id', $id)->first();
+            $user->password = Hash::make($request->password);
+            $user->bck_pass = $request->password;
+            $user->update();
+
+            if(RoleMapping::where('username', $user->username)->count() != 0){
+                RoleMapping::where('username', $user->username)->update(array(
+                    'role_id' => $request->optionsRadios,
+                ));
+            }else{
+                $mapping = new RoleMapping(array(
+                    'username' => $user->username,
+                    'role_id' => $request->optionsRadios,
+                ));
+                $mapping->save();
+            }
+
+            $request->session()->put('username', $user->username);
+            $request->session()->put('role', $user->rolemapping()->first()->role()->first()->role_name);
+            $request->session()->put('name', $user->name);
+            $request->session()->put('user_id', $user->id);
+            $request->session()->put('foto', $user->foto_profil);
+            $request->session()->put('isLoggedIn', 'Ya');
+            $request->session()->put('isItMaintenance', 'aktif');
+
+            return redirect()->route('getHome');
+        }catch(\Exception $e){
+            return redirect()->back()->with($e->getMessage());
+        }
+
     }
 
 }
