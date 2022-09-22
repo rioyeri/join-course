@@ -353,6 +353,7 @@ section {
     display: flex;
     list-style: none;
     align-items: center;
+    margin-right: 80px;
   }
 
   .navbar li {
@@ -416,7 +417,9 @@ section {
   .navbar .dropdown ul {
     display: block;
     position: absolute;
-    left: 28px;
+    /* left: 28px; */
+    /* right:-5px; */
+    left: -35px;
     top: calc(100% + 30px);
     margin: 0;
     padding: 10px 0;
@@ -451,11 +454,11 @@ section {
     color: var(--color-secondary);
   }
 
-  .navbar .dropdown:hover>ul {
+  /* .navbar .dropdown:hover>ul {
     opacity: 1;
     top: 100%;
     visibility: visible;
-  }
+  } */
 
   .navbar .dropdown .dropdown ul {
     top: 0;
@@ -2711,4 +2714,80 @@ section {
 
 .footer .credits a {
   color: #fff;
+}
+
+.btn-login {
+  font-family: var(--font-primary);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 1px;
+  display: inline-block;
+  /* padding: 14px 40px; */
+  padding: 7px 30px;
+  border-radius: 50px;
+  transition: 0.3s;
+  color: #fff;
+  /* color: #008374; */
+  background: #008374;
+  /* background: rgba(255, 255, 255, 0.1); */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.register-group {
+  margin-top: 10px;
+}
+
+.btn-register {
+  color: #008374;
+  /* color: #f85a40 !important; */
+  font-size: 13px;
+}
+
+.btn-register:hover {
+  color: #f85a40;
+  /* background-color: #f85a40; */
+}
+
+/* .google-area {
+  margin-left: -20px;
+} */
+
+.btn-google-login {
+  /* color: #f85a40; */
+  /* background-color: #f85a40; */
+  font-family: var(--font-primary);
+  font-weight: 100;
+  font-size: 3px;
+  letter-spacing: 1px;
+  /* display: inline-block; */
+  /* padding: 14px 40px; */
+  /* padding: 1px 10px; */
+  border-radius: 50px;
+  transition: 0.3s;
+  color: #fff;
+  /* color: #008374; */
+  /* background: #008374; */
+  /* background: rgba(255, 255, 255, 0.1); */
+  /* box-shadow: 0 0 15px rgba(0, 0, 0, 0.08); */
+  /* border: 2px solid rgba(255, 255, 255, 0.1); */
+}
+
+/* .btn-google-login:hover {
+  color: #f85a40;
+  background-color: #f85a40;
+} */
+
+.text-muted {
+  color: #98a6ad !important;
+  font-size: 13px;
+}
+
+.text-green {
+  color: #008374;
+}
+
+.row {
+  margin-right: -10px;
+  margin-left: -10px;
 }

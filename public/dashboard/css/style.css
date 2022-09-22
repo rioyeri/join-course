@@ -49,11 +49,13 @@ a, a:hover, a:focus {
 
 /* Bootstrap Modifications */
 .modal-header {
-	background: #4ECDC4;
+	/* background: #4ECDC4; */
+    background: #f2f3f6;
 }
 
 .modal-title {
-	color: white;
+	/* color: white; */
+    color: #000;
 }
 
 .btn-round {
@@ -97,8 +99,10 @@ a, a:hover, a:focus {
 
 .btn-theme {
   color: #fff;
-  background-color: #4ECDC4;
-  border-color: #48bcb4;
+  /* background-color: #4ECDC4;
+  border-color: #48bcb4; */
+  background-color: #008374;
+  border-color: #00A8B3;
 }
 .btn-theme:hover,
 .btn-theme:focus,
@@ -196,6 +200,23 @@ hr {
 	margin-bottom: 25px;
 }
 
+/* additional */
+.m-5 {
+	margin: 5;
+}
+
+.m-10 {
+	margin: 10px;
+}
+
+.m-20 {
+	margin: 20px;
+}
+
+.m-30 {
+	margin: 30px;
+}
+
 
 .no-padding {
 	padding: 0 !important;
@@ -242,6 +263,11 @@ ul.top-menu > li > .logout {
 	font-weight: 700;
 }
 
+#sidebar h6 {
+	color: #f2f2f2;
+	font-weight: 500;
+}
+
 #sidebar ul li {
     position: relative;
 }
@@ -259,7 +285,7 @@ ul.top-menu > li > .logout {
     height:17px;
     width:17px;
     display:inline-block;
-    background: url("../img/nav-expand.png") no-repeat top;
+    /* background: url("../img/nav-expand.png") no-repeat top; */
     border-radius:3px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
@@ -268,7 +294,7 @@ ul.top-menu > li > .logout {
     top:15px;
 }
 .active .dcjq-icon {
-    background: url("../img/nav-expand.png") no-repeat bottom;
+    /* background: url("../img/nav-expand.png") no-repeat bottom; */
     border-radius:3px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
@@ -697,7 +723,7 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 }
 
 .log-arrow-up {
-    background: url("../img/arrow-up.png") no-repeat;
+    /* background: url("../img/arrow-up.png") no-repeat; */
     width: 20px;
     height: 11px;
     position: absolute;
@@ -1949,18 +1975,21 @@ ul li {
 
 /*LOGIN CONFIGURATION PAGE*/
 .form-login {
-	max-width: 330px;
-	margin: 100px auto 0;
-	background: #fff;
+	max-width: 630px;
+	/* margin: 100px auto 0; */
+    margin: 200px auto 0;
+	/* background: #fff; */
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
 }
 
 .form-login h2.form-login-heading {
 	margin: 0;
-	padding: 25px 20px;
+	/* padding: 25px 10px; */
+    padding: 15px 1px;
 	text-align: center;
-	background: #4ecdc4;
+	/* background: #4ecdc4; */
+    background: #008374;;
 	border-radius: 5px 5px 0 0;
 	-webkit-border-radius: 5px 5px 0 0;
 	color: #fff;
@@ -3483,4 +3512,26 @@ ul.chat-available-user li a:hover {
 
 #copyrights a {
   color: #fff;
+}
+
+.small-text {
+    margin-top: 5px;
+    font-size: 12px;
+    text-transform: initial;
+}
+
+.logout-google {
+    color: #f85a40;
+    font-weight: 900;
+    outline-color: #f85a40;
+}
+
+.logout-google:hover{
+    color: #f82;
+    outline-color: #fff;
+}
+
+.text-center {
+    text-align:center;
+    margin-bottom:40px;
 }
