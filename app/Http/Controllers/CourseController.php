@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Course;
 use App\Models\Grade;
 use App\Models\Log;
+use App\Models\RecycleBin;
 
 class CourseController extends Controller
 {
@@ -62,7 +63,7 @@ class CourseController extends Controller
                     "description" => $request->description,
                 ));
                 $data->save();
-                // Log::setLog('COCOC','Create Course'.$request->name);
+                Log::setLog('COCOC','Create Course : '.$request->name);
                 return redirect()->route('course.index')->with('status','Data berhasil disimpan');
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
@@ -119,7 +120,7 @@ class CourseController extends Controller
                     "topic" => $request->topic,
                     "description" => $request->description,
                 ));
-                // Log::setLog('COCOC','Create Course'.$request->name);
+                Log::setLog('COCOU','Update Course : '.$request->name);
                 return redirect()->route('course.index')->with('status','Data berhasil disimpan');
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
@@ -135,6 +136,42 @@ class CourseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            $data = Course::where('id', $id)->first();
+            $log_id = Log::setLog('COCOD','Delete course : '.$data->name);
+            RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
+            $data->delete();
+            return "true";
+        }catch(\Exception $e){
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+    }
+
+    public function changeStatus(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            '_token' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try{
+                $data = Course::where('id', $id)->first();
+                if($data->status == 0){
+                    $new_status = 1;
+                    $text_log = "Activate Course : ".$data->name;
+                }else{
+                    $new_status = 0;
+                    $text_log = "Deactivate Course : ".$data->name;
+                }
+                $data->status = $new_status;
+                $data->save();
+                Log::setLog('COCOS', $text_log);
+                return "true";
+            }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
     }
 }

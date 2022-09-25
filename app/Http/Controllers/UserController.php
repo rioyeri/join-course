@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Exceptions\Handler;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\NewUserMail;
-
+use App\Mail\ResetPasswordMail;
+use App\Models\ForgotPassword;
 use App\Models\Role;
 use App\Models\RoleMapping;
 use App\Models\User;
+use App\Models\Grade;
 use App\Models\MenuMapping;
 use App\Models\Log;
 
@@ -25,7 +27,6 @@ class UserController extends Controller
             $users = User::where('id', session('user_id'))->get();
         }
         $page = MenuMapping::getMap(session('user_id'),"USUS");
-        Mail::to("rioyeri@gmail.com")->send(new NewUserMail);
         return view('user.index',compact('users','page'));
     }
 
@@ -53,7 +54,7 @@ class UserController extends Controller
         // Validation success
         }else{
             try{
-                $foto_profil = "noimage.jpg";
+                $profilephoto = "noimage.jpg";
 
                 $user = new User(array(
                     // Informasi Pribadi
@@ -63,7 +64,7 @@ class UserController extends Controller
                     'email' => $request->email,
                     'tmpt_lhr' => $request->tempat_lahir,
                     'tgl_lhr' => $request->tanggal_lahir,
-                    'foto_profil' => $foto_profil,
+                    'profilephoto' => $profilephoto,
                     // Account
                     'username' => $request->username,
                     'password' => Hash::make($request->password),
@@ -76,12 +77,12 @@ class UserController extends Controller
                 $user->save();
 
                 // Upload Foto
-                if($request->foto_profil <> NULL|| $request->foto_profil <> ''){
-                    $foto_profil = $user->username.'.'.$request->foto_profil->getClientOriginalExtension();
-                    $request->foto_profil->move(public_path('assets/images/user/foto/'),$foto_profil);
+                if($request->profilephoto <> NULL|| $request->profilephoto <> ''){
+                    $profilephoto = $user->username.'.'.$request->profilephoto->getClientOriginalExtension();
+                    $request->profilephoto->move(public_path('assets/images/user/foto/'),$profilephoto);
                 }
 
-                $user->foto_profil = $foto_profil;
+                $user->profilephoto = $profilephoto;
                 $user->save();
 
                 $mapping = new RoleMapping(array(
@@ -92,8 +93,6 @@ class UserController extends Controller
                 $mapping->save();
 
                 Log::setLog('USUSC','Create User: '.$request->nama);
-
-                Mail::to("rioyeri@gmail.com")->send(new NewUserMail);
 
                 return redirect()->route('user.index')->with('status', 'Data berhasil dibuat');
             }catch(\Exception $e){
@@ -141,19 +140,19 @@ class UserController extends Controller
                 $user->save();
 
                 // Upload Foto
-                if($request->foto_profil <> NULL|| $request->foto_profil <> ''){
+                if($request->profilephoto <> NULL|| $request->profilephoto <> ''){
 
-                    if (file_exists(public_path('assets/images/user/foto/').$user->foto_profil) && $user->foto_profil != "noimage.jpg") {
-                        unlink(public_path('assets/images/user/foto/').$user->foto_profil);
+                    if (file_exists(public_path('assets/images/user/foto/').$user->profilephoto) && $user->profilephoto != "noimage.jpg") {
+                        unlink(public_path('assets/images/user/foto/').$user->profilephoto);
                     }
 
-                    $foto_profil = $user->username.'.'.$request->foto_profil->getClientOriginalExtension();
-                    $request->foto_profil->move(public_path('assets/images/user/foto/'),$foto_profil);
+                    $profilephoto = $user->username.'.'.$request->profilephoto->getClientOriginalExtension();
+                    $request->profilephoto->move(public_path('assets/images/user/foto/'),$profilephoto);
                 }else{
-                    $foto_profil = $user->foto_profil;
+                    $profilephoto = $user->profilephoto;
                 }
 
-                $user->foto_profil = $foto_profil;
+                $user->profilephoto = $profilephoto;
                 $user->save();
 
                 Log::setLog('USUSU','Update User: '.$request->nama);
@@ -168,8 +167,8 @@ class UserController extends Controller
     public function destroy($id){
         $user = User::where('id',$id)->first();
         $name = $user->name;
-        if($user->foto_profil != "noimage.jpg"){
-            unlink(public_path('assets/images/user/foto/').$user->foto_profil);
+        if($user->profilephoto != "noimage.jpg"){
+            unlink(public_path('assets/images/user/foto/').$user->profilephoto);
         }
 
         $user->delete();
@@ -195,14 +194,22 @@ class UserController extends Controller
     public function createPassword($id){
         $user = User::where('id', $id)->first();
         $roles = Role::whereNotIn('id', [1,2,3])->get();
-        return view('dashboard.login.register-google', compact('user','roles'));
+        $grades = Grade::all();
+
+        // return view('dashboard.login.register-google', compact('user','roles','grades'));
+        return view('dashboard.login.register',compact('roles', 'grades', 'user'));
     }
 
     public function storePassword($id, Request $request){
         try{
+            $birthdate = $request->birthdate_year."-".$request->birthdate_month."-".$request->birthdate_date;
+
             $user = User::where('id', $id)->first();
             $user->password = Hash::make($request->password);
             $user->bck_pass = $request->password;
+            $user->phone = $request->phonenumber;
+            $user->birthdate = $birthdate;
+            $user->regis_date = now();
             $user->update();
 
             if(RoleMapping::where('username', $user->username)->count() != 0){
@@ -221,7 +228,7 @@ class UserController extends Controller
             $request->session()->put('role', $user->rolemapping()->first()->role()->first()->role_name);
             $request->session()->put('name', $user->name);
             $request->session()->put('user_id', $user->id);
-            $request->session()->put('foto', $user->foto_profil);
+            $request->session()->put('photo', $user->profilephoto);
             $request->session()->put('isLoggedIn', 'Ya');
             $request->session()->put('isItMaintenance', 'aktif');
 
@@ -232,4 +239,86 @@ class UserController extends Controller
 
     }
 
+    public function forgotPassword(Request $request){
+        if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'){
+            $url = "https://";
+        }else{
+            $url = "http://";
+        }
+        // Append the host(domain name, ip) to the URL.
+        $url.= $_SERVER['HTTP_HOST'];
+
+        if(User::where('email', $request->email)->count() != 0){
+            if(User::where('email', $request->email)->first()->password != "" && $request->_token != ""){
+                if(ForgotPassword::where('email', $request->email)->count() == 0){
+                    $data = new ForgotPassword(array(
+                        'email' => $request->email,
+                        'token' => $request->_token,
+                    ));
+                    $data->save();
+                }else{
+                    ForgotPassword::where('email', $request->email)->update(array(
+                        "token" => $request->_token,
+                    ));
+                }
+                Mail::to($request->email)->send(new ResetPasswordMail($url,$request->email));
+    
+                return redirect()->back()->with('status', 'Check your Email Inbox to reset Password');
+            }else{
+                return redirect()->back()->with('failed', 'You have not password registered, try to login with google account');
+            }
+            
+        }else{
+            return redirect()->back()->with('failed', 'Email never registered');
+        }
+    }
+
+    public function forgetPassword($email, $token){
+        $checktoken = ForgotPassword::where('email',$email)->where('token', $token)->count();
+        if($checktoken != 0 && $token != ""){
+            return view('dashboard.login.resetpassword',compact('email','token'));
+        }else{
+            return view('dashboard.login.resetpassword');
+        }
+
+    }
+
+    public function resetPassword($email, $token, Request $request){
+        // Validate
+        $validator = Validator::make($request->all(), [
+            'password' => 'required',
+            'password_retype' => 'required',
+        ]);
+
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->with('warning', 'Please insert new password and confirm password correctly');
+        }else{
+            try{
+                $timenow = time();
+                $checktoken = ForgotPassword::where('email',$email)->where('token', $token)->count();
+                $updated_at = strtotime(ForgotPassword::where('email',$email)->where('token', $token)->first()->updated_at);
+                if($checktoken != 0 && $token != "" && $updated_at >= ($timenow - 1800)){
+                    if($request->password == $request->password_retype){
+                        User::where('email', $email)->update(array(
+                            'password' => Hash::make($request->password),
+                            'bck_pass' => $request->password,
+                        ));
+
+                        ForgotPassword::where('email',$email)->delete();
+                            
+                        $request->session()->flush();
+
+                        return redirect()->route('getHome')->with('status', 'Reset Password Success! Please Login');
+                    }else{
+                        return redirect()->back()->with('warning', 'Failed to Reset Password');
+                    }
+                }else{
+                    return redirect()->back()->with('failed', 'Your Token is Invalid');
+                }
+            }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
+    }
 }

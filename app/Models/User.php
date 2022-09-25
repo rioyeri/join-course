@@ -9,7 +9,7 @@ class User extends Model
 {
     protected $table ='users';
     protected $fillable = [
-        'username', 'password','bck_pass','name','last_login','login_status','address','phone','ktp','email','tmpt_lhr','tgl_lhr','regis_date','foto_profil','google_id'
+        'username', 'password','bck_pass','name','last_login','login_status','address','phone','idnumber','email','birthdate','birthplace','regis_date','profilephoto','google_id'
     ];
 
     protected $hidden = [
@@ -27,12 +27,12 @@ class User extends Model
         // $getTime = date('Y-m-d', strtotime("1994-10-18"));
         $data = array();
 
-        $user = User::whereMonth('tgl_lhr', $getTime)->get();
+        $user = User::whereMonth('birthdate', $getTime)->get();
         if(!empty($user)){
             foreach($user as $e){
                 $array = array(
                     'name'    => $e->name,
-                    'tanggal' => $e->tgl_lhr,
+                    'birthdate' => $e->birthdate,
                 );
                 array_push($data, $array);
             }
@@ -43,8 +43,8 @@ class User extends Model
 
     public static function getPhoto($id_user){
         $user = User::where('id', $id_user)->first();
-        if($user->foto_profil != null){
-            $file = 'assets/images/user/foto/'.$user->foto_profil;
+        if($user->profilephoto != null){
+            $file = 'dashboard/assets/images/users/photos/'.$user->profilephoto;
 
             if(!file_exists($file)){
                 $first = strtolower(substr($user->username, 0,1));
@@ -62,7 +62,7 @@ class User extends Model
                 $first = "o";
             }
 
-            $file = 'assets/images/letters/'.$first.".jpg";
+            $file = 'dashboard/assets/letters/'.$first.".jpg";
         }
         return $file;
     }

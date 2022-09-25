@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use App\Models\RoleMapping;
+use App\Models\Grade;
 
 class LoginController extends Controller
 {
@@ -58,9 +59,8 @@ class LoginController extends Controller
         if(!$user_exist){
             $user_exist = new User(array(
                 'name' => $user->name,
-                'username' => explode("@",$user->email)[0],
                 'google_id' => $user->id,
-                'foto_profil' => $user->avatar,
+                'profilephoto' => $user->avatar,
                 'email' => $user->email,
                 'regis_date' => now(),    
             ));
@@ -68,13 +68,13 @@ class LoginController extends Controller
         }
 
         if($user_exist->password == ""){
-            return redirect()->route('createPassword', ['id' => $user_exist->id]);
+            return redirect()->route('createPassword', ['id' => $user_exist->id,]);
         }
 
-        if(substr($user_exist->foto_profil,0,4) == "http"){
-            $foto = $user_exist->foto_profil;
+        if(substr($user_exist->profilephoto,0,4) == "http"){
+            $foto = $user_exist->profilephoto;
         }else{
-            $foto = asset('dashboard/assets/users/photos/'.$user_exist->foto_profil);
+            $foto = asset(User::getPhoto($user_exist->id));
         }
 
         $request->session()->put('username', $user_exist->username);
@@ -82,7 +82,7 @@ class LoginController extends Controller
         $request->session()->put('role_id', $user_exist->rolemapping()->first()->role_id);
         $request->session()->put('name', $user_exist->name);
         $request->session()->put('user_id', $user_exist->id);
-        $request->session()->put('foto', $foto);
+        $request->session()->put('photo', $foto);
         $request->session()->put('isLoggedIn', 'Ya');
         $request->session()->put('isItMaintenance', 'aktif');
         // $request->session()->put('isItMaintenance', 'maintenance');

@@ -26,6 +26,9 @@ Route::post('register', 'HomeController@post_register')->name('post_register');
 Route::get('checkUsernameAvailability','UserController@checkUsernameAvailability')->name('checkUsernameAvailability');
 Route::get('password/{id}/create', 'UserController@createPassword')->name('createPassword');
 Route::post('password/{id}/store', 'UserController@storePassword')->name('storePassword');
+Route::post('forgotpassword', 'UserController@forgotPassword')->name('forgotpassword');
+Route::get('resetpassword/{email}/{token}', 'UserController@forgetPassword');
+Route::post('resetpassword/{email}/{token}', 'UserController@resetPassword')->name('resetPassword');
 
 // maintenance
 Route::get('maintenance', 'HomeController@maintenance')->name('maintenance');
@@ -97,8 +100,8 @@ Route::middleware(['checkUser'])->group(function () {
     Route::get('/datacoa','HelperController@ajxCoa')->name('ajxCoa');
     Route::get('getCheckBeforeDelete', 'HelperController@checkBeforeDelete')->name('checkBeforeDelete');
 
-    // Event Helper
-    Route::get('/addEventToTable', 'EventController@addToTable')->name('addEventToTable');
+    // Course Helper
+    Route::post('/course/{id}/changestatus', 'CourseController@changeStatus')->name('changeStatusCourse');
 
     // Gift Box Helper
     Route::get('/addGiftBoxToTable', 'GiftBoxController@addToTable')->name('addGiftBoxToTable');

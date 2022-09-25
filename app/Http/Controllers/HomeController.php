@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\RoleMapping;
 use App\Models\MenuMapping;
+use App\Models\Grade;
 
 class HomeController extends Controller
 {
@@ -58,10 +59,10 @@ class HomeController extends Controller
 
             // FOUND
             if(isset($user->name) && Hash::check($request->password, $user->password)){
-                if(substr($user->foto_profil,0,4) == "http"){
-                    $foto = $user->foto_profil;
+                if(substr($user->profilephoto,0,4) == "http"){
+                    $foto = $user->profilephoto;
                 }else{
-                    $foto = asset('dashboard/assets/users/photos/'.$user->foto_profil);
+                    $foto = asset(User::getPhoto($user->id));
                 }
 
                 $request->session()->put('role', $user->rolemapping()->first()->role()->first()->role_name);
@@ -69,7 +70,7 @@ class HomeController extends Controller
                 $request->session()->put('username', $user->username);
                 $request->session()->put('name', $user->name);
                 $request->session()->put('user_id', $user->id);
-                $request->session()->put('foto', $foto);
+                $request->session()->put('photo', $foto);
                 $request->session()->put('isLoggedIn', 'Ya');
                 $request->session()->put('isItMaintenance', 'aktif');
                 // $request->session()->put('isItMaintenance', 'maintenance');
@@ -94,7 +95,9 @@ class HomeController extends Controller
 
     public function get_register(){
         $roles = Role::whereNotIn('id', [1,2,3])->get();
-        return view('dashboard.login.register',compact('roles'));
+        $grades = Grade::all();
+
+        return view('dashboard.login.register',compact('roles', 'grades'));
     }
 
     public function post_register(Request $request){
@@ -102,42 +105,55 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'name' => 'required',
+            'phonenumber' => 'required',
             'username' => 'required',
             'password' => 'required',
             'password_retype' => 'required',
             'optionsRadios' => 'required',
+            'birthdate_month' => 'required',
+            'birthdate_date' => 'required',
+            'birthdate_year' => 'required',
         ]);
 
         // IF Validation fail
         if ($validator->fails()) {
-            return redirect()->back()->with('warning', 'Pendaftaran Gagal');
+            return redirect()->back()->with('warning', 'Sign Up Failed');
         }else{
             try{
-                $username_count = User::where('username',$request->username)->count();
+                $username_count = User::where('username',$request->username)->orWhere('email', $request->email)->count();
                 // FOUND
-                if($username_count == 0 && $request->password == $request->password_retype){
+                if($username_count == 0){
+                    if($request->password == $request->password_retype){
+                        $birthdate = $request->birthdate_year."-".$request->birthdate_month."-".$request->birthdate_date;
 
-                    $user = new User(array(
-                        'email' => $request->email,
-                        'name' => $request->name,
-                        'username' => $request->username,
-                        'password' => Hash::make($request->password),
-                        'bck_pass' => $request->password,
-                    ));
-                    $user->save();
+                        $user = new User(array(
+                            'email' => $request->email,
+                            'name' => $request->name,
+                            'phone' => $request->phonenumber,
+                            'birthdate' => $birthdate,
+                            'username' => $request->username,
+                            'password' => Hash::make($request->password),
+                            'bck_pass' => $request->password,
+                            'regis_date' => now(),
+                        ));
+                        $user->save();
+    
+                        $mapping = new RoleMapping(array(
+                            'username' => $user->username,
+                            'role_id' => $request->optionsRadios,
+                        ));
+                        $mapping->save();
+    
+                        $request->session()->flush();
+    
+                        return redirect()->route('getHome')->with('status','Sign up success. Please Sign In');
+                    }else{
+                        return redirect()->back()->with('warning', 'Sign up failed!');
+                    }
 
-                    $mapping = new RoleMapping(array(
-                        'username' => $user->username,
-                        'role_id' => $request->optionsRadios,
-                    ));
-                    $mapping->save();
-
-                    $request->session()->flush();
-
-                    return redirect()->route('getHome')->with('status','Pendaftaran berhasil. Silahkan mencoba login');
                 // NOT FOUND
                 }else{
-                    return redirect()->back()->with('warning', 'Akun gagal didaftarkan!');
+                    return redirect()->back()->with('warning', 'Email or Username has been registered, please Sign in');
                 }
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());

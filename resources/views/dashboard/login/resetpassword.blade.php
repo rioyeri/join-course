@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="Dashboard">
     <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
-    <title>Sign Up | Flash Academia</title>
+    <title>Reset Password | Flash Academia</title>
 
     <!-- Favicons -->
     <link href="{{ asset('dashboard/img/favicon.png') }}" rel="icon">
@@ -41,17 +41,22 @@
         .form-box {
             width:600px;
             background : rgba(0,0,0,0.8);
-            margin: 2% auto;
+            margin: 20% auto;
             padding: 50px 0;
             color: #fff;
             box-shadow: 0 0 20px 2px rgba(0,0,0,0.5);
         }
 
         @media (max-width: 991px) {
+            p {
+                color: #fff;
+            }
+
             .form-box {
                 width:95%;
-                background : rgba(255,255,255,0.8);
-                margin: 7% auto;
+                /* background : rgba(255,255,255,0.8); */
+                background : rgba(0,0,0,0.8);
+                margin: 20% auto;
                 padding: 50px 0;
                 color: #000;
                 box-shadow: 0 0 20px 2px rgba(0,0,0,0.5);
@@ -152,6 +157,15 @@
             border-bottom: 1px solid #fff;
             padding-top: 10px;
             padding-bottom: 5px;
+        }
+
+        .input-box2 {
+            margin : auto;
+            width: 90%;
+            /* border-bottom: 1px solid #fff; */
+            margin-top: -20px;
+            padding-bottom: 5px;
+            text-align: center;
         }
 
         .input-box input{
@@ -269,92 +283,43 @@
         *********************************************************************************************************************************************************** -->
     <div id="login-page">
         <div class="container">
-            <form class="form-box" role="form" action="{{ route('storePassword', ['id' => $user->id]) }}" method="POST">
-                @csrf
-                <h2>One Step Closer
-                    <p class="small-text">You have try to login with <b>{{ $user->email }}<b> ( <a href="{{ route('Logout') }}" class="logout-google">Logout?</a>)</p>
-                </h2>
+            @isset($token)
+    
+                <form class="form-box" role="form" action="{{ route('resetPassword',['email'=>$email, 'token'=>$token]) }}" method="POST">
+                    @csrf
+                    <h2>Reset Password
+                        <p class="small-text">You have try to reset password for account <b>{{ $email }}<b> in Flash Academia</p>
+                    </h2>
 
-                <div class="login-wrap">
-                    <div class="form-inline input-box" id="phone-box">
-                        <input type="text" name="phonenumber" id="phonenumber" placeholder="Whatsapp Number" autocomplete="off"  autofocus>
-                        <span class="phone-error" id="phone-error" style="display: none;">Phone Number Invalid</span>
-                    </div>
-                    <div class="form-inline input-box">
-                        <input type="password" name="password" id="password" placeholder="Make a Password" autocomplete="off">
-                        <span class="eye" onclick="showpass('pass1')">
-                            <i class="fa fa-eye-slash" id="togglePassword1"></i>
-                        </span>
-                    </div>
-                    <div class="form-inline input-box">
-                        <input type="password" id="password_retype" placeholder="Confirm Password">
-                        <span class="eye" onclick="showpass('pass2')">
-                            <i class="fa fa-eye-slash" id="togglePassword2"></i>
-                        </span>
-                    </div>
-                    <div class="form-inline select-box">
-                        {{-- <input type="text" name="birthdate" id="birthdate" placeholder="Confirm Password"> --}}
-                        <div class="col-md-3">
-                            <label style="margin-top:10%"><b>Date of Birth : </b></label>
-                        </div>
-                        <div class="col-md-3">
-                            <select class="select2 col-md-6" parsley-trigger="change" name="birthdate_month" id="birthdate_month">
-                                <option value="#" disabled selected>Month</option>
-                                @for ($i=1; $i <= 12; $i++)
-                                    <option value="{{$i}}">{{date("F", mktime(0, 0, 0, $i, 10))}}</option>
-                                @endfor
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select class="select2 col-md-3" parsley-trigger="change" name="birthdate_date" id="birthdate_date">
-                                <option value="#" disabled selected>Date</option>
-                                @for ($i=1; $i <= 31; $i++)
-                                    <option value="{{$i}}">{{$i}}</option>
-                                @endfor
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select class="select2 col-md-3" parsley-trigger="change" name="birthdate_year" id="birthdate_year">
-                                <option value="#" disabled selected>Year</option>
-                                @for ($i=1950; $i <= date('Y'); $i++)
-                                    <option value="{{$i}}">{{$i}}</option>
-                                @endfor
-                            </select>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-inline input-checkbox">
-                        <div class="col-md-3">
-                            <label style="margin-top:2px"><b>Your Role : </b></label>
-                        </div>
-                        @foreach ($roles as $key => $role)
-                            <div class="col-md-2">
-                                <div class="radio">
-                                    <label><input type="radio" name="optionsRadios" id="options-{{ $role->id }}" value="{{ $role->id }}" @if($key == 0) checked @endif onchange="checkRole(this.value)"> {{ $role->role_name }} </label>
-                                </div>
-                            </div>                            
-                        @endforeach
-                    </div>
-                    <br>
-                    <div id="student-field">
+                    <div class="login-wrap">
                         <div class="form-inline input-box">
-                            <div class="col-md-6">
-                                <input type="text" name="school_name" id="school_name" placeholder="School Name">
-                            </div>
-                            <div>
-                                <select class="form-control select2" parsley-trigger="change" name="school_grade" id="school_grade">
-                                    <option value="#" disabled selected>-- Grade --</option>
-                                    @foreach ($grades as $grade)
-                                        <option value="{{$grade->id}}" >{{$grade->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <input type="password" name="password" id="password" placeholder="Make a new Password" autocomplete="off">
+                            <span class="eye" onclick="showpass('pass1')">
+                                <i class="fa fa-eye-slash" id="togglePassword1"></i>
+                            </span>
+                        </div>
+                        <div class="form-inline input-box">
+                            <input type="password" name="password_retype" id="password_retype" placeholder="Confirm new Password">
+                            <span class="eye" onclick="showpass('pass2')">
+                                <i class="fa fa-eye-slash" id="togglePassword2"></i>
+                            </span>
+                        </div>
+                        <br><br>
+                        <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-long-arrow-right"></i> Submit</button>
+                    </div>
+                </form>
+            @else
+                <div class="form-box">
+                    <div class="login-wrap">
+                        <div class="form-inline input-box">
+                            <p style="text-align: center; font-size: 20px">Your Token is invalid.</p>
+                        </div>
+                        <div class="input-box2">
+                            <p class="small-text">Please Request new Token in <a href="{{ route('get_login') }}" style="color:#f82"><strong>Login Page</strong></a></p>
                         </div>
                     </div>
-                    <br><br>
-                    <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-long-arrow-right"></i> Next</button>
                 </div>
-            </form>
+            @endisset
         </div>
     </div>
 
@@ -396,15 +361,6 @@
             }
         }
 
-        function checkRole(id){
-            // console.log(id);
-            if(id == 4){
-                document.getElementById('student-field').style.display = 'block';
-            }else{
-                document.getElementById('student-field').style.display = 'none';
-            }
-        }
-
         $("form").submit(function(){
             password = $('#password').val();
             retype = $('#password_retype').val();
@@ -421,6 +377,41 @@
             }
         });
     </script>
-</body>
+
+    @if (session('status'))
+    <script>
+        var status = "{{session('status')}}";
+        // Display a success toast, with a title
+        toastr.success(status, 'Success')
+    </script>
+    @elseif(session('warning'))
+    <script>
+        var status = "{{session('warning')}}";
+        // Display a success toast, with a title
+        toastr.warning(status, 'Warning!')
+    </script>
+    @elseif(session('failed'))
+    <script>
+    var status = "{{session('failed')}}";
+    // Display a success toast, with a title
+    toastr.error(status, 'Login Gagal')
+    </script>
+    @endif
+    @if ($errors->any())
+    @php
+        $er="";
+    @endphp
+    @foreach ($errors->all() as $error)
+        @php
+        $er .= "<li>".$error."</li>";
+        @endphp
+    @endforeach
+    <script>
+        var error = "<?=$er?>";
+        // Display an error toast, with a title
+        toastr.error(error, 'Error!!!')
+    </script>
+    @endif
+    </body>
 
 </html>

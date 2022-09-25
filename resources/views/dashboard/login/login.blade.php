@@ -108,6 +108,13 @@
         a:hover {
             color: #f82;
         }
+
+        .btn-google-login {
+            color: #fff;
+            background: #f85a40;
+            width:95%;
+            margin: 12% auto;
+        }
     </style>
 </head>
 
@@ -123,10 +130,10 @@
 
                 <div class="login-wrap">
                     <div class="form-inline input-box">
-                        <input type="text" name="login_id" id="login_id" placeholder="Username / Email" autofocus>
+                        <input type="text" name="login_id" id="login_id" placeholder="Username / Email" autofocus autocomplete="new-password">
                     </div>
                     <div class="form-inline input-box">
-                        <input type="password" name="password" id="password" placeholder="Password">
+                        <input type="password" name="password" id="password" placeholder="Password" autocomplete="new-password">
                         <span class="eye" onclick="showpass()">
                             <i class="fa fa-eye-slash" id="togglePassword"></i>
                         </span>
@@ -141,27 +148,36 @@
                 <h5 class="text-center">
                     Don't have an account? <a href="{{ route('get_register') }}"> Sign Up</a>
                 </h5>
+                <h4 class="text-center">
+                    <a href="{{ route('google.redirect') }}" class="btn btn-google-login btn-block" id="button-google"><i class="fa fa-google-plus" style="margin-left:25px"></i> Login with Google</a>
+                </h4>
+                <h5 class="text-center">
+                    <a href="{{ route('getHome') }}"  style="color:#fff;"><i class="fa fa-home"></i> Back to <strong  style="color: #00b6a1; font-size:18px"> Homepage</strong></a>
+                </h5>
             </form>
-            <!-- Modal -->
-            <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">Forgot Password ?</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>Enter your e-mail address below to reset your password.</p>
-                        <input type="text" name="email" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
-                    </div>
-                    <div class="modal-footer">
-                        <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
-                        <button class="btn btn-theme" type="button">Submit</button>
+            <form role="form" action="{{route('forgotpassword')}}" method="POST">
+                @csrf
+                <!-- Modal -->
+                <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title">Forgot Password ?</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>Enter your e-mail address below to reset your password.</p>
+                                <input type="text" name="email" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
+                            </div>
+                            <div class="modal-footer">
+                                <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+                                <button class="btn btn-theme" type="submit">Submit</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
-            </div>
-            <!-- modal -->
+                <!-- modal -->
+            </form>
         </div>
     </div>
 

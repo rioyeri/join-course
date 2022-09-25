@@ -27,7 +27,7 @@ class Course extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"COCO");
-        $course = Course::select('id','name','grade','topic','description');
+        $course = Course::select('id','name','grade','topic','description','status');
 
         $totalRecords = $course->count();
 
@@ -59,8 +59,16 @@ class Course extends Model
                 $options .= '<a class="btn btn-primary btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
             }
 
+            if (array_search("COCOS",$page)){
+                if($key->status == 0){
+                    $options .= '<a class="btn btn-warning btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Non-Active</a> ';
+                }else{
+                    $options .= '<a class="btn btn-success btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Active</a> ';
+                }
+            }
+
             if (array_search("COCOD",$page)){
-                $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="deleteData('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
+                $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
             }
 
             $detail->put('no', $i++);
