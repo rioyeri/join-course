@@ -91,6 +91,10 @@ Route::middleware(['checkUser'])->group(function () {
         'course' => 'CourseController',
         // Course Payment
         'coursepayment' => 'CoursePaymentController',
+        // Student
+        'student' => 'StudentController',
+        // Teacher
+        'teacher' => 'TeacherController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');
@@ -102,6 +106,9 @@ Route::middleware(['checkUser'])->group(function () {
 
     // Course Helper
     Route::post('/course/{id}/changestatus', 'CourseController@changeStatus')->name('changeStatusCourse');
+
+    // Teacher Helper
+    Route::post('/teacher/{id}/changestatus', 'TeacherController@changeStatus')->name('changeStatusCourse');
 
     // Gift Box Helper
     Route::get('/addGiftBoxToTable', 'GiftBoxController@addToTable')->name('addGiftBoxToTable');

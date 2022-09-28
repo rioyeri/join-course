@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use App\Models\Teacher;
+use App\Models\User;
+use App\Models\Grade;
 use App\Models\Course;
 use App\Models\Log;
 use App\Models\RecycleBin;
 
-class CourseController extends Controller
+class TeacherController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,10 +22,10 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         if($request->ajax()){
-            $datas = Course::dataIndex($request);
+            $datas = Teacher::dataIndex($request);
             echo json_encode($datas);
         }else{
-            return view('dashboard.masterdata.course.index');
+            return view('dashboard.masterdata.teacher.index');
         }
     }
 
@@ -32,7 +36,9 @@ class CourseController extends Controller
      */
     public function create()
     {
-        return response()->json(view('dashboard.masterdata.course.form')->render());
+        $courses = Course::all();
+        $users = User::getUserListByRole('!=', 4);
+        return response()->json(view('dashboard.masterdata.teacher.form',compact('courses','users'))->render());
     }
 
     /**
@@ -44,7 +50,8 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'user_id' => 'required',
+            'teacher_subjects' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -52,15 +59,9 @@ class CourseController extends Controller
         // Validation success
         }else{
             try{
-                $data = new Course(array(
-                    "name" => $request->name,
-                    "topic" => $request->topic,
-                    "description" => $request->description,
-                    "creator" => session('user_id'),
-                ));
-                $data->save();
-                Log::setLog('MDCOC','Create Course : '.$request->name);
-                return redirect()->route('course.index')->with('status','Successfully saved');
+                Teacher::setData($request->user_id, $request->teacher_subjects);
+                Log::setLog('MDTCC','Create Teacher : '.$request->user_id);
+                return redirect()->route('teacher.index')->with('status','Successfully saved');
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
             }
@@ -75,7 +76,7 @@ class CourseController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -86,8 +87,10 @@ class CourseController extends Controller
      */
     public function edit($id)
     {
-        $data = Course::where('id', $id)->first();
-        return response()->json(view('dashboard.masterdata.course.form',compact('data'))->render());
+        $data = User::select('id', 'name')->where('id', $id)->first();
+        $exist_course = array_values(array_column(DB::select("SELECT course_id FROM teacher WHERE user_id LIKE $id"), 'course_id'));
+        $courses = Course::all();
+        return response()->json(view('dashboard.masterdata.teacher.form',compact('data','courses','exist_course'))->render());
     }
 
     /**
@@ -100,7 +103,7 @@ class CourseController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'teacher_subjects' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -108,14 +111,9 @@ class CourseController extends Controller
         // Validation success
         }else{
             try{
-                Course::where('id', $id)->update(array(
-                    "name" => $request->name,
-                    "topic" => $request->topic,
-                    "description" => $request->description,
-                    "creator" => session('user_id'),
-                ));
-                Log::setLog('MDCOU','Update Course : '.$request->name);
-                return redirect()->route('course.index')->with('status','Successfully saved');
+                Teacher::setData($id, $request->teacher_subjects);
+                Log::setLog('MDTCU','Update Teacher : '.$id);
+                return redirect()->route('teacher.index')->with('status','Successfully saved');
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
             }
@@ -131,10 +129,12 @@ class CourseController extends Controller
     public function destroy($id)
     {
         try{
-            $data = Course::where('id', $id)->first();
-            $log_id = Log::setLog('MDCOD','Delete course : '.$data->name);
-            RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
-            $data->delete();
+            $datas = Teacher::where('user_id', $id)->get();
+            foreach($datas as $data){
+                $log_id = Log::setLog('MDTCD','Delete Teacher : '.$data->teacher->name.' ('.$data->get_course->name.')');
+                RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));   
+                $data->delete(); 
+            }
             return "true";
         }catch(\Exception $e){
             return redirect()->back()->withErrors($e->getMessage());
@@ -151,18 +151,25 @@ class CourseController extends Controller
         // Validation success
         }else{
             try{
-                $data = Course::where('id', $id)->first();
-                if($data->status == 0){
+                $teacher = Teacher::where('user_id', $id)->get();
+                $user = User::where('id', $id)->first();
+
+                if($teacher[0]->status == 0){
                     $new_status = 1;
-                    $text_log = "Activate Course : ".$data->name;
+                    $text_log = "Activate Teacher : ".$user->name;
                 }else{
                     $new_status = 0;
-                    $text_log = "Deactivate Course : ".$data->name;
+                    $text_log = "Deactivate Teacher : ".$user->name;
                 }
-                $data->status = $new_status;
-                $data->creator = session('user_id');
-                $data->save();
-                Log::setLog('MDCOS', $text_log);
+
+                foreach($teacher as $t){
+                    Teacher::where('id', $t->id)->update(array(
+                        'status' => $new_status,
+                        'creator' => session('user_id'),    
+                    ));
+                }
+
+                Log::setLog('MDTCS', $text_log);
                 return "true";
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());

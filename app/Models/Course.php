@@ -10,12 +10,8 @@ class Course extends Model
 {
     protected $table ='course';
     protected $fillable = [
-        'name','grade','topic','description'
+        'name','topic','description','status','creator'
     ];
-
-    public function get_grade(){
-        return $this->belongsTo('App\Models\Grade', 'grade', 'id');
-    }
 
     public static function dataIndex(Request $request){
         $draw = $request->draw;
@@ -26,14 +22,14 @@ class Course extends Model
         $columnSortOrder = $request['order'][0]['dir']; // asc or desc
         $searchValue = $request['search']['value']; // Search value
 
-        $page = MenuMapping::getMap(session('role_id'),"COCO");
-        $course = Course::select('id','name','grade','topic','description','status');
+        $page = MenuMapping::getMap(session('role_id'),"MDCO");
+        $course = Course::select('id','name','topic','description','status');
 
         $totalRecords = $course->count();
 
         if($searchValue != ''){
             $course->where(function ($query) use ($searchValue) {
-                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('grade', 'LIKE', '%'.$searchValue.'%')->orWhere('topic', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%');
+                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('topic', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%');
             });
         }
 
@@ -55,11 +51,11 @@ class Course extends Model
 
             $options = '';
 
-            if (array_search("COCOU",$page)){
+            if (array_search("MDCOU",$page)){
                 $options .= '<a class="btn btn-primary btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
             }
 
-            if (array_search("COCOS",$page)){
+            if (array_search("MDCOS",$page)){
                 if($key->status == 0){
                     $options .= '<a class="btn btn-warning btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Non-Active</a> ';
                 }else{
@@ -67,13 +63,12 @@ class Course extends Model
                 }
             }
 
-            if (array_search("COCOD",$page)){
+            if (array_search("MDCOD",$page)){
                 $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
             }
 
             $detail->put('no', $i++);
             $detail->put('name', $key->name);
-            $detail->put('grade', $key->get_grade->name);
             $detail->put('topic', $key->topic);
             $detail->put('description', $key->description);
             $detail->put('options', $options);
