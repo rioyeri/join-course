@@ -33,21 +33,10 @@ Route::post('resetpassword/{email}/{token}', 'UserController@resetPassword')->na
 // maintenance
 Route::get('maintenance', 'HomeController@maintenance')->name('maintenance');
 
-// invitation
-Route::get('/invitation/{invitation_id}/kepada:{receiver}', 'InvitationController@getInvitation')->name('getInvitation');
-Route::post('/sendMessageInvitation/{invitation_id}/', 'InvitationController@sendMessage')->name('sendMessageInvitation');
-
 // Template
 Route::get('pilihtemplate', 'TemplateController@index');
 
 Route::middleware(['checkUser'])->group(function () {
-    // Account
-    Route::get('/account/profile','AccountController@profile')->name('showProfile');
-    Route::get('/account/change_pass','AccountController@getchange_pass')->name('getChangePass');
-    Route::get('/account/change_foto','AccountController@getchange_foto')->name('getChangeFoto');
-    Route::post('/account/change_foto','AccountController@change_foto')->name('changeFoto');
-    Route::post('/account/change_pass','AccountController@change_pass')->name('changePass');
-
     // Menu Mapping
     Route::get('/menumapping','MenuController@index')->name('getMapping');
     Route::get('/showmapping/{id}','MenuController@show')->name('showMapping');
@@ -77,16 +66,6 @@ Route::middleware(['checkUser'])->group(function () {
         'submodul' => 'SubModulController',
         // Role Management
         'role' => 'RoleController',
-        // Gallery
-        'gallery' => 'GalleryController',
-        // Link
-        'link' => 'LinkController',
-        // About Us
-        'aboutus' => 'AboutUsController',
-        // Banner
-        'banner' => 'BannerController',
-        // Sosmed
-        'sosmed' => 'SosmedController',
         // Course
         'course' => 'CourseController',
         // Course Payment
@@ -95,6 +74,10 @@ Route::middleware(['checkUser'])->group(function () {
         'student' => 'StudentController',
         // Teacher
         'teacher' => 'TeacherController',
+        // Order
+        'order' => 'OrderController',
+        // Package
+        'package' => 'PackageController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');
@@ -103,13 +86,23 @@ Route::middleware(['checkUser'])->group(function () {
     Route::get('/datakota','HelperController@getDataKota')->name('getDataKota');
     Route::get('/datacoa','HelperController@ajxCoa')->name('ajxCoa');
     Route::get('getCheckBeforeDelete', 'HelperController@checkBeforeDelete')->name('checkBeforeDelete');
+    Route::get('/getTeacherFee', 'HelperController@getTeacherFee')->name('getTeacherFee');
+    Route::get('/getData','HelperController@getData')->name('getData');
 
     // Course Helper
     Route::post('/course/{id}/changestatus', 'CourseController@changeStatus')->name('changeStatusCourse');
 
-    // Teacher Helper
-    Route::post('/teacher/{id}/changestatus', 'TeacherController@changeStatus')->name('changeStatusCourse');
+    // Package Helper
+    Route::post('/package/{id}/changestatus', 'PackageController@changeStatus')->name('changeStatusPackage');
 
-    // Gift Box Helper
-    Route::get('/addGiftBoxToTable', 'GiftBoxController@addToTable')->name('addGiftBoxToTable');
+    // Teacher Helper
+    Route::post('/teacher/{id}/changestatus', 'TeacherController@changeStatus')->name('changeStatusTeacher');
+    Route::get('/teacher/{id}/course', 'TeacherController@editTeacherCourse')->name('editTeacherCourse');
+    Route::put('/teacher/{id}/course', 'TeacherController@setTeacherCourse')->name('setTeacherCourse');
+    Route::get('/teacher/{id}/price', 'TeacherController@editTeacherPrice')->name('editTeacherPrice');
+    Route::put('/teacher/{id}/price', 'TeacherController@setTeacherPrice')->name('setTeacherPrice');
+
+    // Order Helper
+    Route::post('/order/{id}/changestatus', 'OrderController@changeStatus')->name('changeStatusOrder');
+
 });

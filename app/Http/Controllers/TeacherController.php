@@ -6,11 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Teacher;
+use App\Models\TeacherCourse;
+use App\Models\TeacherPrice;
 use App\Models\User;
 use App\Models\Grade;
 use App\Models\Course;
 use App\Models\Log;
 use App\Models\RecycleBin;
+use App\Models\MenuMapping;
+use App\Models\Package;
 
 class TeacherController extends Controller
 {
@@ -25,7 +29,8 @@ class TeacherController extends Controller
             $datas = Teacher::dataIndex($request);
             echo json_encode($datas);
         }else{
-            return view('dashboard.masterdata.teacher.index');
+            $page = "MDTC";
+            return view('dashboard.masterdata.teacher.index',compact('page'));
         }
     }
 
@@ -51,7 +56,9 @@ class TeacherController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
-            'teacher_subjects' => 'required',
+            'title' => 'required',
+            'description' => 'required',
+            'location' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -59,7 +66,13 @@ class TeacherController extends Controller
         // Validation success
         }else{
             try{
-                Teacher::setData($request->user_id, $request->teacher_subjects);
+                $teacher = new Teacher(array(
+                    'user_id' => $request->user_id,
+                    'title' => $request->title,
+                    'description' => $request->description,
+                    'location' => $request->location,
+                ));
+                $teacher->save();
                 Log::setLog('MDTCC','Create Teacher : '.$request->user_id);
                 return redirect()->route('teacher.index')->with('status','Successfully saved');
             }catch(\Exception $e){
@@ -76,7 +89,7 @@ class TeacherController extends Controller
      */
     public function show($id)
     {
-        
+        // 
     }
 
     /**
@@ -87,10 +100,9 @@ class TeacherController extends Controller
      */
     public function edit($id)
     {
-        $data = User::select('id', 'name')->where('id', $id)->first();
-        $exist_course = array_values(array_column(DB::select("SELECT course_id FROM teacher WHERE user_id LIKE $id"), 'course_id'));
-        $courses = Course::all();
-        return response()->json(view('dashboard.masterdata.teacher.form',compact('data','courses','exist_course'))->render());
+        $data = Teacher::where('id', $id)->first();
+        $page = MenuMapping::getMap(session('role_id'),"MDTC");
+        return response()->json(view('dashboard.masterdata.teacher.form',compact('data', 'page'))->render());
     }
 
     /**
@@ -103,7 +115,9 @@ class TeacherController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'teacher_subjects' => 'required',
+            'title' => 'required',
+            'description' => 'required',
+            'location' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -111,8 +125,12 @@ class TeacherController extends Controller
         // Validation success
         }else{
             try{
-                Teacher::setData($id, $request->teacher_subjects);
-                Log::setLog('MDTCU','Update Teacher : '.$id);
+                $teacher = Teacher::where('id', $id)->first();
+                $teacher->title = $request->title;
+                $teacher->description = $request->description;
+                $teacher->location = $request->location;
+                $teacher->save();
+                Log::setLog('MDTCU','Update Teacher : '.$teacher->user_id);
                 return redirect()->route('teacher.index')->with('status','Successfully saved');
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
@@ -129,12 +147,10 @@ class TeacherController extends Controller
     public function destroy($id)
     {
         try{
-            $datas = Teacher::where('user_id', $id)->get();
-            foreach($datas as $data){
-                $log_id = Log::setLog('MDTCD','Delete Teacher : '.$data->teacher->name.' ('.$data->get_course->name.')');
-                RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));   
-                $data->delete(); 
-            }
+            $data = Teacher::where('id', $id)->first();
+            $log_id = Log::setLog('MDTCD','Delete Teacher : '.$data->teacher->name);
+            RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
+            $data->delete();
             return "true";
         }catch(\Exception $e){
             return redirect()->back()->withErrors($e->getMessage());
@@ -151,23 +167,18 @@ class TeacherController extends Controller
         // Validation success
         }else{
             try{
-                $teacher = Teacher::where('user_id', $id)->get();
-                $user = User::where('id', $id)->first();
+                $teacher = Teacher::where('id', $id)->first();
 
-                if($teacher[0]->status == 0){
+                if($teacher->status == 0){
                     $new_status = 1;
-                    $text_log = "Activate Teacher : ".$user->name;
+                    $text_log = "Activate Teacher : ".$teacher->teacher->name;
                 }else{
                     $new_status = 0;
-                    $text_log = "Deactivate Teacher : ".$user->name;
+                    $text_log = "Deactivate Teacher : ".$teacher->teacher->name;
                 }
 
-                foreach($teacher as $t){
-                    Teacher::where('id', $t->id)->update(array(
-                        'status' => $new_status,
-                        'creator' => session('user_id'),    
-                    ));
-                }
+                $teacher->status = $new_status;
+                $teacher->save();
 
                 Log::setLog('MDTCS', $text_log);
                 return "true";
@@ -176,4 +187,59 @@ class TeacherController extends Controller
             }
         }
     }
+
+    public function editTeacherCourse(Request $request, $id){
+        $data = Teacher::where('id', $id)->first();
+        $exist_course = array_values(array_column(DB::select("SELECT course_id FROM teacher_course WHERE teacher_id LIKE $id"), 'course_id'));
+        $courses = Course::all();
+        return response()->json(view('dashboard.masterdata.teacher.course.form',compact('data','courses','exist_course'))->render());
+    }
+
+    public function setTeacherCourse(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            'teacher_subjects' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try{
+                TeacherCourse::setData($id, $request->teacher_subjects);
+                Log::setLog('MDTCC','Create Teacher : '.$request->user_id);
+                return redirect()->route('teacher.index')->with('status','Successfully saved');
+            }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
+    }
+
+    public function editTeacherPrice(Request $request, $id){
+        $data = Teacher::where('id', $id)->first();
+        $exist_packages = TeacherPrice::where('teacher_id', $id)->get();
+        $packages = Package::all();
+        
+        return response()->json(view('dashboard.masterdata.teacher.price.form',compact('data','packages','exist_packages'))->render());
+    }
+
+    public function setTeacherPrice(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            '_token' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try{
+                $teacher = Teacher::where('id', $id)->first();
+                TeacherPrice::setData($id, $request->package_id, $request->package_price);
+                Log::setLog('MDTCC','Create Teacher : '.$teacher->teacher->name);
+                return redirect()->route('teacher.index')->with('status','Successfully saved');
+            }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
+    }
+
 }

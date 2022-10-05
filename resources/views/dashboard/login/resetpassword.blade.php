@@ -331,6 +331,8 @@
     
     <!-- Toastr js -->
     <script src="{{ asset('dashboard/additionalplugins/toastr/toastr.min.js') }}"></script>
+    @include('dashboard.layout.js')
+
     <script>
         // $.backstretch("../../dashboard/img/login-bg.jpg", {
         //     speed: 500
@@ -377,41 +379,6 @@
             }
         });
     </script>
-
-    @if (session('status'))
-    <script>
-        var status = "{{session('status')}}";
-        // Display a success toast, with a title
-        toastr.success(status, 'Success')
-    </script>
-    @elseif(session('warning'))
-    <script>
-        var status = "{{session('warning')}}";
-        // Display a success toast, with a title
-        toastr.warning(status, 'Warning!')
-    </script>
-    @elseif(session('failed'))
-    <script>
-    var status = "{{session('failed')}}";
-    // Display a success toast, with a title
-    toastr.error(status, 'Login Gagal')
-    </script>
-    @endif
-    @if ($errors->any())
-    @php
-        $er="";
-    @endphp
-    @foreach ($errors->all() as $error)
-        @php
-        $er .= "<li>".$error."</li>";
-        @endphp
-    @endforeach
-    <script>
-        var error = "<?=$er?>";
-        // Display an error toast, with a title
-        toastr.error(error, 'Error!!!')
-    </script>
-    @endif
-    </body>
+</body>
 
 </html>

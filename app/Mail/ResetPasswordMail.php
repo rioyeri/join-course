@@ -33,6 +33,6 @@ class ResetPasswordMail extends Mailable
     {
         $data = ForgotPassword::where('email', $this->email)->first();
         $uri = $this->url."/resetpassword/".$this->email."/".$data->token;
-        return $this->from('admin@flashacademia.com', 'Admin Flash Academia')->markdown('emails.resetpassword',compact('uri'));
+        return $this->from('admin@flashacademia.nadasederhana.com', 'Admin Flash Academia')->markdown('emails.resetpassword',compact('uri'));
     }
 }

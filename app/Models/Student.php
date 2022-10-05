@@ -31,13 +31,21 @@ class Student extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"MDST");
-        $student = Student::join('users as u', 'student.user_id', 'u.id')->select('student.id','u.name as student_name','student_grade','school_name');
+        $student = Student::join('users as u', 'student.user_id', 'u.id')->select('student.id','u.name as student_name','student_grade','school_name','u.birthdate as birthdate','u.id as user_id');
 
         $totalRecords = $student->count();
 
         if($searchValue != ''){
             $student->where(function ($query) use ($searchValue) {
-                $query->orWhere('student_name', 'LIKE', '%'.$searchValue.'%')->orWhere('student_grade', 'LIKE', '%'.$searchValue.'%')->orWhere('school_name', 'LIKE', '%'.$searchValue.'%');
+                $user_id = array();
+                $users = User::all();
+                foreach($users as $user){
+                    if(User::getAge($user->birthdate) == $searchValue){
+                        array_push($user_id, $user->id);
+                    }
+                }
+                
+                $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('student_grade', 'LIKE', '%'.$searchValue.'%')->orWhere('school_name', 'LIKE', '%'.$searchValue.'%')->orWhereIn('user_id', $user_id);
             });
         }
 
@@ -45,6 +53,8 @@ class Student extends Model
 
         if($columnName == "no"){
             $student->orderBy('id', $columnSortOrder);
+        }elseif($columnName == "student_age"){
+            $student->orderBy('birthdate', $columnSortOrder);
         }else{
             $student->orderBy($columnName, $columnSortOrder);
         }
@@ -67,8 +77,11 @@ class Student extends Model
                 $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
             }
 
+            $age = User::getAge($key->birthdate)." years old";
+
             $detail->put('no', $i++);
             $detail->put('student_name', $key->student_name);
+            $detail->put('student_age', $age);
             $detail->put('student_grade', $key->get_grade->name);
             $detail->put('school_name', $key->school_name);
             $detail->put('options', $options);

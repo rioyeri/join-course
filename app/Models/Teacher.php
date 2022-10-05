@@ -10,12 +10,8 @@ class Teacher extends Model
 {
     protected $table ='teacher';
     protected $fillable = [
-        'user_id','course_id','status'
+        'user_id','title','description','location','status'
     ];
-
-    public function get_course(){
-        return $this->belongsTo('App\Models\Course', 'course_id', 'id');
-    }
 
     public function teacher(){
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
@@ -31,73 +27,76 @@ class Teacher extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"MDTC");
-        $teacher = Teacher::join('users as u', 'teacher.user_id', 'u.id')->select('teacher.id','u.name as teacher_name', 'teacher.user_id');
+        $teachers = Teacher::join('users as u', 'teacher.user_id', 'u.id')->select('teacher.id','u.name as teacher_name', 'teacher.user_id', 'title', 'description', 'location','status');
 
-
-        $teacher->groupBy('u.id');
-
-        $totalRecords = $teacher->count();
-        // $totalRecords = 0;
-        // foreach($sales->get() as $count){
-        //     $totalRecords++;
-        // }
+        $totalRecords = $teachers->count();
 
         if($searchValue != ''){
-            $teacher->where(function ($query) use ($searchValue) {
-                $course_ids = Course::select('id')->where('name', 'LIKE', '%'.$searchValue.'%')->get();
-                $query->orWhere('teacher_name', 'LIKE', '%'.$searchValue.'%')->orWhereIn('course_id', $course_ids);
+            $teachers->where(function ($query) use ($searchValue) {
+                $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('title', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhere('location', 'LIKE', '%'.$searchValue.'%');
             });
         }
 
-        $totalRecordwithFilter = $teacher->count();
-        // $totalRecordwithFilter = 0;
-        // foreach($sales->get() as $count){
-        //     $totalRecordwithFilter++;
-        // }
+        $totalRecordwithFilter = $teachers->count();
 
         if($columnName == "no"){
-            $teacher->orderBy('id', $columnSortOrder);
+            $teachers->orderBy('updated_at', $columnSortOrder);
         }else{
-            $teacher->orderBy($columnName, $columnSortOrder);
+            $teachers->orderBy($columnName, $columnSortOrder);
         }
 
-        $teacher = $teacher->offset($row)->limit($rowperpage)->get();
+        $teachers = $teachers->offset($row)->limit($rowperpage)->get();
 
         $data = collect();
         $i = $row+1;
 
-        foreach($teacher as $key){
+        foreach($teachers as $key){
             $detail = collect();
-            $subjects = '';
+            $profile_button = '';
+            $courses_button = '';
+            $prices_button = '';
+ 
+            if (array_search("MDTCV",$page)){
+                if(TeacherPrice::where('teacher_id', $key->id)->count() != 0){
+                    $count_price = TeacherPrice::where('teacher_id', $key->id)->count();
+                    $color_price = "#000";
+                }else{
+                    $count_price = "Empty";
+                    $color_price = "#FF0000";
+                }
 
-            foreach(Teacher::where('user_id', $key->user_id)->get() as $key){
-                $subjects .= '<li>'.$key->get_course->name.'</li>';
+                if(TeacherCourse::where('teacher_id', $key->id)->count() != 0){
+                    $count_course = TeacherCourse::where('teacher_id', $key->id)->count();
+                    $color_course = "#000";
+                }else{
+                    $count_course = "Empty";
+                    $color_course = "#FF0000";
+                }
+                $profile_button .= '<a class="btn btn-info m-5" onclick="view_profile('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i> View Profile</a> ';
+                $courses_button .= '<a class="btn btn-info m-5" onclick="view_subject('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-list-ul"></i> View Subjects <span style="color:'.$color_course.'">('.$count_course.')</span></a> ';
+                $prices_button .= '<a class="btn btn-info m-5" onclick="view_price('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-usd"></i> View Packages <span style="color:'.$color_price.'">('.$count_price.')</span></a> ';
             }
 
             $options = '';
-
-            if (array_search("MDTCU",$page)){
-                $options .= '<a class="btn btn-primary btn-round m-5" onclick="edit_data('.$key->user_id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
-            }
-
             if (array_search("MDTCD",$page)){
-                $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->user_id.')"><i class="fa fa-trash-o"></i> Delete</a>';
+                $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a> ';
             }
 
             if (array_search("MDTCS",$page)){
                 if($key->status == 0){
-                    $options .= '<a class="btn btn-warning btn-round m-5" onclick="change_status('.$key->user_id.')"><i class="fa fa-power-off"></i> Non-Active</a> ';
+                    $options .= '<a class="btn btn-warning btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Non-Active</a> ';
                 }else{
-                    $options .= '<a class="btn btn-success btn-round m-5" onclick="change_status('.$key->user_id.')"><i class="fa fa-power-off"></i> Active</a> ';
+                    $options .= '<a class="btn btn-success btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Active</a> ';
                 }
             }
 
             $detail->put('no', $i++);
             $detail->put('teacher_name', $key->teacher->name);
-            $detail->put('teacher_subjects', $subjects);
+            $detail->put('title', $key->title);
+            $detail->put('teacher_profile', $profile_button);
+            $detail->put('courses', $courses_button);
+            $detail->put('prices',$prices_button);
             $detail->put('options', $options);
-
-            
             $data->push($detail);
         }
 
@@ -109,46 +108,5 @@ class Teacher extends Model
         );
 
         return $response;
-    }
-
-    public static function setData($user_id, $courses_id){
-        $old_list = Teacher::where('user_id', $user_id)->get();
-        if($old_list->count() != 0){
-            foreach($old_list as $list){
-                $status = 0;
-                foreach($courses_id as $course){
-                    if($list->id == $course){
-                        $status++;
-                    }
-                    if(Teacher::where('user_id', $user_id)->where('course_id', $course)->count() == 0){
-                        $new = new Teacher(array(
-                            "user_id" => $user_id,
-                            "course_id" => $course,
-                            "status" => 0,
-                        ));
-                        $new->save();
-                    }
-                }
-                if($status == 0){
-                    if(Teacher::where('user_id', $user_id)-> where('course_id', $course)->count() != 0){
-                        $log_id = Log::setLog('MDTCD','Delete Teachers Subject : '.$list->get_course->name.' ('.$list->get_course->grade.')');
-                        RecycleBin::moveToRecycleBin($log_id, $list->getTable(), json_encode($list));
-                        $list->delete();
-                    }
-                }
-            }
-        }else{
-            foreach($courses_id as $course){
-                if(Teacher::where('user_id', $user_id)->where('course_id', $course)->count() == 0){
-                    $new = new Teacher(array(
-                        "user_id" => $user_id,
-                        "course_id" => $course,
-                        "status" => 0,
-                    ));
-                    $new->save();
-                }
-            }
-        }
-
     }
 }

@@ -21,7 +21,8 @@ class CourseController extends Controller
             $datas = Course::dataIndex($request);
             echo json_encode($datas);
         }else{
-            return view('dashboard.masterdata.course.index');
+            $page = "MDCO";
+            return view('dashboard.masterdata.course.index', compact('page'));
         }
     }
 

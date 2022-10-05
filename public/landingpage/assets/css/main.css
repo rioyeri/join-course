@@ -328,7 +328,13 @@ section {
 }
 
 .header .logo h1 span {
+  font-size: 30px;
+  margin: 0;
+  font-weight: 600;
+  /* letter-spacing: 0.8px; */
   color: #f96f59;
+  font-family: var(--font-primary);
+  margin-top: 40px;
 }
 
 .sticked-header-offset {
@@ -1947,11 +1953,13 @@ section {
   font-size: 15px;
   letter-spacing: 1px;
   display: inline-block;
-  padding: 14px 40px;
-  border-radius: 50px;
+  /* padding: 14px 40px; */
+  padding: 10px 40px;
+  border-radius: 10px;
   transition: 0.3s;
   color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+  /* background: rgba(255, 255, 255, 0.1); */
+  background: rgba(0, 131, 116, 1);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
   border: 2px solid rgba(255, 255, 255, 0.1);
 }

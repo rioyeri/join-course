@@ -124,7 +124,7 @@
         *********************************************************************************************************************************************************** -->
     <div id="login-page">
         <div class="container">
-            <form class="form-box" role="form" action="{{route('Login')}}" method="POST">
+            <form class="form-box" id="form" role="form" action="{{route('Login')}}" method="POST">
                 @csrf
                 <h2>Sign In</h2>
 
@@ -155,7 +155,7 @@
                     <a href="{{ route('getHome') }}"  style="color:#fff;"><i class="fa fa-home"></i> Back to <strong  style="color: #00b6a1; font-size:18px"> Homepage</strong></a>
                 </h5>
             </form>
-            <form role="form" action="{{route('forgotpassword')}}" method="POST">
+            <form action="{{route('forgotpassword')}}" method="POST">
                 @csrf
                 <!-- Modal -->
                 <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
@@ -208,22 +208,6 @@
                 document.getElementById(id).type="password";
             }
         }
-
-        // $("form").submit(function(){
-        //     password = $('#password').val();
-        //     retype = $('#password_retype').val();
-            
-
-        //     if(password != retype){
-        //         // document.getElementById("checkpassword").style.display = 'block';
-        //         toastr.error("Konfirmasi Password gagal!", 'Gagal!')
-        //         $('#password').val("");
-        //         $('#password_retype').val("");
-        //         event.preventDefault();
-        //     }else{
-        //         document.getElementById("form").submit();
-        //     }
-        // });
     </script>
 </body>
 

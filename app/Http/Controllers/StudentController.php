@@ -23,7 +23,8 @@ class StudentController extends Controller
             $datas = Student::dataIndex($request);
             echo json_encode($datas);
         }else{
-            return view('dashboard.masterdata.student.index');
+            $page = "MDST";
+            return view('dashboard.masterdata.student.index',compact('page'));
         }
     }
 

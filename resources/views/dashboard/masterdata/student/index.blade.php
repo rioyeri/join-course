@@ -55,6 +55,9 @@
     Students
 @endsection
 
+@section('tab_teacher')
+active
+@endsection
 @section('content')
     <!-- page start-->
     <div class="content-panel">
@@ -82,6 +85,7 @@
                 <thead>
                     <th>No</th>
                     <th>Student Name</th>
+                    <th>Student Age</th>
                     <th>School Name</th>
                     <th>School Grade</th>
                     <th>Options</th>
@@ -125,6 +129,7 @@
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "student_name", name : "student_name"},
+                    {data : "student_age", name: "student_age"},
                     {data : "school_name", name : "school_name"},
                     {data : "student_grade", name : "student_grade"},
                     {data : "options", name : "options", orderable : false, searchable : false,}

@@ -3,7 +3,9 @@
 namespace Maatwebsite\Excel;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ShouldQueueWithoutChain;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithLimit;
@@ -19,10 +21,9 @@ use Throwable;
 class ChunkReader
 {
     /**
-     * @param WithChunkReading $import
-     * @param Reader           $reader
-     * @param TemporaryFile    $temporaryFile
-     *
+     * @param  WithChunkReading  $import
+     * @param  Reader  $reader
+     * @param  TemporaryFile  $temporaryFile
      * @return \Illuminate\Foundation\Bus\PendingDispatch|null
      */
     public function read(WithChunkReading $import, Reader $reader, TemporaryFile $temporaryFile)
@@ -31,9 +32,11 @@ class ChunkReader
             $reader->beforeImport($import);
         }
 
-        $chunkSize  = $import->chunkSize();
-        $totalRows  = $reader->getTotalRows();
-        $worksheets = $reader->getWorksheets($import);
+        $chunkSize    = $import->chunkSize();
+        $totalRows    = $reader->getTotalRows();
+        $worksheets   = $reader->getWorksheets($import);
+        $queue        = property_exists($import, 'queue') ? $import->queue : null;
+        $delayCleanup = property_exists($import, 'delayCleanup') ? $import->delayCleanup : 600;
 
         if ($import instanceof WithProgressBar) {
             $import->getConsoleOutput()->progressStart(array_sum($totalRows));
@@ -64,10 +67,22 @@ class ChunkReader
             }
         }
 
-        $jobs->push(new AfterImportJob($import, $reader));
+        $afterImportJob = new AfterImportJob($import, $reader);
+
+        if ($import instanceof ShouldQueueWithoutChain) {
+            $jobs->push($afterImportJob->delay($delayCleanup));
+
+            return $jobs->each(function ($job) use ($queue) {
+                dispatch($job->onQueue($queue));
+            });
+        }
+
+        $jobs->push($afterImportJob);
 
         if ($import instanceof ShouldQueue) {
-            return QueueImport::withChain($jobs->toArray())->dispatch($import);
+            return new PendingDispatch(
+                (new QueueImport($import))->chain($jobs->toArray())
+            );
         }
 
         $jobs->each(function ($job) {

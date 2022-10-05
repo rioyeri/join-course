@@ -55,13 +55,17 @@
     Teachers
 @endsection
 
+@section('submodul')
+    active
+@endsection
+
 @section('content')
     <!-- page start-->
     <div class="content-panel">
         <button class="btn btn-theme btn-round m-20" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
         <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+        <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -74,11 +78,14 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-teacher">
+            <table class="table table-bordered datatable dt-responsive wrap" id="table-teacher">
                 <thead>
-                    <th>No</th>
+                    <th style="width:5%">No</th>
                     <th>Teacher's Name</th>
-                    <th>Teacher's Subject</th>
+                    <th>Title</th>
+                    <th>Teacher's Profile</th>
+                    <th>Courses</th>
+                    <th>Prices</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -111,7 +118,7 @@
         $('#table-teacher').DataTable({
             "processing" : true,
             "serverSide" : true,
-            "order": [[ 1, "asc" ]],
+            "order": [[ 1, "desc" ]],
             "ajax" : {
                 "url" : "{{ route('teacher.index') }}",
                 "type" : "get",
@@ -120,8 +127,28 @@
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "teacher_name", name : "teacher_name"},
-                    {data : "teacher_subjects", name : "teacher_subjects", orderable : false},
+                    {data : "title", name : "title"},
+                    {data : "teacher_profile", name : "teacher_profile", orderable : false, searchable: false},
+                    {data : "courses", name : "courses", orderable : false},
+                    {data : "prices", name : "prices", orderable : false},
                     {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    targets: [0],
+                    width: "3%",
+                },
+                {
+                    targets: [1,2],
+                    width: "15%",
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return "<div class='text-center'>" + data + "</div>";
+                    },
+                    targets: [3,4,5],
+                    width: "15%",
+                }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
         });
@@ -162,18 +189,18 @@
         });
     }
 
-    function edit_data(id){
-        console.log(id)
-        $.ajax({
-            url : "/teacher/"+id+"/edit",
-            type : "get",
-            dataType: 'json',
-        }).done(function (data) {
-            $('#view-form').html(data);
-        }).fail(function (msg) {
-            alert('Gagal menampilkan data, silahkan refresh halaman.');
-        });
-    }
+    // function edit_data(id){
+    //     console.log(id)
+    //     $.ajax({
+    //         url : "/teacher/"+id+"/edit",
+    //         type : "get",
+    //         dataType: 'json',
+    //     }).done(function (data) {
+    //         $('#view-form').html(data);
+    //     }).fail(function (msg) {
+    //         alert('Gagal menampilkan data, silahkan refresh halaman.');
+    //     });
+    // }
 
     function change_status(id){
         var token = $("meta[name='csrf-token']").attr("content");
@@ -239,6 +266,88 @@
                 )
             }
         })
+    }
+
+    function view_profile(id){
+        $.ajax({
+            url : "/teacher/"+id+"/edit",
+            type : "get",
+            dataType: 'json',
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function view_subject(id){
+        $.ajax({
+            url : "/teacher/"+id+"/course",
+            type : "get",
+            dataType: 'json',
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function view_price(id){
+        $.ajax({
+            url : "/teacher/"+id+"/price",
+            type : "get",
+            dataType: 'json',
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function addToTable(){
+        var style_display = document.getElementById('table_packages').style.display;    
+        if(style_display == 'none'){
+            document.getElementById('table_packages').style.display = 'block';
+        }
+        var package_id = $('#package').val();
+        var price = $('#price').val();
+        select = document.getElementById("package");
+        var package_name = select.options[select.selectedIndex].text;
+        count = $('#table-package tbody tr.trow').length+1;
+
+        duplicate = 0;
+        $("#table-body-package tr").each(function(){
+            var value_count = $(this).find('td:eq(0)').text();
+            var value_package = $('#package_id'+value_count).val();
+            if(value_package == package_id){
+                duplicate++;
+            }
+        });
+
+        if(duplicate == 0){
+            var append = '<tr style="width:100%" id="trow'+count+'" class="trow"><td>'+count+'</td><td>'+package_name+'</td><input type="hidden" name="package_id[]" id="package_id'+count+'" value="'+package_id+'"><td class="text-right">Rp '+number_format(price,2,",",".")+'</td><input type="hidden" name="package_price[]" id="package_price'+count+'" value="'+price+'"><td class="text-center"><a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-xs waves-danger m-b-5" onclick="deleteItemPackage('+count+')" >Delete</a></td></tr>';
+            $('#table-body-package').append(append);
+        }else{
+            $("#table-body-package tr").each(function(){
+                var value_count = $(this).find('td:eq(0)').text();
+                var value_package = $('#package_id'+value_count).val();
+                if(value_package == package_id){
+                    $(this).find('td:eq(2)').text('Rp '+number_format(price,2,",","."));
+                    $('#package_price'+value_count).val(price);
+                    console.log($('#package_price'+value_count).val());
+                }
+            });
+        }
+        resetFormPackage();
+    }
+
+    function resetFormPackage(){
+        $('#package').val('#').change();
+        $('#price').val("");
+    }
+
+    function deleteItemPackage(id){
+        $('#trow'+id).remove();
     }
 </script>
 @endsection

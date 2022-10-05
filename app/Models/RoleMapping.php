@@ -28,4 +28,26 @@ class RoleMapping extends Model
 
         return $d;
     }
+
+    public static function getUserIdByRole($role_id){
+        $d = array_values(array_column(DB::select("SELECT u.id FROM users as u
+        INNER JOIN users_role as ur on u.username = ur.username
+        WHERE ur.role_id = $role_id"),'id'));
+
+        return $d;
+    }
+
+    public static function setData($username, $option){
+        if(RoleMapping::where('username', $username)->count() != 0){
+            RoleMapping::where('username', $username)->update(array(
+                'role_id' => $option,
+            ));
+        }else{
+            $mapping = new RoleMapping(array(
+                'username' => $username,
+                'role_id' => $option,
+            ));
+            $mapping->save();
+        }
+    }
 }

@@ -96,19 +96,19 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 
 <header id="header" class="header d-flex align-items-center">
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-        <a href="index.html" class="logo d-flex align-items-center">
+        <a href="{{ route('getHome') }}" class="logo d-flex align-items-center">
             <!-- Uncomment the line below if you also wish to use an image logo -->
             <!-- <img src="assets/img/logo.png" alt=""> -->
-            <h1>Impact<span>.</span></h1>
+            <h1>Flash<span>Academia</span></h1>
         </a>
         <nav id="navbar" class="navbar">
             <ul>
-                <li><a href="#hero">Home</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="#hero">Beranda</a></li>
+                <li><a href="#services">Tentang Kami</a></li>
                 {{-- <li><a href="#services">Services</a></li>
                 <li><a href="#portfolio">Portfolio</a></li> --}}
-                <li><a href="#team">Team</a></li>
-                <li><a href="blog.html">Blog</a></li>
+                <li><a href="#team">Guru-guru</a></li>
+                {{-- <li><a href="blog.html">Blog</a></li> --}}
                 {{-- <li class="dropdown"><a href="#"><span>Drop Down</span> <i
                             class="bi bi-chevron-down dropdown-indicator"></i></a>
                     <ul>
@@ -160,68 +160,6 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
                             </div>
 
                         </div>
-                        {{-- <li>
-                            <p class="green">You have 4 pending tasks</p>
-                        </li> 
-                        <li>
-                            <a href="index.html#">
-                                <div class="task-info">
-                                    <div class="desc">Dashio Admin Panel</div>
-                                    <div class="percent">40%</div>
-                                </div>
-                                <div class="progress progress-striped">
-                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
-                                        aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                                        <span class="sr-only">40% Complete (success)</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <div class="task-info">
-                                    <div class="desc">Database Update</div>
-                                    <div class="percent">60%</div>
-                                </div>
-                                <div class="progress progress-striped">
-                                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60"
-                                        aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                        <span class="sr-only">60% Complete (warning)</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <div class="task-info">
-                                    <div class="desc">Product Development</div>
-                                    <div class="percent">80%</div>
-                                </div>
-                                <div class="progress progress-striped">
-                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80"
-                                        aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                        <span class="sr-only">80% Complete</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <div class="task-info">
-                                    <div class="desc">Payments Sent</div>
-                                    <div class="percent">70%</div>
-                                </div>
-                                <div class="progress progress-striped">
-                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="70"
-                                        aria-valuemin="0" aria-valuemax="100" style="width: 70%">
-                                        <span class="sr-only">70% Complete (Important)</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="external">
-                            <a href="#">See All Tasks</a>
-                        </li> --}}
                     </ul>
                 </li>
                 <!-- settings end -->

@@ -66,4 +66,24 @@ class User extends Model
         }
         return $file;
     }
+
+    public static function getUserListByRole($operator, $role_id){
+        $ids = RoleMapping::getUserIdByRole($role_id);
+        if($operator == "!="){
+            $users = User::whereNotIn('id', $ids)->get();
+        }else{
+            $users = User::whereIn('id', $ids)->get();
+        }
+
+        return $users;
+    }
+
+    public static function getAge($birthdate){
+        $since = date_create($birthdate);
+        $last_day = date_create();
+
+        $umur = date_diff($since, $last_day)->y;
+        
+        return $umur;
+    }
 }

@@ -14,7 +14,10 @@ use App\Models\ForgotPassword;
 use App\Models\Role;
 use App\Models\RoleMapping;
 use App\Models\User;
+use App\Models\Student;
 use App\Models\Grade;
+use App\Models\Teacher;
+use App\Models\Course;
 use App\Models\MenuMapping;
 use App\Models\Log;
 
@@ -195,9 +198,10 @@ class UserController extends Controller
         $user = User::where('id', $id)->first();
         $roles = Role::whereNotIn('id', [1,2,3])->get();
         $grades = Grade::all();
+        $courses = Course::all();
 
         // return view('dashboard.login.register-google', compact('user','roles','grades'));
-        return view('dashboard.login.register',compact('roles', 'grades', 'user'));
+        return view('dashboard.login.register',compact('roles', 'grades', 'user','courses'));
     }
 
     public function storePassword($id, Request $request){
@@ -205,6 +209,8 @@ class UserController extends Controller
             $birthdate = $request->birthdate_year."-".$request->birthdate_month."-".$request->birthdate_date;
 
             $user = User::where('id', $id)->first();
+            $user->username = $request->username;
+            $user->name = $request->name;
             $user->password = Hash::make($request->password);
             $user->bck_pass = $request->password;
             $user->phone = $request->phonenumber;
@@ -212,16 +218,14 @@ class UserController extends Controller
             $user->regis_date = now();
             $user->update();
 
-            if(RoleMapping::where('username', $user->username)->count() != 0){
-                RoleMapping::where('username', $user->username)->update(array(
-                    'role_id' => $request->optionsRadios,
-                ));
-            }else{
-                $mapping = new RoleMapping(array(
-                    'username' => $user->username,
-                    'role_id' => $request->optionsRadios,
-                ));
-                $mapping->save();
+            RoleMapping::setData($user->username,$request->optionsRadios);
+
+            if($request->optionsRadios == 4){
+                // Student
+                Student::setData($user->id, $request->school_name, $request->student_grade);
+            }elseif($request->optionsRadios == 5){
+                // Teacher
+                Teacher::setData($user->id, $request->teacher_subjects);
             }
 
             $request->session()->put('username', $user->username);

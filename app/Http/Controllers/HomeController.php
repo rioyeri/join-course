@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -11,28 +12,18 @@ use App\Models\Role;
 use App\Models\RoleMapping;
 use App\Models\MenuMapping;
 use App\Models\Grade;
+use App\Models\Student;
+use App\Models\Teacher;
 
 class HomeController extends Controller
 {
     public function index(Request $request){
         if ($request->session()->has('isLoggedIn')) {
-            return view('dashboard.home.index');
+            $page = "HOME";
+            return view('dashboard.home.index',compact('page'));
         }else{
-            return view('landingpage.content.main');
-        }
-    }
-
-    public function index2(Request $request){
-        if(session('isItMaintenance') == "maintenance"){
-            return view('welcome.maintenance');
-        }else{
-            if ($request->session()->has('isLoggedIn')) {
-                return view('home.home');
-                // return view('welcome.maintenance');
-            }else{
-                return view('login.login');
-                // return view('welcome.maintenance');
-            }
+            $teachers = Teacher::limit(4)->get();
+            return view('landingpage.content.main',compact('teachers'));
         }
     }
 
@@ -96,8 +87,9 @@ class HomeController extends Controller
     public function get_register(){
         $roles = Role::whereNotIn('id', [1,2,3])->get();
         $grades = Grade::all();
+        $courses = Course::all();
 
-        return view('dashboard.login.register',compact('roles', 'grades'));
+        return view('dashboard.login.register',compact('roles', 'grades','courses'));
     }
 
     public function post_register(Request $request){
@@ -138,11 +130,15 @@ class HomeController extends Controller
                         ));
                         $user->save();
     
-                        $mapping = new RoleMapping(array(
-                            'username' => $user->username,
-                            'role_id' => $request->optionsRadios,
-                        ));
-                        $mapping->save();
+                        RoleMapping::setData($user->username,$request->optionsRadios);
+
+                        if($request->optionsRadios == 4){
+                            // Student
+                            Student::setData($user->id, $request->school_name, $request->student_grade);
+                        }elseif($request->optionsRadios == 5){
+                            // Teacher
+                            Teacher::setData($user->id, $request->teacher_subjects);
+                        }
     
                         $request->session()->flush();
     

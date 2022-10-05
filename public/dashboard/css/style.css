@@ -81,7 +81,8 @@ a, a:hover, a:focus {
 /*Theme Backgrounds*/
 
 .bg-theme {
-	background-color: #4ECDC4;
+	/* background-color: #4ECDC4; */
+    background-color: #008374;;
 }
 
 .bg-theme02 {
@@ -202,7 +203,7 @@ hr {
 
 /* additional */
 .m-5 {
-	margin: 5;
+	margin: 5px;
 }
 
 .m-10 {
@@ -217,6 +218,37 @@ hr {
 	margin: 30px;
 }
 
+.m-l-5 {
+	margin-left: 5px;
+}
+
+.m-l-10 {
+	margin-left: 10px;
+}
+
+.m-l-20 {
+	margin-left: 20px;
+}
+
+.m-l-30 {
+	margin-left: 30px;
+}
+
+.m-r-5 {
+	margin-right: 5px;
+}
+
+.m-r-10 {
+	margin-right: 10px;
+}
+
+.m-r-20 {
+	margin-right: 20px;
+}
+
+.m-r-30 {
+	margin-right: 30px;
+}
 
 .no-padding {
 	padding: 0 !important;
@@ -241,10 +273,12 @@ ul.top-menu > li > .logout {
 	font-size: 12px;
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
-	border: 1px solid #64c3c2 !important;
+	/* border: 1px solid #64c3c2 !important; */
+    border: 1px solid #008374 !important;
 	padding: 5px 15px;
 	margin-right: 15px;
-	background: #4ECDC4;
+	/* background: #4ECDC4; */
+    background: #008374;
 	margin-top: 15px;
 }
 
@@ -353,7 +387,8 @@ ul.sidebar-menu li ul.sub li a:hover {
 }
 
 ul.sidebar-menu li ul.sub li.active a {
-    color: #4ECDC4;
+    /* color: #4ECDC4; */
+    color: #008374;
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
     -o-transition: all 0.3s ease;
@@ -392,7 +427,8 @@ ul.sidebar-menu li a{
 }
 
 ul.sidebar-menu li a.active, ul.sidebar-menu li a:hover, ul.sidebar-menu li a:focus {
-    background: #4ECDC4;
+    /* background: #4ECDC4; */
+    background: #008374;
     color: #fff;
     display: block;
 
@@ -473,7 +509,10 @@ a.logo:hover, a.logo:focus {
 }
 
 a.logo span {
-    color: #4ECDC4;
+    /* color: #4ECDC4; */
+    /* color: #008374; */
+    color: #f96f59;
+
 }
 
 

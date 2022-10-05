@@ -116,7 +116,7 @@
         $('#table-course').DataTable({
             "processing" : true,
             "serverSide" : true,
-            "order": [[ 3, "asc" ]],
+            "order": [[ 1, "asc" ]],
             "ajax" : {
                 "url" : "{{ route('course.index') }}",
                 "type" : "get",

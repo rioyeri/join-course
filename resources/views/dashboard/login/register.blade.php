@@ -13,17 +13,21 @@
     <link href="{{ asset('dashboard/img/favicon.png') }}" rel="icon">
     <link href="{{ asset('dashboard/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
+    <!-- Select2 -->
+    <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Multiple Select -->
+    <link href="{{ asset('dashboard/additionalplugins/multiselect/css/multi-select.css') }}"  rel="stylesheet" type="text/css" />
+    <!-- Notification css (Toastr) -->
+    <link href="{{ asset('dashboard/additionalplugins/toastr/toastr.min.css') }}" rel="stylesheet" type="text/css" />
+        
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('dashboard/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <!--external css-->
     <link href="{{ asset('dashboard/lib/font-awesome/css/font-awesome.css') }}" rel="stylesheet" />
+    
     <!-- Custom styles for this template -->
     <link href="{{ asset('dashboard/css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('dashboard/css/style-responsive.css') }}" rel="stylesheet">
-    <!-- Select2 -->
-    <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Notification css (Toastr) -->
-    <link href="{{ asset('dashboard/additionalplugins/toastr/toastr.min.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- =======================================================
         Template Name: Dashio
@@ -123,6 +127,7 @@
 
         .select2 {
             font-size: 14px;
+            /* height: 1%; */
             height: 20px;
         }
 
@@ -198,7 +203,7 @@
         }
 
         .input-checkbox {
-            margin : 31px auto;
+            margin : 20px auto;
             width: 90%;
             padding-top: 30px;
             padding-bottom: 5px;
@@ -224,6 +229,7 @@
             color: #000;
             /* margin-left: 5%; */
             /* margin-left: -15px; */
+            /* margin-top:2px; */
             margin-top:10px;
         }
 
@@ -250,6 +256,7 @@
             outline: none;
             background: transparent;
             color: #000;
+            /* margin-top:10px; */
         }
 
         .mix-box .select2{
@@ -260,6 +267,7 @@
             color: #000;
             /* margin-left: 5%; */
             margin-left: -15px;
+            /* margin-bottom:20px; */
             margin-top:2.9px;
         }
 
@@ -270,6 +278,49 @@
         }
 
         .mix-box .col-md-6 .select2 {
+            width: 100%;
+            border-bottom: 1px solid #000;
+        }
+
+        .mix-box2 {
+            margin : 31px auto;
+            width: 100%;
+            border-bottom: 1px solid #000;
+            padding-top: 40px;
+            padding-bottom: 25px;
+        }
+
+        .mix-box2 .select2 {
+            width: 100%;
+            color: #000;
+            margin-top:-30px;
+            margin-left: 0px;
+        }
+
+        .mix-box3 {
+            margin : 31px auto;
+            /* padding-top: 10px; */
+            padding-bottom: 10px;
+        }
+
+        .mix-box3 .select2 {
+            width: 90%;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #000;
+            /* margin-left: 5%; */
+            /* margin-left: -15px; */
+            /* margin-top:2px; */
+            margin-top:10px;
+        }
+
+        .mix-box3 label {
+            margin-left:10%;
+            width: 90%;
+        }
+
+        .mix-box3 .col-md-9 .select2 {
             width: 100%;
             border-bottom: 1px solid #000;
         }
@@ -294,19 +345,22 @@
         *********************************************************************************************************************************************************** -->
     <div id="login-page">
         <div class="container">
-            <form class="form-box" autocomplete="off" role="form" action="{{ route('post_register') }}" method="POST">
+            @isset($user)
+            <form class="form-box" id="form" role="form" action="{{ route('storePassword', ['id' => $user->id]) }}" method="POST">
+                <h2>One Step Closer
+                    <p class="small-text">You have try to login with <b>{{ $user->email }}<b> ( <a href="{{ route('Logout') }}" class="logout-google">Logout?</a>)</p>
+                </h2>
+            @else
+            <form class="form-box" id="form" role="form" action="{{ route('post_register') }}" method="POST">
+                <h2>Sign Up</h2>
+            @endisset
+
                 @csrf
-                @isset($user)
-                    <h2>One Step Closer
-                        <p class="small-text">You have try to login with <b>{{ $user->email }}<b> ( <a href="{{ route('Logout') }}" class="logout-google">Logout?</a>)</p>
-                    </h2>
-                @else
-                    <h2>Sign Up</h2>
-                @endisset
+
 
                 <div class="login-wrap">
                     <div class="form-inline input-box" id="email-box">
-                        <input type="email" name="email" id="email" placeholder="Email" autofocus required onchange="checkEmail(this.value)" value="@isset($user->email){{ $user->email }}@endisset" readonly="@isset($user) readonly @endisset">
+                        <input type="email" name="email" id="email" placeholder="Email" autofocus required onchange="checkEmail(this.value)" value="@isset($user->email){{ $user->email }}@endisset" @isset($user) readonly @endisset>
                         <span class="email-error" id="email-error" style="display: none;">Email Invalid</span>
                     </div>
                     <div class="form-inline input-box" id="username-box">
@@ -354,7 +408,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control select2 col-md-3" parsley-trigger="change" name="birthdate_year" id="birthdate_year" required>
+                            <select class="select2 col-md-3" parsley-trigger="change" name="birthdate_year" id="birthdate_year" required style="width: 75%">
                                 <option value="#" disabled selected>Year</option>
                                 @for ($i=1950; $i <= date('Y'); $i++)
                                     <option value="{{$i}}">{{$i}}</option>
@@ -367,7 +421,7 @@
                             <label style="margin-top:2px"><b>Your Role : </b></label>
                         </div>
                         @foreach ($roles as $key => $role)
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="radio">
                                     <label><input type="radio" name="optionsRadios" id="options-{{ $role->id }}" value="{{ $role->id }}" @if($key == 0) checked @endif onchange="checkRole(this.value)"> {{ $role->role_name }} </label>
                                 </div>
@@ -380,10 +434,27 @@
                                 <input type="text" name="school_name" id="school_name" placeholder="School Name">
                             </div>
                             <div class="col-md-6">
-                                <select class="form-control select2" parsley-trigger="change" name="school_grade" id="school_grade">
+                                <select class="form-control select2" parsley-trigger="change" name="student_grade" id="student_grade">
                                     <option value="#" disabled selected>-- Grade --</option>
                                     @foreach ($grades as $grade)
                                         <option value="{{$grade->id}}" >{{$grade->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="teacher-field" style="display:none;">
+                        <div class="form-inline mix-box">
+                            <div class="col-md-3">
+                                <label style="margin-top:2px"><b>What subject do you teach</b></label>
+                            </div>
+                            <div class="col-md-9">
+                                <select class="form-control select2 select2-multiple" multiple="multiple" multiple parsley-trigger="change" name="teacher_subjects[]" id="teacher_subjects">
+                                    {{-- <option value="#" disabled selected>-- What subject do you teach--</option> --}}
+                                    @foreach ($courses as $course)
+                                        <optgroup label="{{ $course->name }}">
+                                            <option value="{{$course->id}}" >{{$course->name}}</option>
+                                        </optgroup>
                                     @endforeach
                                 </select>
                             </div>
@@ -403,20 +474,24 @@
         </div>
     </div>
 
-    <!-- js placed at the end of the document so the pages load faster -->
-    <script src="{{ asset('dashboard/lib/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('dashboard/lib/bootstrap/js/bootstrap.min.js') }}"></script>
+    
+    @include('dashboard.layout.js')
     <!-- Select2 -->
     <script src="{{ asset('dashboard/additionalplugins/select2/js/select2.min.js') }}" type="text/javascript"></script>
-    <!-- Toastr js -->
-    <script src="{{ asset('dashboard/additionalplugins/toastr/toastr.min.js') }}"></script>
+    <!-- Multiple Select -->
+    <script type="text/javascript" src="{{ asset('dashboard/additionalplugins/multiselect/js/jquery.multi-select.js') }}"></script>
     <script>
-        // $.backstretch("../../dashboard/img/login-bg.jpg", {
-        //     speed: 500
-        // });
-
         $('.select2').select2({
             theme: "themes-dark",
+            // width: 'resolve', // need to override the changed default
+            scrollAfterSelect:true,
+        });
+
+
+        $('#teacher_subjects').select2({
+            // theme: "themes-dark",
+            width: "100%",
+            height: "30%",
         });
 
         $("input#username").on({
@@ -481,8 +556,10 @@
             // console.log(id);
             if(id == 4){
                 document.getElementById('student-field').style.display = 'block';
-            }else{
+                document.getElementById('teacher-field').style.display = 'none';
+            }else if(id == 5){
                 document.getElementById('student-field').style.display = 'none';
+                document.getElementById('teacher-field').style.display = 'block';
             }
         }
 
@@ -525,10 +602,9 @@
             }
         }
 
-        $("form").submit(function(){
+        $("#form").submit(function(){
             password = $('#password').val();
             retype = $('#password_retype').val();
-            
 
             if(password != retype){
                 // document.getElementById("checkpassword").style.display = 'block';
@@ -541,8 +617,6 @@
             month = $('#birthdate_month').val();
             date = $('#birthdate_date').val();
             year = $('#birthdate_year').val();
-
-            console.log(month, date, year);
 
             if(month == null || year == null || date == null){
                 // document.getElementById("checkpassword").style.display = 'block';
