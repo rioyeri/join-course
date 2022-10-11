@@ -5,26 +5,45 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-use App\MenuMapping;
-use App\Employee;
-use App\PurchaseMap;
-use App\RecycleBin;
+use App\Models\MenuMapping;
+use App\Models\Role;
+use App\Models\RecycleBin;
+use App\Models\Log;
 
 class MenuController extends Controller
 {
 
     // Menu Mapping
-    public function index(){
-        try{
-            $users = Employee::all();
-            $page = MenuMapping::getMap(session('user_id'),"MRMM");
-
-            return view('menumapping.index',compact('users','page'));
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-            $page = "menumapping.index";
-            return view('helper.error_pages', compact('page', 'error'));
+    public function index(Request $request){
+        if($request->ajax()){
+            $datas = MenuMapping::dataIndex($request);
+            echo json_encode($datas);
+        }else{
+            $page = "USMM";
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.user.menu-management.index',compact('page', 'submoduls'));
         }
+    }
+
+    public function create()
+    {
+        $role_ids = array_values(array_column(DB::select("SELECT role_id FROM role_submapping"), 'role_id'));
+        $roles = Role::whereNotIn('id', $role_ids)->get();
+        $menus = MenuMapping::all();
+        return response()->json(view('dashboard.user.role-management.form', compact('roles', 'menus'))->render());
+    }
+
+    public function store(Request $request){
+        $checkbox = $request->rest;
+        foreach($checkbox as $rest){
+            $store = new MenuMapping(array(
+                'user_id' => $request->user_id,
+                'submapping_id' => $rest
+            ));
+            $store->save();
+        }
+
+        return redirect()->back();
     }
 
     public function show($id){
@@ -43,17 +62,14 @@ class MenuController extends Controller
         }
     }
 
-    public function store(Request $request){
-        $checkbox = $request->rest;
-        foreach($checkbox as $rest){
-            $store = new MenuMapping(array(
-                'user_id' => $request->user_id,
-                'submapping_id' => $rest
-            ));
-            $store->save();
-        }
-
-        return redirect()->back();
+    public function edit(Request $request, $id){
+        $data = Role::where('id', $id)->first();
+        $moduls = json_decode (json_encode(MenuMapping::getAllSubmodul()), FALSE);
+        $submappings = array_values(array_column(DB::select("SELECT submapping_id FROM role_submapping WHERE role_id=$id"), 'submapping_id'));
+        // echo "<pre>";
+        // print_r($submappings);
+        // die;
+        return response()->json(view('dashboard.user.menu-management.form',compact('data','moduls','submappings'))->render());
     }
 
     public function delete(Request $request){

@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Exceptions\Handler;
 
-use App\Role;
-use App\MenuMapping;
-use App\Log;
+use App\Models\Role;
+use App\Models\MenuMapping;
+use App\Models\Log;
+use App\Models\RecycleBin;
 
 class RoleController extends Controller
 {
@@ -17,11 +18,16 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::all();
-        $page = MenuMapping::getMap(session('user_id'),"USRO");
-        return view('role.index',compact('roles','page'));
+        if($request->ajax()){
+            $datas = Role::dataIndex($request);
+            echo json_encode($datas);
+        }else{
+            $page = "USRL";
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.user.role.index',compact('page', 'submoduls'));
+        }
     }
 
     /**
@@ -31,8 +37,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $jenis = "create";
-        return view('role.form',compact('jenis'));
+        return response()->json(view('dashboard.user.role.form')->render());
     }
 
     /**
@@ -45,22 +50,24 @@ class RoleController extends Controller
     {
         // Validate
         $validator = Validator::make($request->all(), [
-            'role_name' => 'required',
+            'name' => 'required',
+            'description' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
         // Validation success
         }else{
-            $role = new Role(array(
-                // Informasi Pribadi
-                'role_name' => $request->role_name,
-                'creator' => session('user_id'),
-            ));
             try {
-                $role->save();
-                Log::setLog('USROC','Create Role:'.$request->role_name);
-                return redirect()->route('role.index')->with('status','Role berhasil ditambahkan');
+                $data = new Role(array(
+                    // Informasi Pribadi
+                    'name' => $request->name,
+                    'description' => $request->description,
+                    'creator' => session('user_id'),
+                ));
+                $data->save();
+                Log::setLog('USRLC','Create Role : '.$request->name);
+                return redirect()->route('role.index')->with('status','Successfully saved');
             } catch (\Exception $e) {
                 return redirect()->back()->withErrors($e->getMessage());
             }
@@ -86,9 +93,8 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $role = Role::where('id',$id)->first();
-        $jenis = "edit";
-        return view('role.form',compact('jenis','role'));
+        $data = Role::where('id',$id)->first();
+        return response()->json(view('dashboard.user.role.form',compact('data'))->render());
     }
 
     /**
@@ -102,26 +108,25 @@ class RoleController extends Controller
     {
         // Validate
         $validator = Validator::make($request->all(), [
-            'role_name' => 'required',
+            'name' => 'required',
+            'description' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
         // Validation success
         }else{
-            $role = Role::where('id',$id)->first();
-
-            $role->role_name = $request->role_name;
-            $role->creator = session('user_id');
-
             try {
-                $role->save();
-                Log::setLog('USROU','Update Role:'.$request->role_name);
-                return redirect()->route('role.index')->with('status','Role berhasil diubah');
+                $data = Role::where('id',$id)->first();
+                $data->name = $request->name;
+                $data->description = $request->description;
+                $data->creator = session('user_id');
+                $data->save();
+                Log::setLog('USRLU','Update Role : '.$request->name);
+                return redirect()->route('role.index')->with('status','Successfully saved');
             } catch (\Exception $e) {
                 return redirect()->back()->withErrors($e->getMessage());
             }
-            $role->save();
         }
     }
 
@@ -134,8 +139,10 @@ class RoleController extends Controller
     public function destroy($id)
     {
         try{
-            Role::where('id',$id)->delete();
-            Log::setLog('USROD','Delete Role:'.$id);
+            $data = Role::where('id',$id)->first();
+            $log_id = Log::setLog('USRLD','Delete Role : '.$data->name);
+            RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
+            $data->delete();
             return "true";
         // fail
         }catch (\Exception $e) {

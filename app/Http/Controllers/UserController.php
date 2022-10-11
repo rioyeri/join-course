@@ -23,77 +23,73 @@ use App\Models\Log;
 
 class UserController extends Controller
 {
-    public function index(){
-        if(session('role') == "Superadmin" OR session('role') == "Owner" OR session('role') == "Admin"){
-            $users = User::all();
+    public function index(Request $request)
+    {
+        if($request->ajax()){
+            $datas = User::dataIndex($request);
+            echo json_encode($datas);
         }else{
-            $users = User::where('id', session('user_id'))->get();
+            $page = "USUS";
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.user.user-management.index',compact('page','submoduls'));
         }
-        $page = MenuMapping::getMap(session('user_id'),"USUS");
-        return view('user.index',compact('users','page'));
     }
 
-    public function create(){
-        $jenis = "create";
-        return view('user.form',compact('jenis'));
+    public function create()
+    {
+        return response()->json(view('dashboard.user.user-management.form')->render());
     }
 
     public function store(Request $request){
         // Validate
         $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
             'username' => 'required|string',
-            'password' => 'required',
-            'nama' => 'required|string',
-            'alamat' => 'required|string',
-            'telepon' => 'required',
-            'ktp' => 'required|string',
+            'password' => 'required|string',
+            'password_retype' => 'required|string',
             'email' => 'required|email|unique:users',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required',
+            'phone' => 'required',
+            'birthdate' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
         // Validation success
+        }elseif($request->password != $request->password_retype){
+            return redirect()->back()->with("failed", "Confirm password failed!");
         }else{
             try{
                 $profilephoto = "noimage.jpg";
 
                 $user = new User(array(
                     // Informasi Pribadi
-                    'name' => $request->nama,
-                    'address' => $request->alamat,
-                    'phone' => $request->telepon,
+                    'name' => $request->name,
+                    'phone' => $request->phone,
                     'email' => $request->email,
-                    'tmpt_lhr' => $request->tempat_lahir,
-                    'tgl_lhr' => $request->tanggal_lahir,
-                    'profilephoto' => $profilephoto,
+                    'birthdate' => $request->birthdate,
+                    // 'profilephoto' => $profilephoto,
                     // Account
                     'username' => $request->username,
                     'password' => Hash::make($request->password),
                     'bck_pass' => $request->password,
-                    'login_status' => 1,
-                    // Informasi KTP
-                    'ktp' => $request->ktp
                 ));
                 // success
                 $user->save();
 
-                // Upload Foto
+                // // Upload Foto
                 if($request->profilephoto <> NULL|| $request->profilephoto <> ''){
                     $profilephoto = $user->username.'.'.$request->profilephoto->getClientOriginalExtension();
-                    $request->profilephoto->move(public_path('assets/images/user/foto/'),$profilephoto);
+                    $request->profilephoto->move(public_path('dashboard/assets/users/photos/'),$profilephoto);
                 }
 
                 $user->profilephoto = $profilephoto;
                 $user->save();
 
-                $mapping = new RoleMapping(array(
-                    'username' => $user->username,
-                    'role_id' => 61,
-                ));
-
-                $mapping->save();
+                // $mapping = new RoleMapping(array(
+                //     'username' => $user->username,
+                //     'role_id' => 61,
+                // ));
+                // $mapping->save();
 
                 Log::setLog('USUSC','Create User: '.$request->nama);
 
@@ -105,21 +101,18 @@ class UserController extends Controller
     }
 
     public function edit($id){
-        $user = User::where('id',$id)->first();
-        $jenis = "edit";
-        return view('user.form',compact('jenis','user'));
+        $data = User::where('id',$id)->first();
+        return response()->json(view('dashboard.user.user-management.form',compact('data'))->render());
     }
 
     public function update(Request $request, $id){
         // Validate
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string',
-            'alamat' => 'required|string',
-            'telepon' => 'required',
-            'ktp' => 'required|string',
+            'name' => 'required|string',
+            'username' => 'required|string',
             'email' => 'required|email',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required',
+            'phone' => 'required',
+            'birthdate' => 'required',
         ]);
 
         // IF Validation fail
@@ -131,34 +124,28 @@ class UserController extends Controller
                 $user = User::where('id',$id)->first();
 
                 // Informasi Pribadi
-                $user->name = $request->nama;
-                $user->address = $request->alamat;
-                $user->phone = $request->telepon;
+                $user->name = $request->name;
+                $user->username = $request->username;
+                $user->phone = $request->phone;
                 $user->email = $request->email;
-                $user->tmpt_lhr = $request->tempat_lahir;
-                $user->tgl_lhr = $request->tanggal_lahir;
-                // Informasi KTP
-                $user->ktp = $request->ktp;
-
-                $user->save();
+                $user->birthdate = $request->birthdate;
 
                 // Upload Foto
-                if($request->profilephoto <> NULL|| $request->profilephoto <> ''){
-
-                    if (file_exists(public_path('assets/images/user/foto/').$user->profilephoto) && $user->profilephoto != "noimage.jpg") {
-                        unlink(public_path('assets/images/user/foto/').$user->profilephoto);
+                if($request->profilephoto != NULL || $request->profilephoto != ''){
+                    if (file_exists(public_path('dashboard\assets\users\photos/').$user->profilephoto) && $user->profilephoto != null) {
+                        unlink(public_path('dashboard\assets\users\photos/').$user->profilephoto);
                     }
 
                     $profilephoto = $user->username.'.'.$request->profilephoto->getClientOriginalExtension();
-                    $request->profilephoto->move(public_path('assets/images/user/foto/'),$profilephoto);
+                    $request->profilephoto->move(public_path('dashboard\assets\users\photos'), $profilephoto);
                 }else{
                     $profilephoto = $user->profilephoto;
                 }
 
                 $user->profilephoto = $profilephoto;
-                $user->save();
+                $user->update();
 
-                Log::setLog('USUSU','Update User: '.$request->nama);
+                Log::setLog('USUSU','Update User: '.$request->name);
 
                 return redirect()->route('user.index')->with('status', 'Data berhasil dirubah');
             } catch (\Exception $e) {
@@ -170,8 +157,8 @@ class UserController extends Controller
     public function destroy($id){
         $user = User::where('id',$id)->first();
         $name = $user->name;
-        if($user->profilephoto != "noimage.jpg"){
-            unlink(public_path('assets/images/user/foto/').$user->profilephoto);
+        if(file_exists(public_path('dashboard\assets\users\photos/').$user->profilephoto) && $user->profilephoto != null){
+            unlink(public_path('dashboard\assets\users\photos/').$user->profilephoto);
         }
 
         $user->delete();
@@ -229,7 +216,7 @@ class UserController extends Controller
             }
 
             $request->session()->put('username', $user->username);
-            $request->session()->put('role', $user->rolemapping()->first()->role()->first()->role_name);
+            $request->session()->put('role', $user->rolemapping()->first()->role()->first()->name);
             $request->session()->put('name', $user->name);
             $request->session()->put('user_id', $user->id);
             $request->session()->put('photo', $user->profilephoto);

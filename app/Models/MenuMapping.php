@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+
 
 use App\Models\SubModul;
 use App\Models\SubMapping;
@@ -89,5 +91,81 @@ class MenuMapping extends Model
         }
         
         return $data->toArray();
+    }
+
+    public static function dataIndex(Request $request){
+        $draw = $request->draw;
+        $row = $request->start;
+        $rowperpage = $request->length; // Rows display per page
+        $columnIndex = $request['order'][0]['column']; // Column index
+        $columnName = $request['columns'][$columnIndex]['data']; // Column name
+        $columnSortOrder = $request['order'][0]['dir']; // asc or desc
+        $searchValue = $request['search']['value']; // Search value
+
+        $page = MenuMapping::getMap(session('role_id'),"USMM");
+        $menumapping = Role::select('id','name','description');
+
+        $totalRecords = $menumapping->count();
+
+        if($searchValue != ''){
+            $menumapping->where('r.name', 'LIKE', '%'.$searchValue.'%');
+        }
+
+        $totalRecordwithFilter = $menumapping->count();
+
+        if($columnName == "no"){
+            $menumapping->orderBy('id', $columnSortOrder);
+        }else{
+            $menumapping->orderBy($columnName, $columnSortOrder);
+        }
+
+        $menumapping = $menumapping->offset($row)->limit($rowperpage)->get();
+
+        $data = collect();
+        $i = $row+1;
+
+        foreach($menumapping as $key){
+            $detail = collect();
+
+            $count_menu = MenuMapping::where('role_id', $key->id)->count();
+            $options = '';
+            if (array_search("USMMU",$page)){
+                $options .= '<a class="btn btn-theme btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-gears"></i> Have '.$count_menu.' Access Menu</a> ';
+            }
+
+            $detail->put('no', $i++);
+            $detail->put('role_name', $key->name);
+            $detail->put('options', $options);
+            $data->push($detail);
+        }
+
+        $response = array(
+            'draw' => intval($draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecordwithFilter,
+            'data' => $data,
+        );
+
+        return $response;
+    }
+
+    public static function getAllSubmodul(){
+        $moduls = Modul::getAllModul();
+        $result = collect();
+        foreach($moduls as $modul){
+            $row1 = collect();
+            $submapping = SubMapping::where('submodul_id', 'LIKE', $modul->modul_id.'%')->get();
+            $detail = collect();
+            foreach($submapping as $sm){
+                $row2 = collect();
+                $row2->put('submapping_id', $sm->id);
+                $row2->put('jenis_id', $sm->jenis_id);
+                $detail->push($row2);
+            }
+            $row1->put('modul_name', $modul->modul_desc);
+            $row1->put('submoduls', $detail);
+            $result->push($row1);
+        }
+        return $result;
     }
 }

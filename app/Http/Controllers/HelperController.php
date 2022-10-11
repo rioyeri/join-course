@@ -51,4 +51,22 @@ class HelperController extends Controller
 
         return response()->json($data);
     }
+
+    public function searchTeacherOrSubject(Request $request){
+        $word = $request->word;
+        // $teacher = Teacher::where('name', 'LIKE', $request->word)->get();
+        $courses = Course::where(function ($query) use ($word){
+            $query->orWhere('name', 'LIKE', $word.'%')->orWhere('topic', 'LIKE', $word.'%');
+        })->where('status', 1)->limit(5)->get();
+
+        $result = array();
+
+        if($word != ""){
+            foreach($courses as $course){
+                array_push($result, $course->name);
+            }
+        }
+
+        return response()->json($result);
+    }
 }

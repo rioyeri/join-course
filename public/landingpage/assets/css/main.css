@@ -1925,7 +1925,8 @@ section {
   width: 100%;
   position: relative;
   background: var(--color-primary);
-  padding: 60px 0 0 0;
+  /* padding: 60px 0 0 0; */
+  padding: 0 0 0 0;
 }
 
 @media (min-width: 1365px) {
@@ -1938,6 +1939,7 @@ section {
   font-size: 48px;
   font-weight: 700;
   margin-bottom: 20px;
+  /* margin-top: -40px; */
   color: #fff;
 }
 

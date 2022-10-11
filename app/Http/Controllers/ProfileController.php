@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-use App\MenuMapping;
-use App\Log;
-use App\Profile;
-use App\Link;
+use App\Models\MenuMapping;
+use App\Modles\Log;
+use App\Modles\Profile;
+use App\Modles\Link;
 
 class ProfileController extends Controller
 {

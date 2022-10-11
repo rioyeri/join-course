@@ -24,11 +24,14 @@
 
   <!-- Notification css (Toastr) -->
   <link href="{{ asset('dashboard/additionalplugins/toastr/toastr.min.css') }}" rel="stylesheet" type="text/css" />
+  <!-- Select2 -->
+  <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 
   <!--external css-->
   <link href="{{ asset('dashboard/lib/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="{{ asset('landingpage/assets/css/main.css') }}" rel="stylesheet">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <!-- =======================================================
   * Template Name: Impact - v1.0.0

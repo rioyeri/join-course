@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Models\Grade;
 use App\Models\Log;
+use App\Models\MenuMapping;
 use App\Models\RecycleBin;
 
 class StudentController extends Controller
@@ -24,7 +25,8 @@ class StudentController extends Controller
             echo json_encode($datas);
         }else{
             $page = "MDST";
-            return view('dashboard.masterdata.student.index',compact('page'));
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.masterdata.student.index',compact('page','submoduls'));
         }
     }
 

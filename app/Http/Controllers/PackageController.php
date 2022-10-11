@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Package;
 use App\Models\Log;
+use App\Models\MenuMapping;
 use App\Models\RecycleBin;
 
 class PackageController extends Controller
@@ -22,7 +23,8 @@ class PackageController extends Controller
             echo json_encode($datas);
         }else{
             $page = "MDPC";
-            return view('dashboard.masterdata.package.index',compact('page'));
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.masterdata.package.index',compact('page','submoduls'));
         }
     }
 

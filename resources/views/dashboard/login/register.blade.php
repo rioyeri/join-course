@@ -423,7 +423,7 @@
                         @foreach ($roles as $key => $role)
                             <div class="col-md-3">
                                 <div class="radio">
-                                    <label><input type="radio" name="optionsRadios" id="options-{{ $role->id }}" value="{{ $role->id }}" @if($key == 0) checked @endif onchange="checkRole(this.value)"> {{ $role->role_name }} </label>
+                                    <label><input type="radio" name="optionsRadios" id="options-{{ $role->id }}" value="{{ $role->id }}" @if($key == 0) checked @endif onchange="checkRole(this.value)"> {{ $role->name }} </label>
                                 </div>
                             </div>                            
                         @endforeach

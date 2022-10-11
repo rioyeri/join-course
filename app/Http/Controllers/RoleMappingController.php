@@ -4,55 +4,104 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
-use App\RoleMapping;
-use App\Role;
-use App\Employee;
-use App\MenuMapping;
-use App\RecycleBin;
-use App\Log;
+
+use App\Models\RoleMapping;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\MenuMapping;
+use App\Models\RecycleBin;
+use App\Models\Log;
 
 class RoleMappingController extends Controller
 {
-    public function index(){
-        $users = Employee::all();
-        $page = MenuMapping::getMap(session('user_id'),"EMRM");
-        return view('rolemapping.index',compact('users','page'));
+    public function index(Request $request){
+        if($request->ajax()){
+            $datas = RoleMapping::dataIndex($request);
+            echo json_encode($datas);
+        }else{
+            $page = "USRM";
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.user.role-management.index',compact('page', 'submoduls'));
+        }
+    }
+
+    public function create()
+    {
+        $usernames = array_values(array_column(DB::select("SELECT username FROM users_role"), 'username'));
+        $users = User::whereNotIn('username', $usernames)->get();
+        $roles = Role::all();
+        return response()->json(view('dashboard.user.role-management.form', compact('users', 'roles'))->render());
+    }
+
+    public function store(Request $request)
+    {
+        // Validate
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',
+            'role_id' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try {
+                $data = new RoleMapping(array(
+                    // Informasi Pribadi
+                    'username' => $request->username,
+                    'role_id' => $request->role_id,
+                    'creator' => session('user_id'),
+                ));
+                $data->save();
+                Log::setLog('USRMC','Create Role Mapping : '.$request->name);
+                return redirect()->route('rolemapping.index')->with('status','Successfully saved');
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
     }
 
     public function edit($id){
-        $user = RoleMapping::where('username',$id)->first();
+        $data = RoleMapping::where('id',$id)->first();
         $roles = Role::all();
-        if($user){
-            return view('rolemapping.form',compact('roles','user','id'));
-        }else{
-            return view('rolemapping.form',compact('roles','id'));
-        }
+        return response()->json(view('dashboard.user.role-management.form',compact('data', 'roles'))->render());
     }
 
-    public function update(Request $request, $id){
-        $mapping = RoleMapping::where('username',$id)->first();
-        if($mapping){
-            $mapping->role_id = $request->role_id;
+    public function update(Request $request, $id)
+    {
+        // Validate
+        $validator = Validator::make($request->all(), [
+            'role_id' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
         }else{
-            $mapping = new RoleMapping(array(
-                'username' => $id,
-                'company_id' => 1,
-                'role_id' => $request->role_id,
-            ));
+            try {
+                $data = RoleMapping::where('id',$id)->first();
+                $data->role_id = $request->role_id;
+                $data->creator = session('user_id');
+                $data->save();
+                Log::setLog('USRMU','Update Role Mapping : '.$request->name);
+                return redirect()->route('rolemapping.index')->with('status','Successfully saved');
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors($e->getMessage());
+            }
         }
-
-        $mapping->save();
-        Log::setLog('EMRMU','Update Role:'.$id);
-        return redirect()->route('getRoleMapping');
     }
 
     public function destroy($id){
-        $data = RoleMapping::where('username',$id)->first();
-        RecycleBin::moveToRecycleBin($data->getTable(), json_encode($data));
-        $data->delete();
-        Log::setLog('EMRMD','Delete Role:'.$id);
-
-        return redirect()->back();
+        try{
+            $data = RoleMapping::where('id',$id)->first();
+            $log_id = Log::setLog('USRMD','Delete Role Mapping : '.$data->username);
+            RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
+            $data->delete();
+            return "true";
+        }catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
     }
 }

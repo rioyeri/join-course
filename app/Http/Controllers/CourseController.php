@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Course;
 use App\Models\Log;
+use App\Models\MenuMapping;
 use App\Models\RecycleBin;
 
 class CourseController extends Controller
@@ -22,7 +23,8 @@ class CourseController extends Controller
             echo json_encode($datas);
         }else{
             $page = "MDCO";
-            return view('dashboard.masterdata.course.index', compact('page'));
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.masterdata.course.index', compact('page','submoduls'));
         }
     }
 

@@ -13,6 +13,7 @@ use App\Models\Grade;
 use App\Models\Course;
 use App\Models\Package;
 use App\Models\Log;
+use App\Models\MenuMapping;
 use App\Models\RecycleBin;
 
 use function PHPSTORM_META\map;
@@ -31,7 +32,8 @@ class OrderController extends Controller
             echo json_encode($datas);
         }else{
             $page = "OROR";
-            return view('dashboard.order.order.index',compact('page'));
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.order.order.index',compact('page','submoduls'));
         }
     }
 

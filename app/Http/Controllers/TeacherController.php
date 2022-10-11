@@ -30,7 +30,8 @@ class TeacherController extends Controller
             echo json_encode($datas);
         }else{
             $page = "MDTC";
-            return view('dashboard.masterdata.teacher.index',compact('page'));
+            $submoduls = MenuMapping::getMap(session('role_id'),$page);
+            return view('dashboard.masterdata.teacher.index',compact('page','submoduls'));
         }
     }
 

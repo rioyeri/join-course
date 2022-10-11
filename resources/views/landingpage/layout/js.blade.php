@@ -11,6 +11,8 @@
 <script src="{{ asset('landingpage/assets/vendor/php-email-form/validate.js') }}"></script>
 <!-- Toastr js -->
 <script src="{{ asset('dashboard/additionalplugins/toastr/toastr.min.js') }}"></script>
+<!-- Select2 -->
+<script src="{{ asset('dashboard/additionalplugins/select2/js/select2.min.js') }}" type="text/javascript"></script>
 @yield('js')
 
 <!-- Template Main JS File -->

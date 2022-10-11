@@ -22,6 +22,7 @@ Route::get('/login', 'HomeController@get_login')->name('get_login');
 Route::post('login','HomeController@login')->name('Login');
 Route::get('/register', 'HomeController@get_register')->name('get_register');
 Route::post('register', 'HomeController@post_register')->name('post_register');
+
 // User Helper
 Route::get('checkUsernameAvailability','UserController@checkUsernameAvailability')->name('checkUsernameAvailability');
 Route::get('password/{id}/create', 'UserController@createPassword')->name('createPassword');
@@ -36,19 +37,9 @@ Route::get('maintenance', 'HomeController@maintenance')->name('maintenance');
 // Template
 Route::get('pilihtemplate', 'TemplateController@index');
 
+Route::get('searchTeacherOrSubject', 'HelperController@searchTeacherOrSubject')->name('searchTeacherOrSubject');
+
 Route::middleware(['checkUser'])->group(function () {
-    // Menu Mapping
-    Route::get('/menumapping','MenuController@index')->name('getMapping');
-    Route::get('/showmapping/{id}','MenuController@show')->name('showMapping');
-    Route::post('/storemapping','MenuController@store')->name('storeMapping');
-    Route::post('/deletemapping','MenuController@delete')->name('deleteMapping');
-
-    // Role Mapping
-    Route::get('rolemapping','RoleMappingController@index')->name('getRoleMapping');
-    Route::get('/rolemapping/{id}/edit','RoleMappingController@edit')->name('editRoleMapping');
-    Route::put('/rolemapping/{id}/update','RoleMappingController@update')->name('updateRoleMapping');
-    Route::delete('/rolemapping/{id}/delete','RoleMappingController@destroy')->name('destroyRoleMapping');
-
     // Profil for Footer
     Route::get('/profile','ProfileController@index')->name('profile.index');
     Route::get('/profile/{id}/edit','ProfileController@edit')->name('profile.edit');
@@ -66,6 +57,10 @@ Route::middleware(['checkUser'])->group(function () {
         'submodul' => 'SubModulController',
         // Role Management
         'role' => 'RoleController',
+        // Role Mapping
+        'rolemapping' => 'RoleMappingController',
+        // Menu Mapping
+        'menumapping' => 'MenuController',
         // Course
         'course' => 'CourseController',
         // Course Payment
