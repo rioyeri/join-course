@@ -56,20 +56,22 @@ Route::middleware(['checkUser'])->group(function () {
         'menumapping' => 'MenuController',
         // Course
         'course' => 'CourseController',
-        // Course Payment
-        'coursepayment' => 'CoursePaymentController',
         // Student
         'student' => 'StudentController',
         // Teacher
         'teacher' => 'TeacherController',
+        // Payment Account
+        'paymentaccount' => 'PaymentAccountController',
         // Order
         'order' => 'OrderController',
+        // Order Payment
+        'orderpayment' => 'OrderPaymentController',
         // Package
         'package' => 'PackageController',
         // Content Home
         'contentmanagement' => 'ContentManagementController',
         // Profile Company
-        'companyprofile' => 'CompanyProfileController',
+        'companyprofile' => 'CompanyProfileController', 
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');
@@ -88,6 +90,9 @@ Route::middleware(['checkUser'])->group(function () {
 
     // Package Helper
     Route::post('/package/{id}/changestatus', 'PackageController@changeStatus')->name('changeStatusPackage');
+
+    // Payment Account Helper
+    Route::post('/paymentaccount/{id}/changestatus', 'PaymentAccountController@changeStatus')->name('changeStatusPaymentAccount');
 
     // Teacher Helper
     Route::post('/teacher/{id}/changestatus', 'TeacherController@changeStatus')->name('changeStatusTeacher');

@@ -10,8 +10,6 @@
     <link href="{{ asset('dashboard/additionalplugins/datatables/select.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Select2 -->
     <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    {{-- Date Picker --}}
-    <link href="{{ asset('dashboard/additionalplugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
     <!-- Sweet Alert css -->
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -54,17 +52,17 @@
 @endsection
 
 @section('title')
-    Order List
+    Payment Accounts
 @endsection
 
 @section('content')
     <!-- page start-->
     <div class="content-panel">
-        @if(array_search("ORORC", $submoduls))
+        @if(array_search("MDPAC", $submoduls))
             <button class="btn btn-theme btn-round m-20" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
         @endif
-        <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -77,20 +75,13 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order">
+            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-account">
                 <thead>
                     <th>No</th>
-                    <th>Order ID</th>
-                    <th>Student</th>
-                    <th>Grade</th>
-                    <th>Course</th>
-                    <th>Teacher</th>
-                    <th>Package</th>
-                    <th>Status</th>
-                    <th>Course Start</th>
-                    <th>Total Bill</th>
-                    <th>Bill Paid</th>
-                    <th>Payment Status</th>
+                    <th>Account Type</th>
+                    <th>Account Number</th>
+                    <th>Account Name</th>
+                    <th>Creator</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -112,9 +103,6 @@
     <!-- Select2 -->
     <script src="{{ asset('dashboard/additionalplugins/select2/js/select2.min.js') }}" type="text/javascript"></script>
 
-    <!-- Date Picker -->
-    <script src="{{ asset('dashboard/additionalplugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-
     <!-- Sweet Alert Js  -->
     <script src="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('dashboard/additionalpages/jquery.sweet-alert.init.js') }}"></script>
@@ -123,37 +111,24 @@
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table-order').DataTable({
+        $('#table-account').DataTable({
             "processing" : true,
             "serverSide" : true,
-            "order": [[ 0, "desc" ]],
+            "order": [[ 0, "asc" ]],
             "ajax" : {
-                "url" : "{{ route('order.index') }}",
+                "url" : "{{ route('paymentaccount.index') }}",
                 "type" : "get",
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
-                {data : "invoice_id", name : "invoice_id"},
-                {data : "student_name", name : "student_name"},
-                {data : "grade_id", name : "grade_id"},
-                {data : "course_name", name : "course_name"},
-                {data : "teacher_name", name : "teacher_name"},
-                {data : "package_name", name : "package_name"},
-                {data : "status", name : "status", orderable : false},
-                {data : "course_start", name : "course_start"},
-                {data : "order_bill", name : "order_bill"},
-                {data : "bill_paid", name : "bill_paid"},
-                {data : "payment_status", name : "payment_status", orderable : false},
-                {data : "options", name : "options", orderable : false, searchable : false,}
+                    {data : "account_type", name : "account_type"},
+                    {data : "account_number", name : "account_number"},
+                    {data : "account_name", name : "account_name"},
+                    {data : "creator_name", name : "creator_name"},
+                    {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
-        });
-
-        // Select2
-        $(".select2").select2({
-            templateResult: formatState,
-            templateSelection: formatState
         });
 
         function formatState (opt) {
@@ -162,7 +137,6 @@
             }
 
             var optimage = $(opt.element).attr('data-image');
-            console.log(optimage)
             if(!optimage){
             return opt.text.toUpperCase();
             } else {
@@ -176,7 +150,7 @@
 
     function create_data(){
         $.ajax({
-            url : "{{route('order.create')}}",
+            url : "{{route('paymentaccount.create')}}",
             type : "get",
             dataType: 'json',
         }).done(function (data) {
@@ -187,9 +161,8 @@
     }
 
     function edit_data(id){
-        console.log(id)
         $.ajax({
-            url : "/order/"+id+"/edit",
+            url : "/paymentaccount/"+id+"/edit",
             type : "get",
             dataType: 'json',
         }).done(function (data) {
@@ -199,94 +172,20 @@
         });
     }
 
-    function confirm_order(id){
+    function change_status(id){
         var token = $("meta[name='csrf-token']").attr("content");
-        console.log(id)
-        swal({
-            title: 'Confirm this Order?',
-            text: "Confirmed Order will be forward to Student!",
-            type: 'warning',
-            showCancelButton: true,
-            showCloseButton: true,
-            confirmButtonText: 'Confirm Order',
-            cancelButtonText: 'Cancel Order',
-            confirmButtonClass: 'btn btn-success',
-            cancelButtonClass: 'btn btn-danger m-l-10',
-            buttonsStyling: false
-        }).then(function () {
-            $.ajax({
-                url : "/order/"+id+"/changestatus",
-                type : "post",
-                dataType: 'json',
-                data: {
-                    "_token":token,
-                    "status":1,
-                }
-            }).done(function (data) {
-                location.reload();
-            }).fail(function (msg) {
-                swal(
-                    'Failed',
-                    'Failed to confirm',
-                    'error'
-                )
-            });
-        }, function (dismiss) {
-            if (dismiss === 'cancel') {
-                $.ajax({
-                    url : "/order/"+id+"/changestatus",
-                    type : "post",
-                    dataType: 'json',
-                    data: {
-                        "_token":token,
-                        "status":0,
-                    }
-                }).done(function (data) {
-                    location.reload();
-                }).fail(function (msg) {
-                    swal(
-                        'Failed',
-                        'Failed to confirm',
-                        'error'
-                    )
-                });
+        $.ajax({
+            url : "/paymentaccount/"+id+"/changestatus",
+            type : "post",
+            dataType: 'json',
+            data: {
+                "_token":token,
             }
-        })
-    }
-
-    function finishing_order(id){
-        var token = $("meta[name='csrf-token']").attr("content");
-
-        swal({
-            title: 'Confirm this Order?',
-            text: "Confirmed Order will be forward to Student!",
-            type: 'warning',
-            showCancelButton: true,
-            showCloseButton: true,
-            confirmButtonText: 'Finishing Order',
-            cancelButtonText: 'Close',
-            confirmButtonClass: 'btn btn-info',
-            cancelButtonClass: 'btn btn-danger m-l-10',
-            buttonsStyling: false
-        }).then(function () {
-            $.ajax({
-                url : "/order/"+id+"/changestatus",
-                type : "post",
-                dataType: 'json',
-                data: {
-                    "_token":token,
-                    "status":2,
-                }
-            }).done(function (data) {
-                location.reload();
-            }).fail(function (msg) {
-                swal(
-                    'Failed',
-                    'Failed to confirm',
-                    'error'
-                )
-            });
-        })
+        }).done(function (data) {
+            location.reload();
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
     }
 
     function delete_data(id){
@@ -304,7 +203,7 @@
             buttonsStyling: false
         }).then(function () {
             $.ajax({
-                url: "order/"+id,
+                url: "paymentaccount/"+id,
                 type: 'DELETE',
                 data: {
                     "_token": token,
@@ -335,64 +234,6 @@
                 )
             }
         })
-    }
-
-    function get_teacher(params) {
-        var jenisdata = "get_teacher";
-        $.ajax({
-            url : "{{route('getData')}}",
-            type : "get",
-            dataType: 'json',
-            data:{
-                params: params,
-                jenisdata: jenisdata,
-            },
-        }).done(function (data) {
-            $('#teacher_id').html(data.append);
-        }).fail(function (msg) {
-            alert('Gagal menampilkan data, silahkan refresh halaman.');
-        });
-    }
-
-    function get_package(params){
-        var jenisdata = "get_package";
-        $.ajax({
-            url : "{{route('getData')}}",
-            type : "get",
-            dataType: 'json',
-            data:{
-                params: params,
-                jenisdata: jenisdata,
-            },
-        }).done(function (data) {
-            $('#package_id').html(data.append);
-        }).fail(function (msg) {
-            alert('Gagal menampilkan data, silahkan refresh halaman.');
-        });
-    }
-
-    function get_bill(){
-        var teacher_id = $('#teacher_id').val();
-        var package_id = $('#package_id').val();
-
-        if(teacher_id != null && course_id != null && package_id != null){
-            $.ajax({
-                url: "{{ route('getTeacherFee') }}",
-                type: 'GET',
-                data: {
-                    "teacher_id": teacher_id,
-                    "package_id": package_id,
-                },
-            }).done(function (data) {
-                $('#order_bill').val(data);
-            }).fail(function (msg) {
-                swal(
-                    'Failed',
-                    'Failed to delete',
-                    'error'
-                )
-            });
-        }
     }
 </script>
 @endsection

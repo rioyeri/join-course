@@ -57,7 +57,7 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Date of Birth</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="birthdate" id="birthdate" onchange="checkfield()" value="@isset($data->birthdate){{ $data->birthdate }}@endisset">
+            <input type="text" class="form-control datepicker" name="birthdate" id="birthdate" data-date-format='yyyy-mm-dd' onchange="checkfield()" value="@isset($data->birthdate){{ $data->birthdate }}@endisset">
         </div>
     </div>
 
@@ -89,6 +89,14 @@
 </form>
 
 <script>
+    // Date Picker
+    jQuery('.datepicker').datepicker({
+        autoclose: true
+    });
+
+    function moveToBox(){
+        $('#birthdate').data("datepicker").show();
+    }
 
     $("input#username").on({
         keydown: function(e) {

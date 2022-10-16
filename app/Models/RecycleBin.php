@@ -12,7 +12,7 @@ class RecycleBin extends Model
     ];
 
     public function creator(){
-        return $this->belongsTo('App\Employee','creator','id');
+        return $this->belongsTo('App\Models\User','creator','id');
     }
 
     public static function json_encode($content){

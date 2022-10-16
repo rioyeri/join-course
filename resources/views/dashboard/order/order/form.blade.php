@@ -12,6 +12,14 @@
     <form class="form-horizontal style-form" method="post" action="{{ route('order.store') }}">
 @endif
     @csrf
+    @isset($data->invoice_id)
+    <div class="form-group">
+        <label class="col-sm-3 col-sm-3 control-label">ORDER ID</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" value="{{ $data->invoice_id }}" disabled>
+        </div>
+    </div>
+    @endisset
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Student</label>
         <div class="col-sm-9">
