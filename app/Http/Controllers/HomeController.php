@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContentHome;
+use App\Models\ContentProfile;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -22,8 +24,12 @@ class HomeController extends Controller
             $page = "HOME";
             return view('dashboard.home.index',compact('page'));
         }else{
-            $teachers = Teacher::limit(4)->get();
-            return view('landingpage.content.main',compact('teachers'));
+            $content = ContentHome::getContent();
+            $company_profile = ContentProfile::all();
+            // echo "<pre>";
+            // print_r($content);
+            // die;
+            return view('landingpage.content.main',compact('content', 'company_profile'));
         }
     }
 

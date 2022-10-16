@@ -9,18 +9,13 @@
 
         <div class="row gy-4">
             @php($i=1)
-            @foreach ($teachers as $teacher)
+            @foreach ($content[2]->detail as $teacher)
                 <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="@php(100 * $i)">
                     <div class="member">
-                        <img src="{{ asset('landingpage/assets/img/team/team-'.$i.'.jpg') }}" class="img-fluid" alt="">
-                        <h4>{{ $teacher->teacher->name }}</h4>
-                        <span>{{ $teacher->title }}</span>
-                        <div class="social">
-                            <a href=""><i class="bi bi-twitter"></i></a>
-                            <a href=""><i class="bi bi-facebook"></i></a>
-                            <a href=""><i class="bi bi-instagram"></i></a>
-                            <a href=""><i class="bi bi-linkedin"></i></a>
-                        </div>
+                        <img src="{{ $teacher->image }}" class="img-fluid" style="object-fit:cover; min-height: 250px; max-height:250px;" alt="">
+                        <h4>{{ $teacher->title }}</h4>
+                        <span>{{ $teacher->subtitle }}</span>
+                        <p>{{ $teacher->description }}... <a href="">lihat lebih banyak</a></p>
                     </div>
                 </div><!-- End Team Member -->
                 @php($i++)

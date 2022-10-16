@@ -99,14 +99,8 @@
     <div class="container position-relative" style="margin-bottom:150px; margin-top:150px;">
         <div class="row gy-5" data-aos="fade-in">
             <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center text-lg-start">
-                <h2>Temukan Guru yang sempurna bersama <span>FlashAcademia</span></h2>
-                <p>Online atau tatap muka,
-                    tentukan guru pilihanmu
-                </p>
-                {{-- <div class="d-flex justify-content-center justify-content-lg-start">
-                    <input type="text" class="form-control find-box" name="searchbox" id="searchbox" placeholder="Apa yang ingin Anda Pelajari">
-                    <a href="#about" class="btn-get-started btn-find"><i class="fa fa-search" id="button-icon"></i><span id="button-text"> Temukan Guru</span></a>
-                </div> --}}
+                <h2>{{ $content[0]->title }}</h2>
+                <p>{{ $content[0]->subtitle }}</p>
                 <div class="wrapper">
                     <div class="search-input">
                         <input type="text" id="searchbox" placeholder="Apa yang ingin Anda Pelajari" onkeyup="searchTeacherOrSubject()">

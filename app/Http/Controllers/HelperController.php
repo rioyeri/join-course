@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 
 use App\Models\Course;
 use App\Models\Teacher;
 use App\Models\TeacherCourse;
 use App\Models\TeacherPrice;
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class HelperController extends Controller
 {
@@ -66,6 +67,32 @@ class HelperController extends Controller
                 array_push($result, $course->name);
             }
         }
+
+        return response()->json($result);
+    }
+
+    public function getAllTeacherData(){
+        $result = array();
+        $teachers = Teacher::all();
+        foreach($teachers as $teacher){
+            $array = array(
+                "value" => $teacher->teacher->name,
+                "text" => $teacher->teacher->name,
+            );
+            array_push($result, $array);
+        }
+
+        return response()->json(json_encode($result));
+    }
+
+    public function getTeachersDetailbyName(Request $request){
+        $user = User::where('name', 'LIKE', '%'.$request->name.'%')->first();
+        $teacher = Teacher::where('user_id', $user->id)->first();
+        $result = array(
+            "title" => $teacher->title.' ('.$teacher->location.')',
+            "description" => $teacher->description,
+            "image" => $user->profilephoto,
+        );
 
         return response()->json($result);
     }

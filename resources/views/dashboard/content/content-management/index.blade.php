@@ -12,10 +12,12 @@
     <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Sweet Alert css -->
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Magnific Pop-up-->
-    <link rel="stylesheet" href="{{ asset('dashboard/additionalplugins/magnific-popup/dist/magnific-popup.css') }}"/>
+    <!-- Editable-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
     <!-- File Upload-->
     <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-fileupload/bootstrap-fileupload.css') }}" />
+    <!-- Bootstrap Icon -->
+    <link href="{{ asset('landingpage/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
@@ -52,96 +54,35 @@
             border-radius: 3px;
             font-weight: bold;
         }
-
-        img.output{
-            object-fit:cover;
-            display:block;
-            width:100px;
-            height:100px;
-            display: flex;
-        }
-
-        .input-box .col-sm-9 input{
-            width: 100%;
-        }
-
-        .eye {
-            position: absolute;
-            margin-top: 8px;
-            margin-left: -30px;
-            cursor: pointer;
-        }
-
-        .username-error {
-            position: absolute;
-            margin-top: 8px;
-            margin-left: 10px;
-            /* margin-left: -105px; */
-            color: red;
-            font-weight: 700;
-        }
-
-        .email-error {
-            position: absolute;
-            margin-top: 8px;
-            margin-left: 10px;
-            /* margin-left: -105px; */
-            color: red;
-            font-weight: 700;
-        }
-
-        .phone-error {
-            position: absolute;
-            margin-top: 8px;
-            margin-left: 10px;
-            /* margin-left: -105px; */
-            color: red;
-            font-weight: 700;
-        }
     </style>
 @endsection
 
 @section('title')
-    User Management
+    Content Management
 @endsection
 
 @section('content')
     <!-- page start-->
     <div class="content-panel">
-        @if(array_search("USUSC", $submoduls))
-            <button class="btn btn-theme btn-round m-20" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
-        @endif
         <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h4 class="modal-title" id="myModalLabel">Flash Academia</h4>
                     </div>
                     <div class="modal-body" id="view-form">
-
                     </div>
-                    {{-- <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
-                        <button type="button" class="btn btn-primary">Submit</button>
-                    </div> --}}
                 </div>
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-user">
+            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-content">
                 <thead>
                     <th>No</th>
-                    <th>Photo</th>
-                    <th>Name</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    {{-- <th>Place of Birth</th> --}}
-                    <th>Date of Birth</th>
-                    <th>Registration Date</th>
-                    <th>Last Time Login</th>
+                    <th>Segment</th>
+                    <th>Contents</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -167,68 +108,35 @@
     <script src="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('dashboard/additionalpages/jquery.sweet-alert.init.js') }}"></script>
 
-    <!-- Magnific popup -->
-    <script type="text/javascript" src="{{ asset('dashboard/additionalplugins/magnific-popup/dist/jquery.magnific-popup.min.js') }}"></script>
+    <!-- Editable Table-->
+    <script src="{{ asset('dashboard/additionalplugins/tiny-editable/mindmup-editabletable.js') }}"></script>
+    <script src="{{ asset('dashboard/additionalplugins/tiny-editable/numeric-input-example.js') }}"></script>
 
     <!-- File Upload -->
     <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-fileupload/bootstrap-fileupload.js') }}"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.js"></script>
 @endsection
 
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table-user').DataTable({
+        $('#table-content').DataTable({
             "processing" : true,
             "serverSide" : true,
-            "order": [[ 2, "asc" ]],
+            "order": [[ 0, "asc" ]],
             "ajax" : {
-                "url" : "{{ route('user.index') }}",
+                "url" : "{{ route('contentmanagement.index') }}",
                 "type" : "get",
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
-                    {data : "photo", name: "photo", orderable : false, searchable : false},
-                    {data : "name", name : "name"},
-                    {data : "username", name : "username"},
-                    {data : "email", name : "email"},
-                    {data : "phone", name : "phone"},
-                    // {data : "birthplace", name : "birthplace"},
-                    {data : "birthdate", name : "birthdate"},
-                    {data : "regis_date", name : "regis_date"},
-                    {data : "last_login", name : "last_login"},
+                    {data : "segment", name : "segment", orderable : false},
+                    {data : "contents", name : "contents", orderable : false},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
-            "columnDefs" : [
-                {
-                    render: function (data, type, full, meta) {
-                        // console.log(data, type, full, meta);
-                        if(data == null){
-                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
-                        }else{
-                            if(data.substring(0,4) != "http"){
-                                var $image = '<a href="dashboard/assets/users/photos/'+data+'" class="image-popup"><img class="output text-center" src="dashboard/assets/users/photos/'+data+'"></a>';
-                            }else{
-                                var $image = '<a href="'+data+'" class="image-popup"><img class="output text-center" src="'+data+'"></a>';
-                            }
-                        }
-                        return $image;
-                    },
-                    targets: [1],
-                },
-            ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
-            drawCallback: function(){
-                $('.image-popup').magnificPopup({
-                    type: 'image',
-                });
-            }
-        });
-
-        // Select2
-        $(".select2").select2({
-            templateResult: formatState,
-            templateSelection: formatState
         });
 
         function formatState (opt) {
@@ -248,21 +156,9 @@
         };
     });
 
-    function create_data(){
-        $.ajax({
-            url : "{{route('user.create')}}",
-            type : "get",
-            dataType: 'json',
-        }).done(function (data) {
-            $('#view-form').html(data);
-        }).fail(function (msg) {
-            alert('Gagal menampilkan data, silahkan refresh halaman.');
-        });
-    }
-
     function edit_data(id){
         $.ajax({
-            url : "/user/"+id+"/edit",
+            url : "/contentmanagement/"+id+"/edit",
             type : "get",
             dataType: 'json',
         }).done(function (data) {
@@ -272,9 +168,8 @@
         });
     }
 
-    function delete_data(id){
+    function change_status(id){
         var token = $("meta[name='csrf-token']").attr("content");
-
         swal({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -287,33 +182,24 @@
             buttonsStyling: false
         }).then(function () {
             $.ajax({
-                url: "user/"+id,
-                type: 'DELETE',
+                url : "/contentmanagement/"+id+"/changestatus",
+                type : "post",
+                dataType: 'json',
                 data: {
-                    "_token": token,
-                },
+                    "_token":token,
+                }
             }).done(function (data) {
-                swal(
-                    'Deleted!',
-                    'Your data has been deleted.',
-                    'success'
-                )
                 location.reload();
             }).fail(function (msg) {
-                swal(
-                    'Failed',
-                    'Failed to delete',
-                    'error'
-                )
+                alert('Gagal menampilkan data, silahkan refresh halaman.');
             });
-
         }, function (dismiss) {
             // dismiss can be 'cancel', 'overlay',
             // 'close', and 'timer'
             if (dismiss === 'cancel') {
                 swal(
                     'Cancelled',
-                    'Your data is safe :)',
+                    'Data not changed',
                     'error'
                 )
             }

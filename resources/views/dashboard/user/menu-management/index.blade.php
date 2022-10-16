@@ -52,7 +52,7 @@
 @endsection
 
 @section('title')
-    Role
+    Menu Management
 @endsection
 
 @section('content')

@@ -154,12 +154,20 @@ class MenuMapping extends Model
         $result = collect();
         foreach($moduls as $modul){
             $row1 = collect();
-            $submapping = SubMapping::where('submodul_id', 'LIKE', $modul->modul_id.'%')->get();
+            $submodul = SubModul::where('modul_id', $modul->modul_id)->get();
             $detail = collect();
-            foreach($submapping as $sm){
+            foreach($submodul as $sm){
                 $row2 = collect();
-                $row2->put('submapping_id', $sm->id);
-                $row2->put('jenis_id', $sm->jenis_id);
+                $submapping = SubMapping::where('submodul_id', $sm->submodul_id)->get();
+                $detail2 = collect();
+                foreach($submapping as $mp){
+                    $row3 = collect();
+                    $row3->put('submapping_id', $mp->id);
+                    $row3->put('jenis_id', $mp->jenis_id);
+                    $detail2->push($row3);
+                }
+                $row2->put('submodul_name', $sm->submodul_desc);
+                $row2->put('submappings', $detail2);
                 $detail->push($row2);
             }
             $row1->put('modul_name', $modul->modul_desc);
@@ -167,5 +175,47 @@ class MenuMapping extends Model
             $result->push($row1);
         }
         return $result;
+    }
+
+    public static function setData($id, $menus){
+        $role = Role::where('id', $id)->first();
+        $old_list = MenuMapping::where('role_id', $id)->get();
+        if($old_list->count() != 0){
+            foreach($old_list as $list){
+                $status = 0;
+                foreach($menus as $menu){
+                    if($list->submapping_id == $menu){
+                        $status++;
+                    }
+                    if(MenuMapping::where('role_id', $id)->where('submapping_id', $menu)->count() == 0){
+                        $new = new MenuMapping(array(
+                            "role_id" => $id,
+                            "submapping_id" => $menu,
+                        ));
+                        $new->save();
+                        Log::setLog('USMMC','Create Menu : '.$menu.' to '.$role->name);
+                    }
+                }
+                if($status == 0){
+                    if(MenuMapping::where('role_id', $id)-> where('submapping_id', $list->submapping_id)->count() != 0){
+                        $log_id = Log::setLog('USMMD','Delete Menu : '.$list->submapping_id.' to '.$role->name);
+                        RecycleBin::moveToRecycleBin($log_id, $list->getTable(), json_encode($list));
+                        $list->delete();
+                    }
+                }
+            }
+        }else{
+            foreach($menus as $menu){
+                if(MenuMapping::where('role_id', $id)->where('submapping_id', $menu)->count() == 0){
+                    $new = new MenuMapping(array(
+                        "role_id" => $id,
+                        "submapping_id" => $menu,
+                    ));
+                    $new->save();
+                    Log::setLog('USMMC','Create Menu : '.$menu.' to '.$role->name);
+                }
+            }
+        }
+
     }
 }

@@ -4,12 +4,20 @@
     @csrf
     @foreach($moduls as $modul)
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">{{ $modul->modul_name }}</label>
+        <h4 class="col-sm-3 col-sm-3 control-label"><strong>{{ $modul->modul_name }}</strong></h4>
     </div>
     <div class="form-group">
         @foreach($modul->submoduls as $submodul)
-            <div class="col-md-3">
-                <label class="checkbox-inline"><input type="checkbox" name="checkBoxes" id="options-{{ $submodul->submapping_id }}" value="{{ $submodul->submapping_id }}" @if(array_search($submodul->submapping_id, $submappings)) checked @endif> {{ $submodul->jenis_id }} </label>
+            <div class="row">
+                <h5 class="col-sm-3 text-right"><strong>{{ $submodul->submodul_name }}</strong></h5>
+                <div class="col-sm-9 mb-15">
+                    @foreach ($submodul->submappings as $submapping)
+                        <div class="col-md-4">
+                            {{-- <label class="checkbox-inline"><input type="checkbox" name="checkBoxes" id="options-{{ $submapping->submapping_id }}" value="{{ $submapping->submapping_id }}" @if(array_search($submapping->submapping_id, $submappings)) checked @endif> {{ $submapping->jenis_id }} </label> --}}
+                            <label class="checkbox-inline"><input type="checkbox" name="checkBoxes[]" id="options-{{ $submapping->submapping_id }}" value="{{ $submapping->submapping_id }}" @if(in_array($submapping->submapping_id, $submappings)) checked @endif> {{ $submapping->jenis_id }} </label>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         @endforeach
     </div>

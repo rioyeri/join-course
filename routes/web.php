@@ -15,7 +15,7 @@ Route::group(['prefix' => 'google', 'namespace' => 'Auth', 'as' => 'google.'], f
     Route::get('/', 'LoginController@redirect')->name('redirect');
     Route::get('callback', 'LoginController@callback')->name('callback');
 });
-// Route::get('/testuser','TestController@index');
+Route::get('/testuser','TestController@index');
 Route::get('/','HomeController@index')->name('getHome');
 // Route::get('/login','HomeController@index2')->name('getHome2');
 Route::get('/login', 'HomeController@get_login')->name('get_login');
@@ -40,13 +40,6 @@ Route::get('pilihtemplate', 'TemplateController@index');
 Route::get('searchTeacherOrSubject', 'HelperController@searchTeacherOrSubject')->name('searchTeacherOrSubject');
 
 Route::middleware(['checkUser'])->group(function () {
-    // Profil for Footer
-    Route::get('/profile','ProfileController@index')->name('profile.index');
-    Route::get('/profile/{id}/edit','ProfileController@edit')->name('profile.edit');
-    Route::put('/profile/{id}/update','ProfileController@update')->name('profile.update');
-    Route::get('/profile/{id}/show','ProfileController@show')->name('profile.show');
-    Route::delete('/profile/{id}','ProfileController@delete')->name('profile.destroy');
-
     // Resources
     Route::resources([
         // Employee
@@ -73,6 +66,10 @@ Route::middleware(['checkUser'])->group(function () {
         'order' => 'OrderController',
         // Package
         'package' => 'PackageController',
+        // Content Home
+        'contentmanagement' => 'ContentManagementController',
+        // Profile Company
+        'companyprofile' => 'CompanyProfileController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');
@@ -83,6 +80,8 @@ Route::middleware(['checkUser'])->group(function () {
     Route::get('getCheckBeforeDelete', 'HelperController@checkBeforeDelete')->name('checkBeforeDelete');
     Route::get('/getTeacherFee', 'HelperController@getTeacherFee')->name('getTeacherFee');
     Route::get('/getData','HelperController@getData')->name('getData');
+    Route::get('/getAllTeacherData', 'HelperController@getAllTeacherData')->name('getAllTeacherData');
+    Route::get('/getTeachersDetailbyName', 'HelperController@getTeachersDetailbyName')->name('getTeachersDetailbyName');
 
     // Course Helper
     Route::post('/course/{id}/changestatus', 'CourseController@changeStatus')->name('changeStatusCourse');
@@ -100,4 +99,9 @@ Route::middleware(['checkUser'])->group(function () {
     // Order Helper
     Route::post('/order/{id}/changestatus', 'OrderController@changeStatus')->name('changeStatusOrder');
 
+    // Content Management Helper
+    Route::post('/contentmanagement/{id}/changestatus', 'ContentManagementController@changeStatus')->name('changeStatusContent');
+
+    // Company Profile Helper
+    Route::post('/companyprofile/{id}/changestatus', 'CompanyProfileController@changeStatus')->name('changeStatusProfile');
 });

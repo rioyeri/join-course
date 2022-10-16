@@ -4,7 +4,7 @@
         <div class="row gy-4">
             <div class="col-lg-5 col-md-12 footer-info">
                 <a href="#hero" class="logo d-flex align-items-center">
-                    <span>Flash Academia</span>
+                    <span>{{ $company_profile[0]->content }}</span>
                 </a>
                 <div class="social-links d-flex mt-4">
                     <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
@@ -36,11 +36,16 @@
             <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
                 <h4>Kontak Kami</h4>
                 <p>
-                    Jl. Jalan Terus No. 69 <br>
-                    Kel. Kelurahan, Kec. Kecamatan<br>
-                    Kota Besar, Indonesia <br><br>
-                    <strong>Telepon:</strong> +1 5589 55488 55<br>
-                    <strong>Email:</strong> info@example.com<br>
+                    @if($company_profile[1]->status == 1)
+                        {{$company_profile[1]->content}}
+                    @endif
+                    <br>
+                    @if($company_profile[2]->status == 1)
+                        <strong>Telepon:</strong> {{ $company_profile[2]->content }}<br>
+                    @endif
+                    @if($company_profile[3]->status == 1)
+                        <strong>Email:</strong> {{ $company_profile[3]->content }}<br>
+                    @endif
                 </p>
             </div>
         </div>
