@@ -132,12 +132,12 @@ class UserController extends Controller
 
                 // Upload Foto
                 if($request->profilephoto != NULL || $request->profilephoto != ''){
-                    if (file_exists(public_path('dashboard\assets\users\photos/').$user->profilephoto) && $user->profilephoto != null) {
-                        unlink(public_path('dashboard\assets\users\photos/').$user->profilephoto);
+                    if (file_exists(public_path('dashboard/assets/users/photos/'.$user->profilephoto)) && $user->profilephoto != null) {
+                        unlink(public_path('dashboard/assets/users/photos/'.$user->profilephoto));
                     }
 
                     $profilephoto = $user->username.'.'.$request->profilephoto->getClientOriginalExtension();
-                    $request->profilephoto->move(public_path('dashboard\assets\users\photos'), $profilephoto);
+                    $request->profilephoto->move(public_path('dashboard/assets/users/photos'), $profilephoto);
                 }else{
                     $profilephoto = $user->profilephoto;
                 }

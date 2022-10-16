@@ -12,7 +12,7 @@
             @foreach ($content[2]->detail as $teacher)
                 <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="@php(100 * $i)">
                     <div class="member">
-                        <img src="{{ $teacher->image }}" class="img-fluid" style="object-fit:cover; min-height: 250px; max-height:250px;" alt="">
+                        <img src="{{ $teacher->image }}" class="img-fluid" style="object-fit:cover; min-height: 250px; min-width: 300px; max-height:250px;" alt="">
                         <h4>{{ $teacher->title }}</h4>
                         <span>{{ $teacher->subtitle }}</span>
                         <p>{{ $teacher->description }}... <a href="">lihat lebih banyak</a></p>
