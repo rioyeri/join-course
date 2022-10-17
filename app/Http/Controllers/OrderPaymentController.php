@@ -89,6 +89,10 @@ class OrderPaymentController extends Controller
                 $data->payment_evidence = $payment_evidence;
                 $data->invoice_id = $invoice_id;
                 $data->save();
+
+                // Check Paid Off;
+                OrderPayment::checkPaid($order->id);
+
                 Log::setLog('ORPYC','Create Order Payment : '.$invoice_id.' for '.$order->order_id);
                 return redirect()->route('orderpayment.index')->with('status','Successfully saved');
             }catch(\Exception $e){
@@ -146,6 +150,7 @@ class OrderPaymentController extends Controller
                 $data = OrderPayment::where('id', $id)->first();
                 $old_order = Order::where('id', $data->order_id)->first();
                 $new_order = Order::where('id', $request->order_id)->first();
+
                 // Upload Evidence
                 if($request->payment_evidence <> NULL|| $request->payment_evidence <> ''){
                     $path = 'dashboard/assets/payment/';
@@ -174,9 +179,14 @@ class OrderPaymentController extends Controller
                 $data->creator = session('user_id');
                 $data->save();
 
+
                 if($old_order->order_id != $new_order->order_id){
+                    // Check Paid Off;
+                    OrderPayment::checkPaid($old_order->id);
+                    OrderPayment::checkPaid($new_order->id);
                     Log::setLog('ORPYU','Update Order Payment '.$data->invoice_id.' for '.$old_order->order_id.' to '.$new_order->order_id);
                 }else{
+                    OrderPayment::checkPaid($data->order_id);
                     Log::setLog('ORPYU','Update Order Payment '.$data->invoice_id.' for '.$old_order->order_id);
                 }
                 return redirect()->route('orderpayment.index')->with('status','Successfully saved');
@@ -196,6 +206,7 @@ class OrderPaymentController extends Controller
     {
         try{
             $data = OrderPayment::where('id', $id)->first();
+            $order_id = $data->order_id;
             $path = 'dashboard/assets/payment/'.substr($data->get_order->order_id,1).'/';
             $recycle_bin_path = 'dashboard/assets/recyclebin/';
             if (file_exists(public_path($path.$data->payment_evidence)) && $data->payment_evidence != null) {
@@ -204,6 +215,7 @@ class OrderPaymentController extends Controller
             $log_id = Log::setLog('ORPYD','Delete Order Payment : '.$data->invoice_id);
             RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
             $data->delete();
+            OrderPayment::checkPaid($order_id);
             return "true";
         }catch(\Exception $e){
             return redirect()->back()->withErrors($e->getMessage());

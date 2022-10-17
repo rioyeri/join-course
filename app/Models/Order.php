@@ -97,10 +97,12 @@ class Order extends Model
             }
 
             $payment_status = '';
-            if($key->payment_status == 0){
-                $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
-            }else{
+            if($key->payment_status == 1){
                 $payment_status .= '<a class="btn btn-success m-5"><i class="fa fa-check"></i> Paid Off</a> ';
+            }elseif($key->payment_status == 2){
+                $payment_status .= '<a class="btn btn-warning m-5"><i class="fa fa-check"></i> Overpaid</a> ';
+            }else{
+                $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
             }
 
             $detail->put('no', $i++);

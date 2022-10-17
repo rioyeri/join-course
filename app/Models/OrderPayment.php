@@ -25,6 +25,20 @@ class OrderPayment extends Model
         return $invoice_id;
     }
 
+    public static function checkPaid($order_id){
+        $order = Order::where('id', $order_id)->first();
+        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', 1)->sum('payment_amount');
+        if($payment == $order->order_bill){
+            $result = 1;
+        }elseif($payment > $order->order_bill){
+            $result = 2;
+        }else{
+            $result = 0;
+        }
+        $order->payment_status = $result;
+        $order->save();
+    }
+
     public static function dataIndex(Request $request){
         $draw = $request->draw;
         $row = $request->start;
