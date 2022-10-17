@@ -84,6 +84,7 @@ Route::middleware(['checkUser'])->group(function () {
     Route::get('/getData','HelperController@getData')->name('getData');
     Route::get('/getAllTeacherData', 'HelperController@getAllTeacherData')->name('getAllTeacherData');
     Route::get('/getTeachersDetailbyName', 'HelperController@getTeachersDetailbyName')->name('getTeachersDetailbyName');
+    Route::get('getOrderBill', 'HelperController@getOrderBill')->name('getOrderBill');
 
     // Course Helper
     Route::post('/course/{id}/changestatus', 'CourseController@changeStatus')->name('changeStatusCourse');
@@ -109,4 +110,7 @@ Route::middleware(['checkUser'])->group(function () {
 
     // Company Profile Helper
     Route::post('/companyprofile/{id}/changestatus', 'CompanyProfileController@changeStatus')->name('changeStatusProfile');
+
+    // Order Payment Helper
+    Route::post('/orderpayment/{id}/changestatus', 'OrderPaymentController@changeStatus')->name('changeStatusOrderPayment');
 });

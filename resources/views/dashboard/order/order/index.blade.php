@@ -134,7 +134,7 @@
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
-                {data : "invoice_id", name : "invoice_id"},
+                {data : "order_id", name : "order_id"},
                 {data : "student_name", name : "student_name"},
                 {data : "grade_id", name : "grade_id"},
                 {data : "course_name", name : "course_name"},
@@ -146,6 +146,14 @@
                 {data : "bill_paid", name : "bill_paid"},
                 {data : "payment_status", name : "payment_status", orderable : false},
                 {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
         });

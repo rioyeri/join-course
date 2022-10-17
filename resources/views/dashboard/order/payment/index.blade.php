@@ -14,6 +14,10 @@
     <link href="{{ asset('dashboard/additionalplugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
     <!-- Sweet Alert css -->
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Magnific Pop-up-->
+    <link rel="stylesheet" href="{{ asset('dashboard/additionalplugins/magnific-popup/dist/magnific-popup.css') }}"/>
+    <!-- File Upload-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-fileupload/bootstrap-fileupload.css') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
@@ -50,6 +54,14 @@
             border-radius: 3px;
             font-weight: bold;
         }
+
+        img.output{
+            object-fit:cover;
+            display:block;
+            width:100px;
+            height:100px;
+            display: flex;
+        }
     </style>
 @endsection
 
@@ -80,6 +92,7 @@
             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-payment">
                 <thead>
                     <th>No</th>
+                    <th>Invoice ID</th>
                     <th>Order ID</th>
                     <th>Order Bill</th>
                     <th>Payment Amount</th>
@@ -114,6 +127,10 @@
     <!-- Sweet Alert Js  -->
     <script src="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('dashboard/additionalpages/jquery.sweet-alert.init.js') }}"></script>
+    <!-- File Upload -->
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-fileupload/bootstrap-fileupload.js') }}"></script>
+    <!-- Magnific popup -->
+    <script type="text/javascript" src="{{ asset('dashboard/additionalplugins/magnific-popup/dist/jquery.magnific-popup.min.js') }}"></script>
 @endsection
 
 @section('script-js')
@@ -122,7 +139,7 @@
         $('#table-payment').DataTable({
             "processing" : true,
             "serverSide" : true,
-            "order": [[ 0, "desc" ]],
+            "order": [[ 8, "asc" ]],
             "ajax" : {
                 "url" : "{{ route('orderpayment.index') }}",
                 "type" : "get",
@@ -131,15 +148,41 @@
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "invoice_id", name : "invoice_id"},
-                {data : "order_bill", name : "order_bill"},
-                {data : "payment_amount", name : "payment_amount"},
+                {data : "order_id", name : "order_id"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_method", name : "payment_method"},
-                {data : "payment_evidence", name : "payment_evidence"},
+                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
                 {data : "payment_time", name : "payment_time"},
                 {data : "payment_confirmation", name : "payment_confirmation"},
                 {data : "options", name : "options", orderable : false, searchable : false,}
             ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == null){
+                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
+                        }else{
+                            var path = 'dashboard/assets/payment/'+full.order_id.substring(1)+'/'+data;
+                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
+                        }
+                        return $image;
+                    },
+                    targets: [6],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
+            drawCallback: function(){
+                $('.image-popup').magnificPopup({
+                    type: 'image',
+                });
+            }
         });
 
         // Select2
@@ -154,7 +197,6 @@
             }
 
             var optimage = $(opt.element).attr('data-image');
-            console.log(optimage)
             if(!optimage){
             return opt.text.toUpperCase();
             } else {
@@ -179,7 +221,6 @@
     }
 
     function edit_data(id){
-        console.log(id)
         $.ajax({
             url : "/orderpayment/"+id+"/edit",
             type : "get",
@@ -233,6 +274,54 @@
                 swal(
                     'Cancelled',
                     'Your data is safe :)',
+                    'error'
+                )
+            }
+        })
+    }
+
+    function change_status(id, status){
+        var token = $("meta[name='csrf-token']").attr("content");
+        if(status == 0){
+            var btn_text = "Confirm Payment";
+            var btn_class = "btn btn-success";
+        }else{
+            var btn_text = "Cancel Confirm Payment";
+            var btn_class = "btn btn-warning";
+        }
+        swal({
+            title: 'Confirm this Order?',
+            text: "Confirmed Order will be forward to Student!",
+            type: 'warning',
+            showCancelButton: true,
+            showCloseButton: true,
+            confirmButtonText: btn_text,
+            cancelButtonText: 'Cancel',
+            confirmButtonClass: btn_class,
+            cancelButtonClass: 'btn btn-danger m-l-10',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                url : "/orderpayment/"+id+"/changestatus",
+                type : "post",
+                dataType: 'json',
+                data: {
+                    "_token":token,
+                }
+            }).done(function (data) {
+                location.reload();
+            }).fail(function (msg) {
+                swal(
+                    'Failed',
+                    'Failed to confirm',
+                    'error'
+                )
+            });
+        }, function (dismiss) {
+            if (dismiss === 'cancel') {
+                swal(
+                    'Cancelled',
+                    'Data not changed!',
                     'error'
                 )
             }

@@ -10,7 +10,7 @@ class Order extends Model
 {
     protected $table ='order';
     protected $fillable = [
-        'invoice_id','student_id','course_id','grade_id','teacher_id','package_id','course_start','order_bill','order_status','payment_status'
+        'order_id','student_id','course_id','grade_id','teacher_id','package_id','course_start','order_bill','order_status','payment_status'
     ];
 
     public function get_grade(){
@@ -33,9 +33,9 @@ class Order extends Model
         return $this->belongsTo('App\Models\Student', 'student_id', 'id');
     }
 
-    public static function generateInvoiceID($id){
-        $invoice_id = "#FA".date('Ymd')."-".$id;
-        return $invoice_id;
+    public static function generateOrderID($id){
+        $order_id = "#FA".date('Ymd')."-".$id;
+        return $order_id;
     }
 
     public static function dataIndex(Request $request){
@@ -48,13 +48,13 @@ class Order extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"OROR");
-        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.invoice_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status');
+        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status');
 
         $totalRecords = $order->count();
 
         if($searchValue != ''){
             $order->where(function ($query) use ($searchValue) {
-                $query->orWhere('order.invoice_id', 'LIKE', '%'.$searchValue.'%')->orWhere('us.name', 'LIKE', '%'.$searchValue.'%')->orWhere('ut.name', 'LIKE', '%'.$searchValue.'%')->orWhere('c.name', 'LIKE', '%'.$searchValue.'%')->orWhere('grade_id', 'LIKE', '%'.$searchValue.'%')->orWhere('p.name', 'LIKE', '%'.$searchValue.'%')->orWhere('course_start', 'LIKE', '%'.$searchValue.'%')->orWhere('order_bill', 'LIKE', '%'.$searchValue.'%');
+                $query->orWhere('order.order_id', 'LIKE', '%'.$searchValue.'%')->orWhere('us.name', 'LIKE', '%'.$searchValue.'%')->orWhere('ut.name', 'LIKE', '%'.$searchValue.'%')->orWhere('c.name', 'LIKE', '%'.$searchValue.'%')->orWhere('grade_id', 'LIKE', '%'.$searchValue.'%')->orWhere('p.name', 'LIKE', '%'.$searchValue.'%')->orWhere('course_start', 'LIKE', '%'.$searchValue.'%')->orWhere('order_bill', 'LIKE', '%'.$searchValue.'%');
             });
         }
 
@@ -104,7 +104,7 @@ class Order extends Model
             }
 
             $detail->put('no', $i++);
-            $detail->put('invoice_id', $key->invoice_id);
+            $detail->put('order_id', $key->order_id);
             $detail->put('student_name', $key->student_name);
             $detail->put('grade_id', $key->get_grade->name);
             $detail->put('course_name', $key->course_name);

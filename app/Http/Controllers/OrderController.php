@@ -88,10 +88,10 @@ class OrderController extends Controller
                 ));
                 $data->save();
 
-                $data->invoice_id = Order::generateInvoiceID($data->id);
+                $data->order_id = Order::generateInvoiceID($data->id);
                 $data->save();
 
-                Log::setLog('ORORC','Create Order : '.$data->invoice_id);
+                Log::setLog('ORORC','Create Order : '.$data->order_id);
                 return redirect()->route('order.index')->with('status','Successfully saved');
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());

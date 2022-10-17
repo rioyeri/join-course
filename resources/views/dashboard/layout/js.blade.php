@@ -14,6 +14,7 @@
 
 <!--common script for all pages-->
 <script src="{{ asset('dashboard/lib/common-scripts.js') }}"></script>
+<script src="{{ asset('dashboard/lib/numberformat.js') }}"></script>
 
 <!--script for this page-->
 

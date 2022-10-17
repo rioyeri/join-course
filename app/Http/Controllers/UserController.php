@@ -76,7 +76,7 @@ class UserController extends Controller
                 // success
                 $user->save();
 
-                // // Upload Foto
+                // Upload Foto
                 if($request->profilephoto <> NULL|| $request->profilephoto <> ''){
                     $profilephoto = $user->username.'.'.$request->profilephoto->getClientOriginalExtension();
                     $request->profilephoto->move(public_path('dashboard/assets/users/photos/'),$profilephoto);

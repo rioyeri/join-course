@@ -63,16 +63,33 @@ class OrderPaymentController extends Controller
         // Validation success
         }else{
             try{
+                $order = Order::where('id', $request->order_id)->first();
+
                 $data = new OrderPayment(array(
                     "order_id" => $request->order_id,
                     "payment_amount" => $request->payment_amount,
                     "payment_method" => $request->payment_method,
-                    "payment_evidence" => $request->payment_evidence,
                     "payment_confirmation" => 0,
                     "creator" => session('user_id'),
                 ));
                 $data->save();
-                Log::setLog('MDPAC','Create Payment Order : '.$request->order_id);
+
+                $invoice_id = OrderPayment::generateInvoiceID($data->id);
+                // Upload Evidence
+                if($request->payment_evidence <> NULL|| $request->payment_evidence <> ''){
+                    $path = 'dashboard/assets/payment/';
+                    $new_path = $path.substr($order->order_id,1);
+                    if(!file_exists($new_path)){
+                        mkdir($new_path);
+                    }
+                    $payment_evidence = substr($invoice_id,1).'.'.$request->payment_evidence->getClientOriginalExtension();
+                    $request->payment_evidence->move(public_path($new_path),$payment_evidence);
+                }
+
+                $data->payment_evidence = $payment_evidence;
+                $data->invoice_id = $invoice_id;
+                $data->save();
+                Log::setLog('ORPYC','Create Order Payment : '.$invoice_id.' for '.$order->order_id);
                 return redirect()->route('orderpayment.index')->with('status','Successfully saved');
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
@@ -99,7 +116,11 @@ class OrderPaymentController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = OrderPayment::where('id', $id)->first();
+        $current_order_bill = Order::where('id', $data->order_id)->first()->order_bill;
+        $orders = Order::all();
+        $accounts = PaymentAccount::all();
+        return response()->json(view('dashboard.order.payment.form', compact('data','orders','accounts','current_order_bill'))->render());
     }
 
     /**
@@ -111,7 +132,58 @@ class OrderPaymentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required',
+            'payment_amount' => 'required',
+            'payment_method' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try{
+                $data = OrderPayment::where('id', $id)->first();
+                $old_order = Order::where('id', $data->order_id)->first();
+                $new_order = Order::where('id', $request->order_id)->first();
+                // Upload Evidence
+                if($request->payment_evidence <> NULL|| $request->payment_evidence <> ''){
+                    $path = 'dashboard/assets/payment/';
+                    $old_path = $path.substr($old_order->order_id,1).'/';
+                    $new_path = $path.substr($new_order->order_id,1);
+
+                    if(!file_exists($new_path)){
+                        mkdir($new_path);
+                    }
+
+                    if (file_exists(public_path($old_path.$data->payment_evidence)) && $data->payment_evidence != null) {
+                        unlink(public_path($old_path.$data->payment_evidence));
+                    }
+
+                    $payment_evidence = substr($data->invoice_id,1).'.'.$request->payment_evidence->getClientOriginalExtension();
+                    $request->payment_evidence->move(public_path($new_path),$payment_evidence);
+                }else{
+                    $payment_evidence = $data->payment_evidence;
+                }
+
+                $data->order_id = $request->order_id;
+                $data->payment_amount = $request->payment_amount;
+                $data->payment_method = $request->payment_method;
+                $data->payment_evidence = $payment_evidence;
+                $data->payment_confirmation = 0;
+                $data->creator = session('user_id');
+                $data->save();
+
+                if($old_order->order_id != $new_order->order_id){
+                    Log::setLog('ORPYU','Update Order Payment '.$data->invoice_id.' for '.$old_order->order_id.' to '.$new_order->order_id);
+                }else{
+                    Log::setLog('ORPYU','Update Order Payment '.$data->invoice_id.' for '.$old_order->order_id);
+                }
+                return redirect()->route('orderpayment.index')->with('status','Successfully saved');
+            }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
     }
 
     /**
@@ -122,6 +194,51 @@ class OrderPaymentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            $data = OrderPayment::where('id', $id)->first();
+            $path = 'dashboard/assets/payment/'.substr($data->get_order->order_id,1).'/';
+            $recycle_bin_path = 'dashboard/assets/recyclebin/';
+            if (file_exists(public_path($path.$data->payment_evidence)) && $data->payment_evidence != null) {
+                rename(public_path($path.$data->payment_evidence), public_path($recycle_bin_path.$data->payment_evidence));
+            }
+            $log_id = Log::setLog('ORPYD','Delete Order Payment : '.$data->invoice_id);
+            RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
+            $data->delete();
+            return "true";
+        }catch(\Exception $e){
+            return redirect()->back()->withErrors($e->getMessage());
+        }
     }
+
+    public function changeStatus(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            '_token' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try{
+                $payment = OrderPayment::where('id', $id)->first();
+
+                if($payment->payment_confirmation == 0){
+                    $new_status = 1;
+                    $text_log = 'Confirming Payment : '.$payment->invoice_id.' for '.$payment->get_order->order_id;
+                }else{
+                    $new_status = 0;
+                    $text_log = 'Cancel confirm Payment : '.$payment->invoice_id.' for '.$payment->get_order->order_id;
+                }
+
+                $payment->payment_confirmation = $new_status;
+                $payment->save();
+
+                Log::setLog('ORPYS', $text_log);
+                return "true";
+            }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
+    }
+
 }

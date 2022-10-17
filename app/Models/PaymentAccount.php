@@ -12,8 +12,12 @@ class PaymentAccount extends Model
         'account_type','account_name','account_number','status','creator'
     ];
 
+    public function get_bank(){
+    return $this->belongsTo('App\Models\Bank','account_type','name');
+    }
+
     public function creator(){
-        return $this->belongsTo('App\User','creator','id');
+        return $this->belongsTo('App\Models\User','creator','id');
     }
 
     public static function dataIndex(Request $request){

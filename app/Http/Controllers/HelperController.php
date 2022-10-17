@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
+use App\Models\Order;
 use App\Models\Course;
 use App\Models\Teacher;
 use App\Models\TeacherCourse;
@@ -95,5 +96,11 @@ class HelperController extends Controller
         );
 
         return response()->json($result);
+    }
+
+    public function getOrderBill(Request $request){
+        $order = Order::where('id', $request->id)->first();
+
+        return response()->json($order->order_bill);
     }
 }
