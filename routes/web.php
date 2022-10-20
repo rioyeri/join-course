@@ -11,6 +11,8 @@
 |
 */
 
+use App\Models\ContentPromo;
+
 Route::group(['prefix' => 'google', 'namespace' => 'Auth', 'as' => 'google.'], function(){
     Route::get('/', 'LoginController@redirect')->name('redirect');
     Route::get('callback', 'LoginController@callback')->name('callback');
@@ -72,6 +74,8 @@ Route::middleware(['checkUser'])->group(function () {
         'contentmanagement' => 'ContentManagementController',
         // Profile Company
         'companyprofile' => 'CompanyProfileController', 
+        // Content Promo
+        'contentpromo' => 'ContentPromoController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');

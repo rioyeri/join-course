@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ContentHome;
 use App\Models\ContentProfile;
+use App\Models\ContentPromo;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -26,10 +27,8 @@ class HomeController extends Controller
         }else{
             $content = ContentHome::getContent();
             $company_profile = ContentProfile::all();
-            // echo "<pre>";
-            // print_r($content);
-            // die;
-            return view('landingpage.content.main',compact('content', 'company_profile'));
+            $promos = ContentPromo::getContent();
+            return view('landingpage.content.main',compact('content', 'company_profile','promos'));
         }
     }
 

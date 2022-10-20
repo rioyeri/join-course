@@ -11,7 +11,7 @@
         {{-- @include('landingpage.content.portofolio') --}}
         @include('landingpage.content.team')
         @include('landingpage.content.testimonial')
-        {{-- @include('landingpage.content.pricing') --}}
+        @include('landingpage.content.pricing')
         @include('landingpage.content.faq')
         {{-- @include('landingpage.content.blog') --}}
         @include('landingpage.content.contact')
