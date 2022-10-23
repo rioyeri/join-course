@@ -74,7 +74,7 @@ class HelperController extends Controller
 
     public function getAllTeacherData(){
         $result = array();
-        $teachers = Teacher::all();
+        $teachers = Teacher::where('status', 1)->get();
         foreach($teachers as $teacher){
             $array = array(
                 "value" => $teacher->teacher->name,

@@ -46,7 +46,7 @@ class LoginController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-    public function callback(Request $request){
+    public function callback(Request $request,$data=null,$order=null){
         try{
             $user = Socialite::driver('google')->stateless()->user();
         }catch(\Exception $e){

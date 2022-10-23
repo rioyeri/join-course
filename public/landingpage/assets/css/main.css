@@ -1863,7 +1863,7 @@ section {
 }
 
 .contact .php-email-form input,
-.contact .php-email-form textarea {
+.contact .php-email-form textarea{
   border-radius: 0;
   box-shadow: none;
   font-size: 14px;
@@ -1871,7 +1871,8 @@ section {
 
 .contact .php-email-form input[type=text],
 .contact .php-email-form input[type=email],
-.contact .php-email-form textarea {
+.contact .php-email-form textarea,
+.contact .php-email-form {
   padding: 12px 15px;
 }
 

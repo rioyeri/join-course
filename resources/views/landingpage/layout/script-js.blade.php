@@ -10,6 +10,7 @@
     $(".select2").select2({
         templateResult: formatState,
         templateSelection: formatState,
+        // height: "80px",
     });
 
     // getting all required elements
@@ -84,12 +85,14 @@
 
     function formatState (opt) {
         if (!opt.id) {
-            return opt.text.toUpperCase();
+            // return opt.text.toUpperCase();
+            return opt.text;
         }
 
         var optimage = $(opt.element).attr('data-image');
         if(!optimage){
-        return opt.text.toUpperCase();
+        // return opt.text.toUpperCase();
+        return opt.text;
         } else {
             var $opt = $(
             '<span><img src="' + optimage + '" width="60px" /> ' + opt.text.toUpperCase() + '</span>'

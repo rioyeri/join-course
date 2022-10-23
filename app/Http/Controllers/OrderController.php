@@ -44,8 +44,12 @@ class OrderController extends Controller
      */
     public function create()
     {
-        $students = Student::all();
-        $teachers = Teacher::groupBy('user_id')->get();
+        if(session('role_id') == 4){
+            $students = Student::where('user_id', session('user_id'))->get();
+        }else{
+            $students = Student::all();
+        }
+        $teachers = Teacher::where('status', 1)->get();
         $courses = Course::where('status', 1)->get();
         $grades = Grade::all();
         $packages = Package::where('status', 1)->get();
@@ -88,8 +92,11 @@ class OrderController extends Controller
                 ));
                 $data->save();
 
-                $data->order_id = Order::generateInvoiceID($data->id);
+                $data->order_id = Order::generateOrderID($data->id);
                 $data->save();
+ 
+                $request->session()->forget('user_data');
+                $request->session()->forget('order');
 
                 Log::setLog('ORORC','Create Order : '.$data->order_id);
                 return redirect()->route('order.index')->with('status','Successfully saved');
@@ -119,8 +126,12 @@ class OrderController extends Controller
     public function edit($id)
     {
         $data = Order::where('id', $id)->first();
-        $students = Student::all();
-        $teachers = Teacher::groupBy('user_id')->get();
+        if(session('role_id') == 4){
+            $students = Student::where('user_id', session('user_id'))->get();
+        }else{
+            $students = Student::all();
+        }
+        $teachers = Teacher::where('status', 1)->get();
         $courses = Course::where('status', 1)->get();
         $grades = Grade::all();
         $packages = Package::where('status', 1)->get();
@@ -221,5 +232,16 @@ class OrderController extends Controller
                 return redirect()->back()->withErrors($e->getMessage());
             }
         }
+    }
+
+    public function neworder(Request $request){
+        $data = str_replace("&"," ",$request->user_name);
+        $data.= "+".str_replace("&"," ",$request->user_phone);
+        $data.= "+".str_replace("&"," ",$request->user_school);
+        $data.= "+".str_replace("&"," ",$request->grade_id);
+        $order = str_replace("&"," ",$request->course_id);
+        $order.= "+".str_replace("&"," ",$request->package_id);
+
+        return redirect()->route('get_login_to_order', ['data'=>$data, 'order'=>$order]);
     }
 }

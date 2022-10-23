@@ -20,10 +20,19 @@ Route::group(['prefix' => 'google', 'namespace' => 'Auth', 'as' => 'google.'], f
 Route::get('/testuser','TestController@index');
 Route::get('/','HomeController@index')->name('getHome');
 // Route::get('/login','HomeController@index2')->name('getHome2');
+
+// Login Normal
 Route::get('/login', 'HomeController@get_login')->name('get_login');
 Route::post('login','HomeController@login')->name('Login');
 Route::get('/register', 'HomeController@get_register')->name('get_register');
 Route::post('register', 'HomeController@post_register')->name('post_register');
+
+// Login with order
+Route::get('/login/{user}/{order}', 'HomeController@get_login_to_order')->name('get_login_to_order');
+Route::post('login/{user}/{order}', 'HomeController@post_login_to_order')->name('post_login_to_order');
+// Register with order
+Route::get('/register/{user}/{order}', 'HomeController@get_register_to_order')->name('get_register_to_order');
+Route::post('register/{user}/{order}', 'HomeController@post_register_to_order')->name('post_register_to_order');
 
 // User Helper
 Route::get('checkUsernameAvailability','UserController@checkUsernameAvailability')->name('checkUsernameAvailability');
@@ -40,6 +49,8 @@ Route::get('maintenance', 'HomeController@maintenance')->name('maintenance');
 Route::get('pilihtemplate', 'TemplateController@index');
 
 Route::get('searchTeacherOrSubject', 'HelperController@searchTeacherOrSubject')->name('searchTeacherOrSubject');
+
+Route::post('/neworder', 'OrderController@neworder')->name('neworder');
 
 Route::middleware(['checkUser'])->group(function () {
     // Resources

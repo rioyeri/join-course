@@ -64,7 +64,7 @@
             <button class="btn btn-theme btn-round m-20" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
         @endif
         <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -77,7 +77,7 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order">
+            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order" width="100%">
                 <thead>
                     <th>No</th>
                     <th>Order ID</th>
@@ -183,6 +183,7 @@
     });
 
     function create_data(){
+        console.log("create")
         $.ajax({
             url : "{{route('order.create')}}",
             type : "get",
@@ -403,4 +404,23 @@
         }
     }
 </script>
+@if(session('order'))
+<script>
+    //  $.holdReady(true);
+    // setTimeout(function () {
+    //     // Setting a variable until
+    //     // document.ready is called
+    //     // const myVar = "GFG";
+    //     // $.holdReady(false);
+
+
+    //     console.log("timeout")
+    // }, 5000);
+
+    $(document).ready(function() {
+        create_data();
+        $(".modal").modal("show");
+    });
+</script>
+@endif
 @endsection

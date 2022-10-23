@@ -127,8 +127,7 @@
 
         .select2 {
             font-size: 14px;
-            /* height: 1%; */
-            height: 20px;
+            height: 25px;
         }
 
         h2{
@@ -217,7 +216,6 @@
 
         .select-box {
             margin : 31px auto;
-            /* padding-top: 10px; */
             padding-bottom: 10px;
         }
 
@@ -227,10 +225,7 @@
             outline: none;
             background: transparent;
             color: #000;
-            /* margin-left: 5%; */
-            /* margin-left: -15px; */
-            /* margin-top:2px; */
-            margin-top:10px;
+            margin-top:5px;
         }
 
         .select-box label {
@@ -267,14 +262,14 @@
             color: #000;
             /* margin-left: 5%; */
             margin-left: -15px;
-            /* margin-bottom:20px; */
-            margin-top:2.9px;
+            /* margin-top:2.9px; */
         }
 
         .mix-box .col-md-6 input {
             width: 100%;
             border-bottom: 1px solid #000;
             margin-left: 3%;
+            margin-top: 2px;
         }
 
         .mix-box .col-md-6 .select2 {
@@ -309,9 +304,6 @@
             outline: none;
             background: transparent;
             color: #000;
-            /* margin-left: 5%; */
-            /* margin-left: -15px; */
-            /* margin-top:2px; */
             margin-top:10px;
         }
 
@@ -336,16 +328,28 @@
         a:hover {
             color: #f82;
         }
+
+        .select2-container--default .select2-selection--single{
+            background-color: rgba(0,0,0,0);
+            border: rgba(0,0,0,0);
+        }
     </style>
 </head>
 
 <body>
+    @php
+        use App\Models\Order;
+        if($order && $data){
+            $user = Order::getFormatData($data, $order);
+        }
+    @endphp
+
     <!-- **********************************************************************************************************************************************************
         MAIN CONTENT
         *********************************************************************************************************************************************************** -->
     <div id="login-page">
         <div class="container">
-            @isset($user)
+            @isset($user->id)
             <form class="form-box" id="form" role="form" action="{{ route('storePassword', ['id' => $user->id]) }}" method="POST">
                 <h2>One Step Closer
                     <p class="small-text">You have try to login with <b>{{ $user->email }}<b> ( <a href="{{ route('Logout') }}" class="logout-google">Logout?</a>)</p>
@@ -356,11 +360,12 @@
             @endisset
 
                 @csrf
-
+                <input type="hidden" name="data" id="data" value="{{ $data }}">
+                <input type="hidden" name="order" id="order" value="{{ $order }}">
 
                 <div class="login-wrap">
                     <div class="form-inline input-box" id="email-box">
-                        <input type="email" name="email" id="email" placeholder="Email" autofocus required onchange="checkEmail(this.value)" value="@isset($user->email){{ $user->email }}@endisset" @isset($user) readonly @endisset>
+                        <input type="email" name="email" id="email" placeholder="Email" autofocus required onchange="checkEmail(this.value)" value="@isset($user->email){{ $user->email }}@endisset" @isset($user->email) readonly @endisset>
                         <span class="email-error" id="email-error" style="display: none;">Email Invalid</span>
                     </div>
                     <div class="form-inline input-box" id="username-box">
@@ -368,7 +373,7 @@
                         <span class="username-error" id="uname-error" style="display: none;">Username has been taken</span>
                     </div>
                     <div class="form-inline input-box" id="phone-box">
-                        <input type="text" name="phonenumber" id="phonenumber" placeholder="Whatsapp Number" autocomplete="off" required onchange="checkPhone(this.value)">
+                        <input type="text" name="phonenumber" id="phonenumber" placeholder="Whatsapp Number" autocomplete="off" required onchange="checkPhone(this.value)" value="@isset($user->phone){{ $user->phone }}@endisset">
                         <span class="phone-error" id="phone-error" style="display: none;">Phone Number Invalid</span>
                     </div>
                     <div class="form-inline input-box">
@@ -408,7 +413,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="select2 col-md-3" parsley-trigger="change" name="birthdate_year" id="birthdate_year" required style="width: 75%">
+                            <select class="select2 col-md-3" parsley-trigger="change" name="birthdate_year" id="birthdate_year" required style="width: 85%">
                                 <option value="#" disabled selected>Year</option>
                                 @for ($i=1950; $i <= date('Y'); $i++)
                                     <option value="{{$i}}">{{$i}}</option>
@@ -431,13 +436,21 @@
                     <div id="student-field">
                         <div class="form-inline mix-box">
                             <div class="col-md-6">
-                                <input type="text" name="school_name" id="school_name" placeholder="School Name">
+                                <input type="text" name="school_name" id="school_name" placeholder="School Name" value="@isset($user->school){{ $user->school }}@endisset">
                             </div>
                             <div class="col-md-6">
                                 <select class="form-control select2" parsley-trigger="change" name="student_grade" id="student_grade">
                                     <option value="#" disabled selected>-- Grade --</option>
                                     @foreach ($grades as $grade)
-                                        <option value="{{$grade->id}}" >{{$grade->name}}</option>
+                                        @isset($user->grade_id)
+                                            @if ($user->grade_id == $grade->id)
+                                                <option value="{{$grade->id}}" selected>{{$grade->name}}</option>
+                                            @else
+                                                <option value="{{$grade->id}}">{{$grade->name}}</option>
+                                            @endif
+                                        @else
+                                            <option value="{{$grade->id}}">{{$grade->name}}</option>
+                                        @endisset
                                     @endforeach
                                 </select>
                             </div>
@@ -464,7 +477,7 @@
                     <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-user"></i> Sign Up</button>
                 </div>
                 <h5 class="text-center">
-                    Already have account? <a href="{{ route('get_login') }}"> Sign In</a>
+                    Already have account? <a href="{{ route('get_login_to_order',['data'=> $data, 'order'=> $order]) }}"> Sign In</a>
                 </h5>
 
                 <h5 class="text-center">
@@ -474,7 +487,7 @@
         </div>
     </div>
 
-    
+
     @section ('js')
         <!-- Select2 -->
         <script src="{{ asset('dashboard/additionalplugins/select2/js/select2.min.js') }}" type="text/javascript"></script>
@@ -484,9 +497,7 @@
     @section('script-js')
         <script>
             $('.select2').select2({
-                theme: "themes-dark",
-                // width: 'resolve', // need to override the changed default
-                scrollAfterSelect:true,
+                // theme: "themes-dark",
             });
 
 

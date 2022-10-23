@@ -130,7 +130,7 @@ class ContentManagementController extends Controller
         $data = ContentHome::where('id', $id)->first();
         if($id != 1){
             if($id == 3){
-                $teachers = Teacher::all();
+                $teachers = Teacher::where('status', 1)->get();
                 $details = ContentHomeDetail::where('content_id', $id)->get();
                 $icons = BootstrapIcon::all();
                 return response()->json(view('dashboard.content.content-management.form',compact('data', 'details', 'icons','teachers'))->render());    

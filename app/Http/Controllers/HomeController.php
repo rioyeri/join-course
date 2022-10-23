@@ -15,6 +15,7 @@ use App\Models\Role;
 use App\Models\RoleMapping;
 use App\Models\MenuMapping;
 use App\Models\Grade;
+use App\Models\Package;
 use App\Models\Student;
 use App\Models\Teacher;
 
@@ -28,7 +29,10 @@ class HomeController extends Controller
             $content = ContentHome::getContent();
             $company_profile = ContentProfile::all();
             $promos = ContentPromo::getContent();
-            return view('landingpage.content.main',compact('content', 'company_profile','promos'));
+            $grades = Grade::all();
+            $packages = Package::all();
+            $courses = Course::all();
+            return view('landingpage.content.main',compact('content', 'company_profile','promos','grades','packages','courses'));
         }
     }
 
@@ -37,6 +41,16 @@ class HomeController extends Controller
             return redirect()->route('getHome');
         }else{
             return view('dashboard.login.login');
+        }
+    }
+
+    public function get_login_to_order(Request $request, $data, $order){
+        $data = $data;
+        $order = $order;
+        if ($request->session()->has('isLoggedIn')) {
+            return redirect()->route('getHome');
+        }else{
+            return view('dashboard.login.order-login',compact('data', 'order'));
         }
     }
 
@@ -61,17 +75,29 @@ class HomeController extends Controller
                     $foto = asset(User::getPhoto($user->id));
                 }
 
+                $role_id = $user->rolemapping()->first()->role_id;
                 $request->session()->put('role', $user->rolemapping()->first()->role()->first()->role_name);
-                $request->session()->put('role_id', $user->rolemapping()->first()->role_id);
+                $request->session()->put('role_id', $role_id);
                 $request->session()->put('username', $user->username);
                 $request->session()->put('name', $user->name);
                 $request->session()->put('user_id', $user->id);
                 $request->session()->put('photo', $foto);
                 $request->session()->put('isLoggedIn', 'Ya');
                 $request->session()->put('isItMaintenance', 'aktif');
-                // $request->session()->put('isItMaintenance', 'maintenance');
-                return redirect()->route('getHome');
 
+                if($role_id == 4){
+                    $student = Student::where('user_id', $user->id)->first();
+                    $request->session()->put('student_id', $student->id);
+                }
+                // $request->session()->put('isItMaintenance', 'maintenance');
+
+                if(isset($request->order)){
+                    $request->session()->put('user_data', $request->data);
+                    $request->session()->put('order', $request->order);
+                    return redirect()->route('order.index');
+                }else{
+                    return redirect()->route('getHome');
+                }
             // NOT FOUND
             }else{
                 return redirect()->route('get_login')->with('failed', 'tidak berhasil login');
@@ -90,11 +116,19 @@ class HomeController extends Controller
     }
 
     public function get_register(){
-        $roles = Role::whereNotIn('id', [1,2,3])->get();
+        $roles = Role::whereIn('id', [4,5])->get();
         $grades = Grade::all();
         $courses = Course::all();
 
         return view('dashboard.login.register',compact('roles', 'grades','courses'));
+    }
+
+    public function get_register_to_order($data, $order){
+        $roles = Role::whereIn('id', [4,5])->get();
+        $grades = Grade::all();
+        $courses = Course::all();
+
+        return view('dashboard.login.order-register',compact('roles', 'grades','courses','data','order'));
     }
 
     public function post_register(Request $request){
@@ -144,10 +178,27 @@ class HomeController extends Controller
                             // Teacher
                             Teacher::setData($user->id, $request->teacher_subjects);
                         }
-    
-                        $request->session()->flush();
-    
-                        return redirect()->route('getHome')->with('status','Sign up success. Please Sign In');
+                        if(isset($request->order)){
+                            if(substr($user->profilephoto,0,4) == "http"){
+                                $foto = $user->profilephoto;
+                            }else{
+                                $foto = asset(User::getPhoto($user->id));
+                            }
+                            $role_id = $user->rolemapping()->first()->role_id;
+                            $request->session()->put('role', $user->rolemapping()->first()->role()->first()->role_name);
+                            $request->session()->put('role_id', $role_id);
+                            $request->session()->put('username', $user->username);
+                            $request->session()->put('name', $user->name);
+                            $request->session()->put('user_id', $user->id);
+                            $request->session()->put('photo', $foto);
+                            $request->session()->put('isLoggedIn', 'Ya');
+                            $request->session()->put('user_data', $request->data);
+                            $request->session()->put('order', $request->order);
+                            return redirect()->route('order.index');
+                        }else{
+                            $request->session()->flush();
+                            return redirect()->route('getHome')->with('status','Sign up success. Please Sign In');
+                        }
                     }else{
                         return redirect()->back()->with('warning', 'Sign up failed!');
                     }

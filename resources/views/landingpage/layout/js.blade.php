@@ -8,7 +8,7 @@
 <script src="{{ asset('landingpage/assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
 <script src="{{ asset('landingpage/assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
 <script src="{{ asset('landingpage/assets/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
-<script src="{{ asset('landingpage/assets/vendor/php-email-form/validate.js') }}"></script>
+{{-- <script src="{{ asset('landingpage/assets/vendor/php-email-form/validate.js') }}"></script> --}}
 <!-- Toastr js -->
 <script src="{{ asset('dashboard/additionalplugins/toastr/toastr.min.js') }}"></script>
 <!-- Select2 -->

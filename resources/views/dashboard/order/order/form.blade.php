@@ -1,3 +1,10 @@
+@php
+    use App\Models\Order;
+    if(session('order') && session('user_data')){
+        $data = Order::getFormatData(session('user_data'), session('order'));
+    }
+@endphp
+
 <script>
     $(".select2").select2({
         width:'100%',
@@ -24,18 +31,24 @@
         <label class="col-sm-3 col-sm-3 control-label">Student</label>
         <div class="col-sm-9">
             <select class="form-control select2" parsley-trigger="change" name="student_id" id="student_id">
-                <option value="#" selected disabled>-- Select --</option>
-                @foreach ($students as $student)
-                    @isset($data->student_id)
-                        @if($data->student_id == $student->id)
-                            <option value="{{$student->id}}" selected>{{$student->student->name}}</option>
+                @if(count($students) == 1)
+                    @foreach ($students as $student)
+                        <option value="{{$student->id}}" selected>{{$student->student->name}}</option>
+                    @endforeach
+                @else
+                    <option value="#" selected disabled>-- Select --</option>
+                    @foreach ($students as $student)
+                        @isset($data->student_id)
+                            @if($data->student_id == $student->id)
+                                <option value="{{$student->id}}" selected>{{$student->student->name}}</option>
+                            @else
+                                <option value="{{$student->id}}" >{{$student->student->name}}</option>
+                            @endif
                         @else
-                            <option value="{{$student->id}}" >{{$student->student->name}}</option>
-                        @endif
-                    @else
-                        <option value="{{$student->id}}">{{$student->student->name}}</option>
-                    @endisset
-                @endforeach
+                            <option value="{{$student->id}}">{{$student->student->name}}</option>
+                        @endisset
+                    @endforeach
+                @endif
             </select>
         </div>
     </div>
@@ -122,8 +135,8 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-md-3 col-md-3 control-label">Select Date to Start</label>
-        <div class="col-md-9 col-xs-11">
+        <label class="col-sm-3 col-sm-3 control-label">Select Date to Start</label>
+        <div class="col-sm-9">
             {{-- <input type="text" class="form-control datepicker" name="course_start" id="course_start" value="@isset($data){{ $data->course_start }}@endisset"> --}}
             <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="course_start" id="course_start" value="@isset($data->course_start){{ $data->course_start }}@endisset">
             <span id="span_date" class="input-group-btn add-on" onclick="moveToBox()" style="padding-right: 39px;">
@@ -138,8 +151,18 @@
     </div>
 </form>
 
+@if (session('user_data') && session('order'))
 <script>
-// Date Picker
+    $(document).ready(function() {
+        var subject = $('#course_id').val();
+        if(subject != "#"){
+            get_teacher(subject);
+        }
+    })    
+</script>
+@endif
+<script>
+    // Date Picker
     jQuery('.datepicker').datepicker({
         todayHighlight: true,
         autoclose: true

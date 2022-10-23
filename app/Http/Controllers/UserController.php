@@ -183,7 +183,7 @@ class UserController extends Controller
 
     public function createPassword($id){
         $user = User::where('id', $id)->first();
-        $roles = Role::whereNotIn('id', [1,2,3])->get();
+        $roles = Role::whereIn('id', [4,5])->get();
         $grades = Grade::all();
         $courses = Course::all();
 
