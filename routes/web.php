@@ -48,7 +48,10 @@ Route::get('maintenance', 'HomeController@maintenance')->name('maintenance');
 // Template
 Route::get('pilihtemplate', 'TemplateController@index');
 
+// Helper Controller
 Route::get('searchTeacherOrSubject', 'HelperController@searchTeacherOrSubject')->name('searchTeacherOrSubject');
+Route::post('/search', 'HelperController@showSearchResult')->name('showSearchResult');
+Route::get('/showTeacherDetail/{id}', 'HelperController@showTeacherDetail')->name('showTeacherDetail');;
 
 Route::post('/neworder', 'OrderController@neworder')->name('neworder');
 

@@ -81,7 +81,7 @@ class ContentManagementController extends Controller
                     $title = $request->title;
                     $subtitle = $teacher->title;
                     $description = $teacher->description;
-                    $link = $request->link;
+                    $link = $teacher->id; // $link used to save teacher_id on table content home
                     $link_text = $request->link_text;
                     $image = $user->profilephoto;
                 }else{

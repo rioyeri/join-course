@@ -109,4 +109,42 @@ class Teacher extends Model
 
         return $response;
     }
+
+    public static function getTeacherListByCourse($courses){
+        $result = collect();
+        $teacher_ids = TeacherCourse::whereIn('course_id',$courses)->select('teacher_id')->get();
+        $teachers = Teacher::whereIn('id', $teacher_ids)->get();
+        foreach($teachers as $teacher){
+            if($teacher->teacher->profilephoto == null){
+                $image = asset('dashboard/assets/noimage.jpg');
+            }else{
+                $image = asset('dashboard/assets/users/photos/'.$teacher->teacher->profilephoto);
+            }
+            $detail = collect();
+            $detail->put('id', $teacher->id);
+            $detail->put('title', $teacher->title);
+            $detail->put('subtitle', $teacher->subtitle);
+            $detail->put('description', $teacher->description);
+            $detail->put('image', $image);
+            $result->push($detail);
+        }
+        return json_decode(json_encode($result), FALSE);
+    }
+
+    public static function getTeacherListByTeacherId($id){
+        $result = collect();
+        $teacher = Teacher::where('id', $id)->first();
+        if($teacher->teacher->profilephoto == null){
+            $image = asset('dashboard/assets/noimage.jpg');
+        }else{
+            $image = asset('dashboard/assets/users/photos/'.$teacher->teacher->profilephoto);
+        }
+        $result->put('name', $teacher->teacher->name);
+        $result->put('title', $teacher->title);
+        $result->put('description', $teacher->description);
+        $result->put('image', $image);
+
+        return json_decode(json_encode($result), FALSE);
+        // return $result;
+    }
 }

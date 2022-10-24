@@ -37,11 +37,11 @@
         }).done(function (data) {
             // console.log(data);
             if(data && data.length!=0){
-                icon.onclick = ()=>{
-                    webLink = `https://www.google.com/search?q=${userData}`;
-                    linkTag.setAttribute("href", webLink);
-                    linkTag.click();
-                }
+                // icon.onclick = ()=>{
+                //     webLink = `https://www.google.com/search?q=${userData}`;
+                //     linkTag.setAttribute("href", webLink);
+                //     linkTag.click();
+                // }
                 data = data.map((data)=>{
                     return data = '<li>'+data+'</li>';
                 });
@@ -64,11 +64,11 @@
     function select(element){
         let selectData = element.textContent;
         inputBox.value = selectData;
-        icon.onclick = ()=>{
-            webLink = `https://www.google.com/search?q=${selectData}`;
-            linkTag.setAttribute("href", webLink);
-            linkTag.click();
-        }
+        // icon.onclick = ()=>{
+        //     webLink = `https://www.google.com/search?q=${selectData}`;
+        //     linkTag.setAttribute("href", webLink);
+        //     linkTag.click();
+        // }
         searchWrapper.classList.remove("active");
     }
 
@@ -117,5 +117,23 @@
         element.style.visibility = "hidden";
         element.style.display = "none";
         // console.log(document.getElementById('loginForm'))
+    }
+    
+    function showDetail(id){
+        console.log(id);
+        $.ajax({
+            url : "/showTeacherDetail/"+id,
+            type : "get",
+            dataType: 'json',
+        }).done(function (data) {
+            $('#view-form').html(data);
+            $('#myModal').modal('show');
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function closeDetail(){
+        $('#myModal').modal('hide');
     }
 </script>

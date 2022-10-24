@@ -60,13 +60,24 @@ class ContentHome extends Model
                     $contents .= '<li> <strong>Contents</strong> :</li>';
                 }
                 foreach($details as $det){
-                    if($det->subtitle != null){
-                        $subtitle = '('.$det->subtitle.')';
+                    if($key->id == 3){
+                        $teacher = Teacher::where('id', $det->link)->first();
+                        if($teacher->title != null){
+                            $subtitle = '('.$teacher->title.')';
+                        }else{
+                            $subtitle = "";
+                        }
+                        $contents .= '<ul><strong>'.$j++.'. '.$teacher->teacher->name.' '.$subtitle.'</strong></ul>';
+                        $contents .= '<ul>'.$teacher->description.'</ul>';
                     }else{
-                        $subtitle = "";
+                        if($det->subtitle != null){
+                            $subtitle = '('.$det->subtitle.')';
+                        }else{
+                            $subtitle = "";
+                        }
+                        $contents .= '<ul><strong>'.$j++.'. '.$det->title.' '.$subtitle.'</strong></ul>';
+                        $contents .= '<ul>'.$det->description.'</ul>';
                     }
-                    $contents .= '<ul><strong>'.$j++.'. '.$det->title.' '.$subtitle.'</strong></ul>';
-                    $contents .= '<ul>'.$det->description.'</ul>';
                 }
             }
 
@@ -112,20 +123,36 @@ class ContentHome extends Model
                     $image = asset('dashboard/assets/noimage.jpg');
                 }else{
                     if($content->id == 3){
-                        $image = asset('dashboard/assets/users/photos/'.$det->image);
+                        $teacher_image = Teacher::where('id', $det->link)->first()->teacher->profilephoto;
+                        $image = asset('dashboard/assets/users/photos/'.$teacher_image);
                     }elseif($content->id == 4){
                         $image = asset('landingpage/assets/testimonial/photos/'.$det->image);
                     }else{
                         $image = $det->image;
                     }
                 }
+
+                if($content->id == 3){
+                    $teacher = Teacher::where('id', $det->link)->first();
+                    $title = $teacher->teacher->name;
+                    $subtitle = $teacher->title;
+                    $description = $teacher->description;
+                    $link = $det->link;
+                    $link_text = "";
+                }else{
+                    $title = $det->title;
+                    $subtitle = $det->subtitle;
+                    $description = $det->description;
+                    $link = $det->link;
+                    $link_text = $det->link_text;
+                }
                 $detail = collect();
-                $detail->put('title', $det->title);
-                $detail->put('subtitle', $det->subtitle);
-                $detail->put('description', $det->description);
+                $detail->put('title', $title);
+                $detail->put('subtitle', $subtitle);
+                $detail->put('description', $description);
                 $detail->put('image', $image);
-                $detail->put('link', $det->link);
-                $detail->put('link_text', $det->link_text);
+                $detail->put('link', $link);
+                $detail->put('link_text', $link_text);
                 $row_detail->push($detail);
             }
             $row->put('title', $content->title);
@@ -133,10 +160,6 @@ class ContentHome extends Model
             $row->put('detail', $row_detail);
             $result->push($row);
         }
-
-        // echo "<pre>";
-        // print_r($result);
-        // die;
 
         return json_decode(json_encode($result), FALSE);
     }

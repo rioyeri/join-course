@@ -101,34 +101,12 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
             <!-- <img src="assets/img/logo.png" alt=""> -->
             <h1>Flash<span>Academia</span></h1>
         </a>
+        @isset($content)
         <nav id="navbar" class="navbar">
             <ul>
-                <li><a href="#hero">Beranda</a></li>
                 <li><a href="#services">Tentang Kami</a></li>
-                {{-- <li><a href="#services">Services</a></li>
-                <li><a href="#portfolio">Portfolio</a></li> --}}
                 <li><a href="#team">Guru-guru</a></li>
-                {{-- <li><a href="blog.html">Blog</a></li> --}}
-                {{-- <li class="dropdown"><a href="#"><span>Drop Down</span> <i
-                            class="bi bi-chevron-down dropdown-indicator"></i></a>
-                    <ul>
-                        <li><a href="#">Drop Down 1</a></li>
-                        <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i
-                                    class="bi bi-chevron-down dropdown-indicator"></i></a>
-                            <ul>
-                                <li><a href="#">Deep Drop Down 1</a></li>
-                                <li><a href="#">Deep Drop Down 2</a></li>
-                                <li><a href="#">Deep Drop Down 3</a></li>
-                                <li><a href="#">Deep Drop Down 4</a></li>
-                                <li><a href="#">Deep Drop Down 5</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Drop Down 2</a></li>
-                        <li><a href="#">Drop Down 3</a></li>
-                        <li><a href="#">Drop Down 4</a></li>
-                    </ul>
-                </li> --}}
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#contact">Pesan Sekarang</a></li>
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle" id="login" onclick="showLoginForm()">
                         Login
@@ -165,8 +143,29 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
                 <!-- settings end -->
             </ul>
         </nav><!-- .navbar -->
+        @endisset
         <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
         <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
     </div>
 </header><!-- End Header -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Flash Academia</h4>
+                <a href="javascript:;" class="close btn btn-round" data-dismiss="modal" aria-hidden="true" onclick="closeDetail()">&times; Tutup</a>
+            </div>
+            <div class="modal-body" id="view-form">
+            </div>
+            {{-- <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
+                <button type="button" class="btn btn-primary">Submit</button>
+            </div> --}}
+        </div>
+    </div>
+</div>
+
+
 <!-- End Header -->

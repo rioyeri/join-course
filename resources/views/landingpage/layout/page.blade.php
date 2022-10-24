@@ -2,7 +2,6 @@
 <html>
 @include('landingpage.layout.head')
 <body>
-    {{-- @include('landingpage.layout.header') --}}
     @include('landingpage.layout.navigation')
     @yield('content')
     @include('landingpage.layout.footer')

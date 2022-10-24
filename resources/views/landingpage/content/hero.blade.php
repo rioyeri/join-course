@@ -81,6 +81,8 @@
         font-size: 20px;
         color: #008374;
         cursor: pointer;
+        border: rgba(0,0,0,0);
+        background-color: rgba(0,0,0,0); 
     }
 
     @media (max-width: 1200px) {
@@ -102,12 +104,15 @@
                 <h2>{{ $content[0]->title }}</h2>
                 <p>{{ $content[0]->subtitle }}</p>
                 <div class="wrapper">
-                    <div class="search-input">
-                        <input type="text" id="searchbox" placeholder="Apa yang ingin Anda Pelajari" onkeyup="searchTeacherOrSubject()">
-                        <div class="autocom-box">
+                    <form action="{{ route('showSearchResult') }}" method="POST">
+                        @csrf
+                        <div class="search-input">
+                            <input type="text" name="searchbox" id="searchbox" placeholder="Apa yang ingin Anda Pelajari" onkeyup="searchTeacherOrSubject()">
+                            <div class="autocom-box">
+                            </div>
+                            <button class="icon" type="submit"><i class="fa fa-search"></i></button>
                         </div>
-                        <div class="icon"><i class="fa fa-search"></i></div>
-                    </div>
+                    </form>
                 </div>
             </div>
             <div class="col-lg-6 order-1 order-lg-2">

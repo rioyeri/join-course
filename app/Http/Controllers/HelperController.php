@@ -9,6 +9,8 @@ use App\Models\Teacher;
 use App\Models\TeacherCourse;
 use App\Models\TeacherPrice;
 use App\Models\User;
+use App\Models\ContentProfile;
+use App\Models\ContentHome;
 
 class HelperController extends Controller
 {
@@ -72,6 +74,17 @@ class HelperController extends Controller
         return response()->json($result);
     }
 
+    public function showSearchResult(Request $request){
+        $keyword = $request->searchbox;
+        $courses = Course::where(function ($query) use ($keyword){
+            $query->orWhere('name', 'LIKE', $keyword.'%')->orWhere('topic', 'LIKE', $keyword.'%');
+        })->where('status', 1)->select('id')->get();
+
+        $results = Teacher::getTeacherListByCourse($courses);
+        $company_profile = ContentProfile::all();
+        return view('landingpage.content.searchresult', compact('company_profile', 'keyword', 'results'));
+    }
+
     public function getAllTeacherData(){
         $result = array();
         $teachers = Teacher::where('status', 1)->get();
@@ -102,5 +115,10 @@ class HelperController extends Controller
         $order = Order::where('id', $request->id)->first();
 
         return response()->json($order->order_bill);
+    }
+
+    public function showTeacherDetail($id){
+        $teacher = Teacher::getTeacherListByTeacherId($id);
+        return response()->json(view('landingpage.layout.profile',compact('teacher'))->render());
     }
 }
