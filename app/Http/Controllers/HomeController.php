@@ -23,8 +23,9 @@ class HomeController extends Controller
 {
     public function index(Request $request){
         if ($request->session()->has('isLoggedIn')) {
-            $page = "HOME";
-            return view('dashboard.home.index',compact('page'));
+            // $page = "HOME";
+            // return view('dashboard.home.index',compact('page'));
+            return redirect()->route('home.index');
         }else{
             $content = ContentHome::getContent();
             $company_profile = ContentProfile::all();
@@ -100,7 +101,12 @@ class HomeController extends Controller
                 }
             // NOT FOUND
             }else{
-                return redirect()->route('get_login')->with('failed', 'tidak berhasil login');
+                if(isset($request->order)){
+                    return redirect()->route('get_login_to_order')->with('failed', 'tidak berhasil login');
+                }else{
+                    return redirect()->route('get_login')->with('failed', 'tidak berhasil login');
+
+                }
             }
         }
     }

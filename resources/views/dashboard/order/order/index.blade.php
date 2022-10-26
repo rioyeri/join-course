@@ -10,7 +10,7 @@
     <link href="{{ asset('dashboard/additionalplugins/datatables/select.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Select2 -->
     <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    {{-- Date Picker --}}
+    <!-- Date Picker -->
     <link href="{{ asset('dashboard/additionalplugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
     <!-- Sweet Alert css -->
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -142,8 +142,8 @@
                 {data : "package_name", name : "package_name"},
                 {data : "status", name : "status", orderable : false},
                 {data : "course_start", name : "course_start"},
-                {data : "order_bill", name : "order_bill"},
-                {data : "bill_paid", name : "bill_paid"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_status", name : "payment_status", orderable : false},
                 {data : "options", name : "options", orderable : false, searchable : false,}
             ],

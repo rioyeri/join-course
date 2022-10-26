@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\Teacher;
 use App\Models\Student;
-use App\Models\User;
 use App\Models\Grade;
 use App\Models\Course;
 use App\Models\Package;

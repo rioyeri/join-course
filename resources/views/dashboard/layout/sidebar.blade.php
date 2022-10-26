@@ -15,13 +15,13 @@ MAIN SIDEBAR MENU
             <h5 class="centered">{{ session('username') }}</h5>
             <h6 class="centered">{{ session('name') }}</h6>
             <li class="mt">
-                <a @if($page == "HOME") class="active" @endif class="" href="{{ route('getHome') }}">
+                <a @if(substr($page, 0,2) == "DS") class="active" @endif href="{{ route('getHome') }}">
                     <i class="fa fa-home"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             @if(session('role_id') == 1 || session('role_id') == 2)
-                @foreach (Modul::getAllModul() as $modul)
+                @foreach (Modul::getAllModul("sidebar") as $modul)
                     <li class="sub-menu">
                         <a @if(substr($page, 0,2) == $modul->modul_id) class="active" @endif href="javascript:;">
                             <i class="{{$modul->modul_icon}}"></i>

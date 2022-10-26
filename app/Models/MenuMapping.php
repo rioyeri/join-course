@@ -74,7 +74,7 @@ class MenuMapping extends Model
         INNER JOIN modul_submapping sm ON sm.id = mm.submapping_id 
         INNER JOIN modul_submodul s ON s.submodul_id = sm.submodul_id
         INNER JOIN modul m ON m.modul_id = s.modul_id
-        WHERE mm.role_id=$role_id ORDER BY m.urutan ASC");
+        WHERE mm.role_id=$role_id AND m.modul_id!='DS' ORDER BY m.urutan ASC");
     }
 
     public static function getMap($role_id,$submodul){

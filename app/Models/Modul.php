@@ -11,7 +11,11 @@ class Modul extends Model
         'modul_id', 'modul_desc','modul_icon','urutan'
     ];
 
-    public static function getAllModul(){
-        return Modul::orderBy('urutan','asc')->get();
+    public static function getAllModul($type=null){
+        if($type=="sidebar"){
+            return Modul::where('modul_id', '!=', "DS")->orderBy('urutan','asc')->get();
+        }else{
+            return Modul::orderBy('urutan','asc')->get();
+        }
     }
 }

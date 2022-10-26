@@ -57,7 +57,7 @@ class User extends Model
                     $first = "o";
                 }
 
-                $file = 'assets/images/letters/'.$first.".jpg";
+                $file = 'dashboard/assets/letters/'.$first.".jpg";
             }
         }else{
             $first = strtolower(substr($user->username, 0,1));

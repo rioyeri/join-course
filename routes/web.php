@@ -90,6 +90,8 @@ Route::middleware(['checkUser'])->group(function () {
         'companyprofile' => 'CompanyProfileController', 
         // Content Promo
         'contentpromo' => 'ContentPromoController',
+        // Dashboard
+        'home' => 'DashboardController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');

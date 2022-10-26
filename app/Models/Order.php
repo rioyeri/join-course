@@ -126,6 +126,8 @@ class Order extends Model
                 $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
             }
 
+            $bill_paid = OrderPayment::where('order_id', $key->id)->where('payment_confirmation', 1)->sum('payment_amount');
+
             $detail->put('no', $i++);
             $detail->put('order_id', $key->order_id);
             $detail->put('student_name', $key->student_name);
@@ -136,7 +138,7 @@ class Order extends Model
             $detail->put('status', $status);
             $detail->put('course_start', $key->course_start);
             $detail->put('order_bill', $key->order_bill);
-            $detail->put('bill_paid', "Belum di set");
+            $detail->put('bill_paid', $bill_paid);
             $detail->put('payment_status', $payment_status);
             $detail->put('options', $options);
             $data->push($detail);
@@ -174,5 +176,89 @@ class Order extends Model
         );
 
         return json_decode(json_encode($data),FALSE);
+    }
+
+    public static function dataDashboard(Request $request){
+        $draw = $request->draw;
+        $row = $request->start;
+        $rowperpage = $request->length; // Rows display per page
+        $columnIndex = $request['order'][0]['column']; // Column index
+        $columnName = $request['columns'][$columnIndex]['data']; // Column name
+        $columnSortOrder = $request['order'][0]['dir']; // asc or desc
+        $searchValue = $request['search']['value']; // Search value
+
+        $page_schedule = MenuMapping::getMap(session('role_id'),"DSSC");
+        $page_report = MenuMapping::getMap(session('role_id'),"DSRP");
+        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status')->where('order_status', 1);
+
+        if(session('role_id') == 4){
+            $order->where('us.id', session('user_id'));
+        }elseif(session('role_id') == 5){
+            $order->where('ut.id', session('user_id'));
+        }
+    
+        $totalRecords = $order->count();
+
+        if($searchValue != ''){
+            $order->where(function ($query) use ($searchValue) {
+                $query->orWhere('order.order_id', 'LIKE', '%'.$searchValue.'%')->orWhere('us.name', 'LIKE', '%'.$searchValue.'%')->orWhere('ut.name', 'LIKE', '%'.$searchValue.'%')->orWhere('c.name', 'LIKE', '%'.$searchValue.'%')->orWhere('grade_id', 'LIKE', '%'.$searchValue.'%')->orWhere('p.name', 'LIKE', '%'.$searchValue.'%');
+            });
+        }
+
+        $totalRecordwithFilter = $order->count();
+
+        if($columnName == "no"){
+            $order->orderBy('id', $columnSortOrder);
+        }else{
+            $order->orderBy($columnName, $columnSortOrder);
+        }
+
+        $order = $order->offset($row)->limit($rowperpage)->get();
+
+        $data = collect();
+        $i = $row+1;
+
+        foreach($order as $key){
+            $detail = collect();
+
+            $today = date('Y-m-d');
+            $orderdet = OrderDetail::where('order_id', $key->id)->where('schedule_time', '>=', $today)->orderBy('schedule_time', 'asc')->get();
+            if($orderdet->count() == 0){
+                $this_schedule = "There is no schedule";
+            }else{
+                $date = date_create($orderdet[0]->schedule_time);
+                $this_schedule = date_format($date, "D, d-m-Y H:i:s");
+            }
+
+            $schedule = "";
+            if(array_search("DSSCV", $page_schedule)){
+                $schedule .= '<a href="" onclick="view_schedule('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-calendar"></i> '.$this_schedule.'</a> ';
+            }
+
+            $report = "";
+            if(array_search("DSRPV", $page_report)){
+                $report .= '<a href="" onclick="view_report('.$key->id.')" data-toggle="modal" data-target="#myModal" class="btn btn-sm btn-info"><i class="fa fa-file-text"></i> See Report</a>';
+            }
+
+            $detail->put('no', $i++);
+            $detail->put('order_id', $key->order_id);
+            $detail->put('student_name', $key->student_name);
+            $detail->put('grade_id', $key->get_grade->name);
+            $detail->put('course_name', $key->course_name);
+            $detail->put('teacher_name', $key->teacher_name);
+            $detail->put('package_name', $key->package_name);
+            $detail->put('schedule', $schedule);
+            $detail->put('report', $report);
+            $data->push($detail);
+        }
+
+        $response = array(
+            'draw' => intval($draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecordwithFilter,
+            'data' => $data,
+        );
+
+        return $response;
     }
 }

@@ -3,7 +3,7 @@
         width:'100%',
     });
 </script>
-<h4 class="mb"><i class="fa fa-angle-right"></i> Teacher's Subject : {{ $data->teacher->name }}</h4>
+<h4 class="mb"><i class="fa fa-angle-right"></i> Teacher's Package : {{ $data->teacher->name }}</h4>
 <form class="form-horizontal style-form" method="post" action="{{ route('setTeacherPrice', ['id' => $data->id]) }}">
     {{ method_field('PUT') }}
     @csrf
