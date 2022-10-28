@@ -57,10 +57,18 @@ class LoginController extends Controller
 
         // NOT FOUND
         if(!$user_exist){
+            // GET AVATAR
+            $fileContents = file_get_contents($user->avatar);
+            $arr = explode("@", $user->email, 2);
+            $username = $arr[0];
+            $avatar = $username.'.jpg';
+            $path = public_path().'/dashboard/assets/users/photos/'.$avatar;
+            file_put_contents($path, $fileContents);
+
             $user_exist = new User(array(
                 'name' => $user->name,
                 'google_id' => $user->id,
-                'profilephoto' => $user->avatar,
+                'profilephoto' => $avatar,
                 'email' => $user->email,
                 'regis_date' => now(),    
             ));
@@ -71,11 +79,11 @@ class LoginController extends Controller
             return redirect()->route('createPassword', ['id' => $user_exist->id,]);
         }
 
-        if(substr($user_exist->profilephoto,0,4) == "http"){
-            $foto = $user_exist->profilephoto;
-        }else{
-            $foto = asset(User::getPhoto($user_exist->id));
-        }
+        $foto = asset(User::getPhoto($user_exist->id));
+
+        User::where('id', $user_exist->id)->update(array(
+            "last_login" => now(),
+        ));
 
         $request->session()->put('username', $user_exist->username);
         $request->session()->put('role', $user_exist->rolemapping()->first()->role()->first()->role_name);

@@ -3586,3 +3586,25 @@ ul.chat-available-user li a:hover {
     text-align:center;
     margin-bottom:40px;
 }
+
+.btn-setting {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 20%;
+    padding: 3px 5px 3px 5px;
+    /* border-color: #a9a9a9;
+    color : #a9a9a9;
+    background-color: #f82; */
+    /* border-color: #008374;
+    color : #008374; */
+    color : #fff;
+    border-color: #fff;
+    /* background-color: #a9a9a9; */
+}
+
+.btn-setting:hover {
+    /* color : #fff;
+    border-color: #fff; */
+    border-color: #f82;
+    color : #f82;
+}

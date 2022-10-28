@@ -243,4 +243,33 @@ class TeacherController extends Controller
         }
     }
 
+    public function updateTeacherProfile(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required',
+            'location' => 'required',
+            'teacher_subjects' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try{
+                $teacher = Teacher::where('id', $id)->first();
+                $teacher->title = $request->title;
+                $teacher->description = $request->description;
+                $teacher->location = $request->location;
+                $teacher->save();
+
+                TeacherCourse::setData($id, $request->teacher_subjects);
+                TeacherPrice::setData($id, $request->package_id, $request->package_price);
+
+                Log::setLog('MDTCU','Update Teacher Profile : '.$teacher->teacher->name);
+                return redirect()->route('viewProfile')->with('status','Successfully saved');
+            }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
+    }
 }

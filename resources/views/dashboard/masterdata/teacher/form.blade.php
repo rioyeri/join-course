@@ -35,7 +35,7 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Your Title</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="title" id="title" placeholder="Misal: Guru Matematika, Pelatih Renang" @isset($data) value="{{ $data->title }}" disabled @endisset>
+            <input type="text" class="form-control" name="title" id="title" placeholder="Misal: Guru Matematika, Pelatih Renang" @isset($data->title) value="{{ $data->title }}" disabled @endisset>
         </div>
     </div>
     <div class="form-group">
@@ -47,7 +47,7 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Your Location</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="location" id="location" placeholder="Misal: Kota Bandung" @isset($data) value="{{ $data->location }}" disabled @endisset>
+            <input type="text" class="form-control" name="location" id="location" placeholder="Misal: Kota Bandung" @isset($data->location) value="{{ $data->location }}" disabled @endisset>
         </div>
     </div>
     @isset($data)

@@ -11,6 +11,8 @@
 
     <title>@yield('title') | Flash Academy</title>
 
+    <!-- Magnific Pop-up-->
+    <link rel="stylesheet" href="{{ asset('dashboard/additionalplugins/magnific-popup/dist/magnific-popup.css') }}"/>
     @yield('css')
     <!-- Notification css (Toastr) -->
     <link href="{{ asset('dashboard/additionalplugins/toastr/toastr.min.css') }}" rel="stylesheet" type="text/css" />

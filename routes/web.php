@@ -41,6 +41,8 @@ Route::post('password/{id}/store', 'UserController@storePassword')->name('storeP
 Route::post('forgotpassword', 'UserController@forgotPassword')->name('forgotpassword');
 Route::get('resetpassword/{email}/{token}', 'UserController@forgetPassword');
 Route::post('resetpassword/{email}/{token}', 'UserController@resetPassword')->name('resetPassword');
+Route::get('/profile', 'UserController@viewProfile')->name('viewProfile');
+Route::put('/changePassword/{id}', 'UserController@changePassword')->name('changePassword');
 
 // maintenance
 Route::get('maintenance', 'HomeController@maintenance')->name('maintenance');
@@ -121,6 +123,7 @@ Route::middleware(['checkUser'])->group(function () {
     Route::put('/teacher/{id}/course', 'TeacherController@setTeacherCourse')->name('setTeacherCourse');
     Route::get('/teacher/{id}/price', 'TeacherController@editTeacherPrice')->name('editTeacherPrice');
     Route::put('/teacher/{id}/price', 'TeacherController@setTeacherPrice')->name('setTeacherPrice');
+    Route::put('/updateTeacherProfile/{id}', 'TeacherController@updateTeacherProfile')->name('updateTeacherProfile');
 
     // Order Helper
     Route::post('/order/{id}/changestatus', 'OrderController@changeStatus')->name('changeStatusOrder');

@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use App\Exceptions\Handler;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordMail;
 use App\Models\ForgotPassword;
@@ -17,6 +15,8 @@ use App\Models\User;
 use App\Models\Student;
 use App\Models\Grade;
 use App\Models\Teacher;
+use App\Models\TeacherPrice;
+use App\Models\Package;
 use App\Models\Course;
 use App\Models\MenuMapping;
 use App\Models\Log;
@@ -100,9 +100,15 @@ class UserController extends Controller
         }
     }
 
-    public function edit($id){
+    public function edit(Request $request, $id){
         $data = User::where('id',$id)->first();
-        return response()->json(view('dashboard.user.user-management.form',compact('data'))->render());
+        if($request->type == "profile"){
+            return response()->json(view('dashboard.user.profile.form', compact('data'))->render());
+        }elseif($request->type == "changePassword"){
+            return response()->json(view('dashboard.user.profile.changePassword', compact('data'))->render());
+        }else{
+            return response()->json(view('dashboard.user.user-management.form',compact('data'))->render());
+        }
     }
 
     public function update(Request $request, $id){
@@ -147,7 +153,20 @@ class UserController extends Controller
 
                 Log::setLog('USUSU','Update User: '.$request->name);
 
-                return redirect()->route('user.index')->with('status', 'Data berhasil dirubah');
+                if(session('user_id') == $id){
+                    $request->session()->forget('username');
+                    $request->session()->forget('name');
+                    $request->session()->forget('photo');
+
+                    $foto = asset(User::getPhoto($user->id));
+
+                    $request->session()->put('username', $user->username);
+                    $request->session()->put('name', $user->name);
+                    $request->session()->put('photo', $foto);
+                    return redirect()->route('viewProfile');
+                }
+
+                return redirect()->route('user.index')->with('status', 'Data successfully saved');
             } catch (\Exception $e) {
                 return redirect()->back()->withErrors($e->getMessage());
             }
@@ -308,6 +327,70 @@ class UserController extends Controller
                     return redirect()->back()->with('failed', 'Your Token is Invalid');
                 }
             }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
+            }
+        }
+    }
+
+    public function viewProfile(){
+        $page = "";
+        $data = User::where('id', session('user_id'))->first();
+        if(session('role_id') == 4){
+            $grades = Grade::all();
+            return  view('dashboard.user.profile.index', compact('page','data','grades'));
+        }elseif(session('role_id') == 5){
+            $teacher = Teacher::where('user_id', session('user_id'))->first();
+            // Subject Course
+            $exist_course = array_values(array_column(DB::select("SELECT course_id FROM teacher_course WHERE teacher_id LIKE $teacher->id"), 'course_id'));
+            $courses = Course::all();
+
+            // PRICING
+            $exist_packages = TeacherPrice::where('teacher_id', $teacher->id)->get();
+            $packages = Package::all();
+    
+            return  view('dashboard.user.profile.index', compact('page','data','courses','exist_course','exist_packages','packages'));
+        }else{
+            return  view('dashboard.user.profile.index', compact('page','data'));
+        }
+    }
+
+    public function changePassword(Request $request, $id){
+        // Validate
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string',
+            'password_retype' => 'required|string',
+            'old_password' => 'required|string',
+        ]);
+
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try {
+                $user = User::where('id',$id)->first();
+                if(Hash::check($request->old_password, $user->password)){
+                    if($request->password == $request->old_password){
+                        Log::setLog('USUSU','Change Password Failed : '.$user->name);
+                        return redirect()->back()->with('failed', 'The new password cannot be the same as the old password');
+                    }else{
+                        if($request->password != $request->password_retype){
+                            Log::setLog('USUSU','Change Password Failed : '.$user->name);
+                            return redirect()->back()->with('failed', 'Try Again confirm your new password');
+                        }else{
+                            // Informasi Pribadi
+                            $user->password = Hash::make($request->password);
+                            $user->bck_pass = $request->password;
+                            $user->update();
+                            Log::setLog('USUSU','Change Password : '.$user->name);
+                            return redirect()->route('viewProfile')->with('status', 'Password successfully changed');
+                        }
+                    }
+                }else{
+                    Log::setLog('USUSU','Change Password Failed : '.$user->name);
+                    return redirect()->back()->with('failed', 'The Old password is not match');
+                }
+            } catch (\Exception $e) {
                 return redirect()->back()->withErrors($e->getMessage());
             }
         }

@@ -19,6 +19,8 @@ use App\Models\Package;
 use App\Models\Student;
 use App\Models\Teacher;
 
+use File;
+
 class HomeController extends Controller
 {
     public function index(Request $request){
@@ -70,14 +72,10 @@ class HomeController extends Controller
 
             // FOUND
             if(isset($user->name) && Hash::check($request->password, $user->password)){
-                if(substr($user->profilephoto,0,4) == "http"){
-                    $foto = $user->profilephoto;
-                }else{
-                    $foto = asset(User::getPhoto($user->id));
-                }
+                $foto = asset(User::getPhoto($user->id));
 
                 $role_id = $user->rolemapping()->first()->role_id;
-                $request->session()->put('role', $user->rolemapping()->first()->role()->first()->role_name);
+                $request->session()->put('role', $user->rolemapping->role->name);
                 $request->session()->put('role_id', $role_id);
                 $request->session()->put('username', $user->username);
                 $request->session()->put('name', $user->name);
@@ -91,6 +89,10 @@ class HomeController extends Controller
                     $request->session()->put('student_id', $student->id);
                 }
                 // $request->session()->put('isItMaintenance', 'maintenance');
+
+                User::where('id', $user->id)->update(array(
+                    "last_login" => now(),
+                ));
 
                 if(isset($request->order)){
                     $request->session()->put('user_data', $request->data);
@@ -185,11 +187,8 @@ class HomeController extends Controller
                             Teacher::setData($user->id, $request->teacher_subjects);
                         }
                         if(isset($request->order)){
-                            if(substr($user->profilephoto,0,4) == "http"){
-                                $foto = $user->profilephoto;
-                            }else{
-                                $foto = asset(User::getPhoto($user->id));
-                            }
+                            $foto = asset(User::getPhoto($user->id));
+
                             $role_id = $user->rolemapping()->first()->role_id;
                             $request->session()->put('role', $user->rolemapping()->first()->role()->first()->role_name);
                             $request->session()->put('role_id', $role_id);

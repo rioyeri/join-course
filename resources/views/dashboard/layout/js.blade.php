@@ -9,7 +9,8 @@
 <script src="{{ asset('dashboard/additionalplugins/numberformat/numberformat.js') }}"></script>
 <!-- Toastr js -->
 <script src="{{ asset('dashboard/additionalplugins/toastr/toastr.min.js') }}"></script>
-
+<!-- Magnific popup -->
+<script type="text/javascript" src="{{ asset('dashboard/additionalplugins/magnific-popup/dist/jquery.magnific-popup.min.js') }}"></script>
 @yield('js')
 
 <!--common script for all pages-->
@@ -17,7 +18,6 @@
 <script src="{{ asset('dashboard/lib/numberformat.js') }}"></script>
 
 <!--script for this page-->
-
 @if (session('status'))
     <script>
         var status = "{{session('status')}}";

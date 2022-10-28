@@ -12,6 +12,7 @@ class User extends Model
 {
     use SoftDeletes;
     protected $table ='users';
+    protected $dates = ['deleted_at'];
     protected $fillable = [
         'username', 'password','bck_pass','name','last_login','login_status','address','phone','idnumber','email','birthdate','birthplace','regis_date','profilephoto','google_id'
     ];
@@ -22,6 +23,14 @@ class User extends Model
 
     public function rolemapping(){
         return $this->belongsTo('App\Models\RoleMapping','username','username');
+    }
+
+    public function get_teacher(){
+        return $this->belongsTo('App\Models\Teacher','id','user_id');
+    }
+
+    public function get_student(){
+        return $this->belongsTo('App\Models\Student','id','user_id');
     }
 
     public static function getBirthday(){
@@ -48,7 +57,7 @@ class User extends Model
     public static function getPhoto($id_user){
         $user = User::where('id', $id_user)->first();
         if($user->profilephoto != null){
-            $file = 'dashboard/assets/images/users/photos/'.$user->profilephoto;
+            $file = 'dashboard/assets/users/photos/'.$user->profilephoto;
 
             if(!file_exists($file)){
                 $first = strtolower(substr($user->username, 0,1));

@@ -211,11 +211,7 @@
                         if(data == null){
                             var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
                         }else{
-                            if(data.substring(0,4) != "http"){
-                                var $image = '<a href="dashboard/assets/users/photos/'+data+'" class="image-popup"><img class="output text-center" src="dashboard/assets/users/photos/'+data+'"></a>';
-                            }else{
-                                var $image = '<a href="'+data+'" class="image-popup"><img class="output text-center" src="'+data+'"></a>';
-                            }
+                            var $image = '<a href="dashboard/assets/users/photos/'+data+'" class="image-popup"><img class="output text-center" src="dashboard/assets/users/photos/'+data+'"></a>';
                         }
                         return $image;
                     },

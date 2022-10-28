@@ -124,12 +124,18 @@ class StudentController extends Controller
         // Validation success
         }else{
             try{
-                Student::where('id', $id)->update(array(
+                $data = Student::where('id', $id)->update(array(
                     'school_name' => $request->school_name,
                     'student_grade' => $request->student_grade,
                 ));
-                Log::setLog('MDSTC','Update Student : '.$id);
-                return redirect()->route('student.index')->with('status','Successfully saved');
+                if($request->type=="profile"){
+                    $student = Student::where('id', $id)->first();
+                    Log::setLog('MDSTC','Update Student Profile : '.$student->student->name);
+                    return redirect()->route('viewProfile')->with('status','Successfully saved');    
+                }else{
+                    Log::setLog('MDSTC','Update Student : '.$id);
+                    return redirect()->route('student.index')->with('status','Successfully saved');    
+                }
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
             }
