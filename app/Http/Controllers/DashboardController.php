@@ -26,8 +26,13 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         if($request->ajax()){
-            $datas = Order::dataDashboard($request);
-            echo json_encode($datas);
+            if($request->type == "ongoing-order"){
+                $datas = Order::dataOngoingDashboard($request);
+                echo json_encode($datas);
+            }elseif($request->type == "notyet-confirm-order"){
+                $datas = Order::dataNotYetConfirmDashboard($request);
+                echo json_encode($datas);
+            }
         }else{
             if(session('role_id') == 5){
                 // Teacher

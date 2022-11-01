@@ -13,8 +13,9 @@ use App\Models\Package;
 use App\Models\Log;
 use App\Models\MenuMapping;
 use App\Models\RecycleBin;
+use App\Models\OrderPayment;
 
-use function PHPSTORM_META\map;
+use PDF;
 
 class OrderController extends Controller
 {
@@ -219,13 +220,16 @@ class OrderController extends Controller
 
                 if($request->status == 2){
                     $text_log = "Finishing Order : ".$data->id;
-                }if($request->status == 1){
+                }elseif($request->status == 1){
                     $text_log = "Approve Order : ".$data->id;
+                }elseif($request->status == -1){
+                    $text_log = "Decline Order : ".$data->id;
                 }else{
                     $text_log = "Cancel Order : ".$data->id;
                 }
 
                 $data->order_status = $request->status;
+                $data->approve_by = session('user_id');
                 $data->save();
 
                 Log::setLog('MDTCS', $text_log);
@@ -237,6 +241,8 @@ class OrderController extends Controller
     }
 
     public function neworder(Request $request){
+        ini_set('max_execution_time', 30000);
+
         $data = str_replace("&"," ",$request->user_name);
         $data.= "+".str_replace("&"," ",$request->user_phone);
         $data.= "+".str_replace("&"," ",$request->user_school);
@@ -245,5 +251,61 @@ class OrderController extends Controller
         $order.= "+".str_replace("&"," ",$request->package_id);
 
         return redirect()->route('get_login_to_order', ['data'=>$data, 'order'=>$order]);
+    }
+
+    public function getInvoice(Request $request, $order_id){
+        ini_set('max_execution_time', 6000);
+        $data = collect();
+        $order = Order::where('id', $order_id)->first();
+        $order_detail = Order::where('id', $order_id)->get();
+        $paid = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
+
+        $subtotal = 0;
+        $items = collect();
+        foreach($order_detail as $detail){
+            $item = collect();
+            $item->put('package_name', $detail->get_package->name);
+            $item->put('course_name', $detail->get_course->name);
+            $item->put('grade', $detail->get_grade->name);
+            $item->put('teacher_name', $detail->get_teacher->teacher->name);
+            $item->put('order_bill', $detail->order_bill);
+            $items->push($item);
+            $subtotal+=$detail->order_bill;
+        }
+
+        $tax_name = "";
+        $data->put('invoice_id', $order->order_id);
+        $data->put('date', date('d-m-Y'));
+        $data->put('student_name', $order->get_student->student->name);
+        $data->put('student_phone', $order->get_student->student->phone);
+        $data->put('items', $items);
+        $data->put('subtotal', $subtotal);
+        if($tax_name != ""){
+            $tax_value = $subtotal/100*11;
+            $data->put('tax_name', $tax_name);
+            $data->put('tax_value', $tax_value);
+            $subtotal+=$tax_value;    
+        }
+
+        if($paid != 0){
+            $data->put('paid', $paid);
+            $subtotal-=$paid;
+        }
+
+        $data->put('total_bill', $subtotal);
+
+        $filename = "Invoice_".$order->order_id;
+        $data = json_decode(json_encode($data), FALSE);
+
+        // $pdf = PDF::loadview('dashboard.order.order.invoice',['data'=>$data])->setPaper('a4', 'portrait');
+        // $pdf->save(public_path('download/'.$filename.'.pdf'));
+        // return $pdf->download($filename.'.pdf');
+        // return view('dashboard.order.order.invoice', compact('data'));
+        
+        if ($request->ajax()) {
+            return response()->json(view('dashboard.order.order.invoice',compact('data'))->render());
+        }else{
+            return view('dashboard.order.order.invoice',compact('data'));
+        }
     }
 }

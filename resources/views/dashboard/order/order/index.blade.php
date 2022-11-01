@@ -218,7 +218,7 @@
             showCancelButton: true,
             showCloseButton: true,
             confirmButtonText: 'Confirm Order',
-            cancelButtonText: 'Cancel Order',
+            cancelButtonText: 'Decline Order',
             confirmButtonClass: 'btn btn-success',
             cancelButtonClass: 'btn btn-danger m-l-10',
             buttonsStyling: false
@@ -230,6 +230,61 @@
                 data: {
                     "_token":token,
                     "status":1,
+                }
+            }).done(function (data) {
+                location.reload();
+            }).fail(function (msg) {
+                swal(
+                    'Failed',
+                    'Failed to confirm',
+                    'error'
+                )
+            });
+        }, function (dismiss) {
+            if (dismiss === 'cancel') {
+                $.ajax({
+                    url : "/order/"+id+"/changestatus",
+                    type : "post",
+                    dataType: 'json',
+                    data: {
+                        "_token":token,
+                        "status":-1,
+                    }
+                }).done(function (data) {
+                    location.reload();
+                }).fail(function (msg) {
+                    swal(
+                        'Failed',
+                        'Failed to confirm',
+                        'error'
+                    )
+                });
+            }
+        })
+    }
+
+    function finishing_order(id){
+        var token = $("meta[name='csrf-token']").attr("content");
+
+        swal({
+            title: 'Finish this Order?',
+            text: "Order will be show as Finished Course!",
+            type: 'warning',
+            showCancelButton: true,
+            showCloseButton: true,
+            confirmButtonText: 'Finishing Order',
+            cancelButtonText: 'Cancel Order',
+            confirmButtonClass: 'btn btn-info',
+            cancelButtonClass: 'btn btn-danger m-l-10',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                url : "/order/"+id+"/changestatus",
+                type : "post",
+                dataType: 'json',
+                data: {
+                    "_token":token,
+                    "status":2,
                 }
             }).done(function (data) {
                 location.reload();
@@ -263,18 +318,18 @@
         })
     }
 
-    function finishing_order(id){
+    function canceling_finish_order(id){
         var token = $("meta[name='csrf-token']").attr("content");
 
         swal({
-            title: 'Confirm this Order?',
-            text: "Confirmed Order will be forward to Student!",
+            title: 'Canceling Finish Order?',
+            text: "This Order will be back to Ongoing course",
             type: 'warning',
             showCancelButton: true,
             showCloseButton: true,
-            confirmButtonText: 'Finishing Order',
+            confirmButtonText: 'Back to Ongoing',
             cancelButtonText: 'Close',
-            confirmButtonClass: 'btn btn-info',
+            confirmButtonClass: 'btn btn-success',
             cancelButtonClass: 'btn btn-danger m-l-10',
             buttonsStyling: false
         }).then(function () {
@@ -284,7 +339,7 @@
                 dataType: 'json',
                 data: {
                     "_token":token,
-                    "status":2,
+                    "status":1,
                 }
             }).done(function (data) {
                 location.reload();
@@ -402,6 +457,15 @@
                 )
             });
         }
+    }
+
+    function printPdf(id){
+        windowUrl = $('#route'+id).val();
+        console.log(windowUrl)
+        windowName = "Invoice";
+        var printWindow = window.open(windowUrl, windowName, 'left=50000,top=50000,width=0,height=0');
+        printWindow.focus();
+        printWindow.print();
     }
 </script>
 @if(session('order'))

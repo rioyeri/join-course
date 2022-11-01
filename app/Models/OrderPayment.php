@@ -25,29 +25,31 @@ class OrderPayment extends Model
         return $invoice_id;
     }
 
-    public static function checkPaid($order_id){
+    public static function checkPaid($order_id, $new_token=null){
         $order = Order::where('id', $order_id)->first();
-        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', 1)->sum('payment_amount');
+        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
         if($payment == $order->order_bill){
             $result = 1;
+            $token = null;
+            if(session()->has('order_id') && session()->has('order_token')){
+                session()->forget('order_id');
+                session()->forget('order_token');    
+            }
         }elseif($payment > $order->order_bill){
             $result = 2;
+            $token = $order->order_token;
         }else{
             $result = 0;
+            $token = $new_token;
         }
         $order->payment_status = $result;
-        $order->order_token = null;
+        $order->order_token = $token;
         $order->save();
-
-        if(session()->has('order_id') && session()->has('order_token')){
-            session()->forget('order_id');
-            session()->forget('order_token');    
-        }
     }
 
     public static function getRemainingPayment($order_id){
         $order = Order::where('id', $order_id)->first();
-        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', 1)->sum('payment_amount');
+        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
         $remainingPayment = $order->order_bill - $payment;
 
         return $remainingPayment;
@@ -63,32 +65,36 @@ class OrderPayment extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"ORPY");
-        $account = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at');
+        if(session('role_id') == 4 || session('role_id') == 5){
+            $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->join('student as s', 'o.student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at')->where('us.id', session('user_id'));
+        }else{
+            $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at');
+        }
 
-        $totalRecords = $account->count();
+        $totalRecords = $orderpayment->count();
 
         if($searchValue != ''){
-            $account->where(function ($query) use ($searchValue) {
+            $orderpayment->where(function ($query) use ($searchValue) {
                 $query->orWhere('o.order_id', 'LIKE', '%'.$searchValue.'%')->orWhere('pa.account_type', 'LIKE', '%'.$searchValue.'%')->orWhere('payment_amount', 'LIKE', '%'.$searchValue.'%')->orWhere('order_payment.created_at', 'LIKE', '%'.$searchValue.'%')->orWhere('u.name', 'LIKE', '%'.$searchValue.'%');
             });
         }
 
-        $totalRecordwithFilter = $account->count();
+        $totalRecordwithFilter = $orderpayment->count();
 
         if($columnName == "no"){
-            $account->orderBy('id', $columnSortOrder);
+            $orderpayment->orderBy('id', $columnSortOrder);
         }elseif($columnName == "payment_time"){
-            $account->orderBy('created_at', $columnSortOrder);
+            $orderpayment->orderBy('created_at', $columnSortOrder);
         }else{
-            $account->orderBy($columnName, $columnSortOrder);
+            $orderpayment->orderBy($columnName, $columnSortOrder);
         }
 
-        $account = $account->offset($row)->limit($rowperpage)->get();
+        $orderpayment = $orderpayment->offset($row)->limit($rowperpage)->get();
 
         $data = collect();
         $i = $row+1;
 
-        foreach($account as $key){
+        foreach($orderpayment as $key){
             $detail = collect();
 
             $payment_account = PaymentAccount::where('id', $key->payment_method)->first();
@@ -96,16 +102,20 @@ class OrderPayment extends Model
 
 
             if (array_search("ORPYS",$page)){
-                if($key->payment_confirmation == 0){
-                    $payment_confirmation = '<a class="btn btn-warning m-5" onclick="change_status('.$key->id.',0)"><i class="fa fa-dollar"></i> Not Confirmed Yet</a> ';
+                if($key->payment_confirmation == 1){
+                    $payment_confirmation = '<a class="btn btn-success btn-round m-5" onclick="change_status('.$key->id.',1)"><i class="fa fa-dollar"></i> Payment Confirmed</a> ';
+                }elseif($key->payment_confirmation == -1){
+                    $payment_confirmation = '<a class="btn btn-danger btn-round m-5" onclick="change_status('.$key->id.',-1)"><i class="fa fa-dollar"></i> Payment Decline</a> ';
                 }else{
-                    $payment_confirmation = '<a class="btn btn-success m-5" onclick="change_status('.$key->id.',1)"><i class="fa fa-dollar"></i> Payment Confirmed</a> ';
+                    $payment_confirmation = '<a class="btn btn-warning btn-round m-5" onclick="change_status('.$key->id.',0)"><i class="fa fa-dollar"></i> Not Confirmed Yet</a> ';
                 }
             }else{
-                if($key->payment_confirmation == 0){
-                    $payment_confirmation = '<a class="btn btn-warning m-5"><i class="fa fa-dollar"></i> Not Confirmed Yet</a> ';
-                }else{
+                if($key->payment_confirmation == 1){
                     $payment_confirmation = '<a class="btn btn-success m-5"><i class="fa fa-dollar"></i> Payment Confirmed</a> ';
+                }elseif($key->payment_confirmation == -1){
+                    $payment_confirmation = '<a class="btn btn-danger m-5"><i class="fa fa-dollar"></i> Payment Decline</a> ';
+                }else{
+                    $payment_confirmation = '<a class="btn btn-warning m-5"><i class="fa fa-dollar"></i> Not Confirmed Yet</a> ';
                 }
             }
 

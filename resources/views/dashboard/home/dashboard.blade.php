@@ -67,7 +67,7 @@ Dashboard
         <h4><strong>Ongoing Course</strong></h4>
     </div>
     <div class="adv-table">
-        <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-dashboard" width="100%">
+        <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-ongoing-order" width="100%">
             <thead>
                 <th>No</th>
                 <th>Order ID</th>
@@ -79,20 +79,42 @@ Dashboard
                 <th>Schedule</th>
                 <th>Report</th>
             </thead>
-            <tbody id="table-body">
+            <tbody id="table-body-ongoing-order">
             </tbody>
         </table>
     </div>
-    <!-- Modal -->
-    <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Flash Academia</h4>
-                </div>
-                <div class="modal-body" id="view-form">
-                </div>
+</div>
+<br>
+<div class="content-panel">
+    <div class="mb">
+        <h4><strong>Order Not Yet Confirmed</strong></h4>
+    </div>
+    <div class="adv-table">
+        <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-notyet-confirm-order" width="100%">
+            <thead>
+                <th>No</th>
+                <th>Order ID</th>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Grade</th>
+                <th>Teacher</th>
+                <th>Package</th>
+                <th>Order Status</th>
+            </thead>
+            <tbody id="table-body-notyet-confirm-order">
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Flash Academia</h4>
+            </div>
+            <div class="modal-body" id="view-form">
             </div>
         </div>
     </div>
@@ -127,7 +149,7 @@ Dashboard
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table-dashboard').DataTable({
+        $('#table-ongoing-order').DataTable({
             "processing" : true,
             "serverSide" : true,
             "order": [[ 0, "desc" ]],
@@ -138,6 +160,7 @@ Dashboard
                 "type" : "get",
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "ongoing-order",
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "order_id", name : "order_id"},
@@ -148,6 +171,39 @@ Dashboard
                 {data : "package_name", name : "package_name"},
                 {data : "schedule", name : "schedule", orderable : false, searchable : false,},
                 {data : "report", name : "report", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+        });
+
+        $('#table-notyet-confirm-order').DataTable({
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 0, "desc" ]],
+            "lengthMenu": [[5,10,25,50,100], [5,10,25, 50, 100]],
+            "pageLength": 5,
+            "ajax" : {
+                "url" : "{{ route('home.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "notyet-confirm-order",
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "course_name", name : "course_name"},
+                {data : "grade_id", name : "grade_id"},
+                {data : "teacher_name", name : "teacher_name"},
+                {data : "package_name", name : "package_name"},
+                {data : "order_status", name : "order_status", orderable : false, searchable : false,}
             ],
             "columnDefs" : [
                 {
@@ -209,6 +265,151 @@ Dashboard
         }).fail(function (msg) {
             alert('Gagal menampilkan data, silahkan refresh halaman.');
         });
+    }
+
+    function confirm_order(id){
+        var token = $("meta[name='csrf-token']").attr("content");
+        console.log(id)
+        swal({
+            title: 'Confirm this Order?',
+            text: "Confirmed Order will be forward to Student!",
+            type: 'warning',
+            showCancelButton: true,
+            showCloseButton: true,
+            confirmButtonText: 'Confirm Order',
+            cancelButtonText: 'Decline Order',
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger m-l-10',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                url : "/order/"+id+"/changestatus",
+                type : "post",
+                dataType: 'json',
+                data: {
+                    "_token":token,
+                    "status":1,
+                }
+            }).done(function (data) {
+                location.reload();
+            }).fail(function (msg) {
+                swal(
+                    'Failed',
+                    'Failed to confirm',
+                    'error'
+                )
+            });
+        }, function (dismiss) {
+            if (dismiss === 'cancel') {
+                $.ajax({
+                    url : "/order/"+id+"/changestatus",
+                    type : "post",
+                    dataType: 'json',
+                    data: {
+                        "_token":token,
+                        "status":-1,
+                    }
+                }).done(function (data) {
+                    location.reload();
+                }).fail(function (msg) {
+                    swal(
+                        'Failed',
+                        'Failed to confirm',
+                        'error'
+                    )
+                });
+            }
+        })
+    }
+
+    function finishing_order(id){
+        var token = $("meta[name='csrf-token']").attr("content");
+
+        swal({
+            title: 'Finish this Order?',
+            text: "Order will be show as Finished Course!",
+            type: 'warning',
+            showCancelButton: true,
+            showCloseButton: true,
+            confirmButtonText: 'Finishing Order',
+            cancelButtonText: 'Cancel Order',
+            confirmButtonClass: 'btn btn-info',
+            cancelButtonClass: 'btn btn-danger m-l-10',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                url : "/order/"+id+"/changestatus",
+                type : "post",
+                dataType: 'json',
+                data: {
+                    "_token":token,
+                    "status":2,
+                }
+            }).done(function (data) {
+                location.reload();
+            }).fail(function (msg) {
+                swal(
+                    'Failed',
+                    'Failed to confirm',
+                    'error'
+                )
+            });
+        }, function (dismiss) {
+            if (dismiss === 'cancel') {
+                $.ajax({
+                    url : "/order/"+id+"/changestatus",
+                    type : "post",
+                    dataType: 'json',
+                    data: {
+                        "_token":token,
+                        "status":0,
+                    }
+                }).done(function (data) {
+                    location.reload();
+                }).fail(function (msg) {
+                    swal(
+                        'Failed',
+                        'Failed to confirm',
+                        'error'
+                    )
+                });
+            }
+        })
+    }
+
+    function canceling_finish_order(id){
+        var token = $("meta[name='csrf-token']").attr("content");
+
+        swal({
+            title: 'Canceling Finish Order?',
+            text: "This Order will be back to Ongoing course",
+            type: 'warning',
+            showCancelButton: true,
+            showCloseButton: true,
+            confirmButtonText: 'Back to Ongoing',
+            cancelButtonText: 'Close',
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger m-l-10',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                url : "/order/"+id+"/changestatus",
+                type : "post",
+                dataType: 'json',
+                data: {
+                    "_token":token,
+                    "status":1,
+                }
+            }).done(function (data) {
+                location.reload();
+            }).fail(function (msg) {
+                swal(
+                    'Failed',
+                    'Failed to confirm',
+                    'error'
+                )
+            });
+        })
     }
 </script>
 @endsection

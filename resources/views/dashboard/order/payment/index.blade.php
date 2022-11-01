@@ -282,12 +282,18 @@
 
     function change_status(id, status){
         var token = $("meta[name='csrf-token']").attr("content");
-        if(status == 0){
-            var btn_text = "Confirm Payment";
-            var btn_class = "btn btn-success";
-        }else{
+        if(status == 1){
             var btn_text = "Cancel Confirm Payment";
             var btn_class = "btn btn-warning";
+            var new_status = 0;
+        }else if(status == -1){
+            var btn_text = "Confirm Payment";
+            var btn_class = "btn btn-success";
+            var new_status = 1;
+        }else{
+            var btn_text = "Confirm Payment";
+            var btn_class = "btn btn-success";
+            var new_status = 1; 
         }
         swal({
             title: 'Confirm this Order?',
@@ -296,7 +302,7 @@
             showCancelButton: true,
             showCloseButton: true,
             confirmButtonText: btn_text,
-            cancelButtonText: 'Cancel',
+            cancelButtonText: 'Decline Payment',
             confirmButtonClass: btn_class,
             cancelButtonClass: 'btn btn-danger m-l-10',
             buttonsStyling: false
@@ -307,6 +313,7 @@
                 dataType: 'json',
                 data: {
                     "_token":token,
+                    "status":new_status,
                 }
             }).done(function (data) {
                 location.reload();
@@ -318,13 +325,26 @@
                 )
             });
         }, function (dismiss) {
-            if (dismiss === 'cancel') {
-                swal(
-                    'Cancelled',
-                    'Data not changed!',
-                    'error'
-                )
-            }
+            console.log(dismiss);
+            if(dismiss == 'cancel'){
+                $.ajax({
+                    url : "/orderpayment/"+id+"/changestatus",
+                    type : "post",
+                    dataType: 'json',
+                    data: {
+                        "_token":token,
+                        "status":-1,
+                    }
+                }).done(function (data) {
+                    location.reload();
+                }).fail(function (msg) {
+                    swal(
+                        'Failed',
+                        'Failed to confirm',
+                        'error'
+                    )
+                });
+            }            
         })
     }
 </script>

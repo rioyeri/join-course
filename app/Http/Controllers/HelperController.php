@@ -114,7 +114,7 @@ class HelperController extends Controller
 
     public function getOrderBill(Request $request){
         $order = Order::where('id', $request->id)->first();
-        $payment = OrderPayment::where('order_id', $request->id)->where('payment_confirmation', 1)->sum('payment_amount');
+        $payment = OrderPayment::where('order_id', $request->id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
         $order_bill = $order->order_bill - $payment;
 
         return response()->json($order_bill);

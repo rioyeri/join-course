@@ -57,9 +57,6 @@ class OrderPaymentController extends Controller
      */
     public function store(Request $request)
     {
-        // echo "<pre>";
-        // print_r($request->all());
-        // die;
         $validator = Validator::make($request->all(), [
             'order_id' => 'required',
             'payment_amount' => 'required',
@@ -105,7 +102,7 @@ class OrderPaymentController extends Controller
                 $data->save();
 
                 // Check Paid Off;
-                OrderPayment::checkPaid($order->id);
+                OrderPayment::checkPaid($order->id, $request->_token);
 
                 Log::setLog('ORPYC','Create Order Payment : '.$invoice_id.' for '.$order->order_id);
                 return redirect()->route('orderpayment.index')->with('status','Successfully saved');
@@ -196,11 +193,11 @@ class OrderPaymentController extends Controller
 
                 if($old_order->order_id != $new_order->order_id){
                     // Check Paid Off;
-                    OrderPayment::checkPaid($old_order->id);
-                    OrderPayment::checkPaid($new_order->id);
+                    OrderPayment::checkPaid($old_order->id,$request->_token);
+                    OrderPayment::checkPaid($new_order->id,$request->_token);
                     Log::setLog('ORPYU','Update Order Payment '.$data->invoice_id.' for '.$old_order->order_id.' to '.$new_order->order_id);
                 }else{
-                    OrderPayment::checkPaid($data->order_id);
+                    OrderPayment::checkPaid($data->order_id,$request->_token);
                     Log::setLog('ORPYU','Update Order Payment '.$data->invoice_id.' for '.$old_order->order_id);
                 }
                 return redirect()->route('orderpayment.index')->with('status','Successfully saved');
@@ -216,7 +213,7 @@ class OrderPaymentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try{
             $data = OrderPayment::where('id', $id)->first();
@@ -229,7 +226,7 @@ class OrderPaymentController extends Controller
             $log_id = Log::setLog('ORPYD','Delete Order Payment : '.$data->invoice_id);
             RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
             $data->delete();
-            OrderPayment::checkPaid($order_id);
+            OrderPayment::checkPaid($order_id, $request->_token);
             return "true";
         }catch(\Exception $e){
             return redirect()->back()->withErrors($e->getMessage());
@@ -248,7 +245,10 @@ class OrderPaymentController extends Controller
             try{
                 $payment = OrderPayment::where('id', $id)->first();
 
-                if($payment->payment_confirmation == 0){
+                if($request->status == -1){
+                    $new_status = -1;
+                    $text_log = "Payment Decline : ".$payment->invoice_id." for ".$payment->get_order->order_id;
+                }elseif($request->status == 1){
                     $new_status = 1;
                     $text_log = 'Confirming Payment : '.$payment->invoice_id.' for '.$payment->get_order->order_id;
                 }else{
@@ -257,7 +257,10 @@ class OrderPaymentController extends Controller
                 }
 
                 $payment->payment_confirmation = $new_status;
+                $payment->confirmation_by = session('user_id');
                 $payment->save();
+
+                OrderPayment::checkPaid($payment->order_id, $request->_token);
 
                 Log::setLog('ORPYS', $text_log);
                 return "true";

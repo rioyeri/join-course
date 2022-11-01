@@ -67,7 +67,7 @@ Dashboard
         <h4><strong>Ongoing Course</strong></h4>
     </div>
     <div class="adv-table">
-        <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-dashboard" width="100%">
+        <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-ongoing-order" width="100%">
             <thead>
                 <th>No</th>
                 <th>Order ID</th>
@@ -78,20 +78,20 @@ Dashboard
                 <th>Schedule</th>
                 <th>Report</th>
             </thead>
-            <tbody id="table-body">
+            <tbody id="table-body-ongoing-order">
             </tbody>
         </table>
     </div>
-    <!-- Modal -->
-    <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Flash Academia</h4>
-                </div>
-                <div class="modal-body" id="view-form">
-                </div>
+</div>
+<!-- Modal -->
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Flash Academia</h4>
+            </div>
+            <div class="modal-body" id="view-form">
             </div>
         </div>
     </div>
@@ -126,7 +126,7 @@ Dashboard
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table-dashboard').DataTable({
+        $('#table-ongoing-order').DataTable({
             "processing" : true,
             "serverSide" : true,
             "order": [[ 0, "desc" ]],
@@ -137,6 +137,7 @@ Dashboard
                 "type" : "get",
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "ongoing-order",
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "order_id", name : "order_id"},
@@ -146,6 +147,38 @@ Dashboard
                 {data : "package_name", name : "package_name"},
                 {data : "schedule", name : "schedule", orderable : false, searchable : false,},
                 {data : "report", name : "report", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+        });
+
+        $('#table-notyet-confirm-order').DataTable({
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 0, "desc" ]],
+            "lengthMenu": [[5,10,25,50,100], [5,10,25, 50, 100]],
+            "pageLength": 5,
+            "ajax" : {
+                "url" : "{{ route('home.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "notyet-confirm-order",
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "course_name", name : "course_name"},
+                {data : "grade_id", name : "grade_id"},
+                {data : "package_name", name : "package_name"},
+                {data : "order_status", name : "order_status", orderable : false, searchable : false,}
             ],
             "columnDefs" : [
                 {

@@ -19,6 +19,8 @@
 @section('content')
 <div class="content-panel-single">
     <h4 class="mb"><i class="fa fa-angle-right"></i> Upload Payment Evidence for {{ $data->order_id }}</h4>
+    <input type="hidden" id="route" value="{{ route('getInvoice',['order_id' => $data->id]) }}">
+    <a href="javascript:;" class="btn btn-info btn-round m-5" onclick="printPdf()"><i class="fa fa-file-pdf-o"></i> Download Invoice</a>
     <form class="form-horizontal style-form" method="post" action="{{ route('orderpayment.store') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="order_id" id="order_id" value="{{ $data->id }}">
@@ -33,7 +35,7 @@
         <div class="form-group">
             <label class="col-sm-3 col-sm-3 control-label">Payment Amount</label>
             <div class="col-sm-9">
-                <input type="number" class="form-control" name="payment_amount" id="payment_amount" value="0" min="0">
+                <input type="number" class="form-control" name="payment_amount" id="payment_amount" value="0" min="0" max="{{ $data->order_bill }}">
             </div>
         </div>
         <div class="form-group">
@@ -117,5 +119,14 @@
         todayHighlight: true,
         autoclose: true
     });
+
+    function printPdf(){
+        windowUrl = $('#route').val();
+        console.log(windowUrl)
+        windowName = "Invoice";
+        var printWindow = window.open(windowUrl, windowName, 'left=50000,top=50000,width=0,height=0');
+        printWindow.focus();
+        printWindow.print();
+    }
 </script>
 @endsection

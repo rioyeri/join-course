@@ -131,6 +131,7 @@ Route::middleware(['checkUser'])->group(function () {
 
     // Order Helper
     Route::post('/order/{id}/changestatus', 'OrderController@changeStatus')->name('changeStatusOrder');
+    Route::get('/order/{id}/invoice', 'OrderController@getInvoice')->name('getInvoice');
 
     // Content Management Helper
     Route::post('/contentmanagement/{id}/changestatus', 'ContentManagementController@changeStatus')->name('changeStatusContent');
