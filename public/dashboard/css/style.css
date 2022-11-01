@@ -476,6 +476,11 @@ ul.sidebar-menu li a.active i {
     margin-left: 210px;
 }
 
+/* MAIN CONTENT CONFIGURATION SINGLE PAGE */
+#main-content-single {
+    margin: 0 3% 0 3%;
+}
+
 .header, .footer {
     min-height: 60px;
     padding: 0 15px;
@@ -1160,6 +1165,12 @@ PANELS CONFIGURATIONS
 	box-shadow: 0px 3px 2px #aab2bd;
 	padding-top: 15px;
 	padding-bottom: 5px;
+}
+/*Content Panel Single*/
+.content-panel-single {
+	background: #ffffff;
+	box-shadow: 0px 3px 2px #aab2bd;
+	padding: 15px 15px 5px 15px;
 }
 .content-panel h4 {
 	margin-left: 10px;

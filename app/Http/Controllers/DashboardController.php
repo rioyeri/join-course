@@ -89,7 +89,7 @@ class DashboardController extends Controller
                     $file = null;
                     if($request->file <> NULL|| $request->file <> ''){
                         $path = 'dashboard/assets/order/';
-                        $new_path = $path.substr($order->order_id,1);
+                        $new_path = $path.$order->order_id;
                         if(!file_exists($new_path)){
                             mkdir($new_path);
                         }
@@ -107,7 +107,7 @@ class DashboardController extends Controller
                     <td style="width:5%">'.$count.'</td>
                     <td style="width:25%">'.$data->created_at->format('Y-m-d H:i:s').'</td>
                     <td style="width:20%">'.$data->title.'</td>
-                    <td style="width:30%"><a href="'.asset('dashboard/assets/order/'.substr($order->order_id,1).'/'.$data->file).'" target="_blank"><i class="fa fa-file-text-o"></i> '.$data->file.'</a></td>';
+                    <td style="width:30%"><a href="'.asset('dashboard/assets/order/'.$order->order_id.'/'.$data->file).'" target="_blank"><i class="fa fa-file-text-o"></i> '.$data->file.'</a></td>';
                     if(array_search("DSRPD", $submoduls)){
                         $append .= '<td style="width:20%" class="text-center"><a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-md waves-danger m-b-5" onclick="deleteItem('.$data->id.','.$count.')">Delete</a></td>';
                     }
@@ -216,7 +216,7 @@ class DashboardController extends Controller
         if($request->ajax()){
             if($request->type == "report"){
                 $data = OrderReport::where('id', $id)->first();
-                $path = 'dashboard/assets/order/'.substr($data->get_order->order_id,1).'/';
+                $path = 'dashboard/assets/order/'.$data->get_order->order_id.'/';
                 $recycle_bin_path = 'dashboard/assets/recyclebin/';
                 if (file_exists(public_path($path.$data->file)) && $data->file != null) {
                     rename(public_path($path.$data->file), public_path($recycle_bin_path.$data->file));

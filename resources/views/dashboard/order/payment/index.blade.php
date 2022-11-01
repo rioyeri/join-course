@@ -163,7 +163,7 @@
                         if(data == null){
                             var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
                         }else{
-                            var path = 'dashboard/assets/payment/'+full.order_id.substring(1)+'/'+data;
+                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
                             var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
                         }
                         return $image;
@@ -328,4 +328,13 @@
         })
     }
 </script>
+
+@if(session('order_id') && session('order_token'))
+<script>
+    $(document).ready(function() {
+        create_data();
+        $(".modal").modal("show");
+    });
+</script>
+@endif
 @endsection

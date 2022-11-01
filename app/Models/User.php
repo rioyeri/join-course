@@ -138,16 +138,7 @@ class User extends Model
             if($key->phone == ""){
                 $phone = '<span class="text-danger">NOT SET YET</span>';
             }else{
-                $key_phone = $key->phone;
-                if(preg_match('/\s/',$key_phone) != 0){
-                    $key_phone = str_replace(' ', '', $key_phone);
-                }
-                if(substr($key_phone,0,1) == "+"){
-                    $phone_format = substr($key_phone, 1);
-                }elseif(substr($key_phone,0,1) == "0"){
-                    $phone_format = "62".substr($key_phone, 1);
-                }
-
+                $phone_format = User::getFormatWANumber($key->phone);
                 $phone_redirect = "https://wa.me/".$phone_format."?text=Hai ".$key->username.", Kami dari admin Flash Academia memberikan informasi bahwa ";
                 $phone = $key->phone.' <a href="'.$phone_redirect.'" target="_blank"><i class="fa fa-whatsapp"></i></a>';
             }
@@ -183,5 +174,18 @@ class User extends Model
         );
 
         return $response;
+    }
+
+    public static function getFormatWANumber($key_phone){
+        if(preg_match('/\s/',$key_phone) != 0){
+            $key_phone = str_replace(' ', '', $key_phone);
+        }
+        if(substr($key_phone,0,1) == "+"){
+            $phone_format = substr($key_phone, 1);
+        }elseif(substr($key_phone,0,1) == "0"){
+            $phone_format = "62".substr($key_phone, 1);
+        }
+
+        return $phone_format;
     }
 }

@@ -10,7 +10,7 @@ class Order extends Model
 {
     protected $table ='order';
     protected $fillable = [
-        'order_id','student_id','course_id','grade_id','teacher_id','package_id','course_start','order_bill','order_status','payment_status'
+        'order_id','student_id','course_id','grade_id','teacher_id','package_id','course_start','order_bill','order_status','payment_status','order_token'
     ];
 
     public function get_grade(){
@@ -34,7 +34,7 @@ class Order extends Model
     }
 
     public static function generateOrderID($id){
-        $order_id = "#FA".date('Ymd')."-".$id;
+        $order_id = "FA".date('Ymd')."-".$id;
         return $order_id;
     }
 
@@ -49,9 +49,9 @@ class Order extends Model
 
         $page = MenuMapping::getMap(session('role_id'),"OROR");
         if(session('role_id') == 4 || session('role_id') == 5){
-            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status')->where('us.id', session('user_id'));
+            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status')->where('us.id', session('user_id'));
         }else{
-            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status');
+            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status');
         }
 
         $totalRecords = $order->count();
@@ -94,6 +94,8 @@ class Order extends Model
 
             $status = '';
 
+            $student_name = $key->student_name;
+
             if(session('role_id') != 4 && session('role_id') != 5){
                 if($key->order_status == 0){
                     $status .= '<a class="btn btn-danger btn-round m-5" onclick="confirm_order('.$key->id.')"><i class="fa fa-power-off"></i> Canceled</a> ';
@@ -104,6 +106,14 @@ class Order extends Model
                 }else{
                     $status .= '<a class="btn btn-warning btn-round m-5" onclick="confirm_order('.$key->id.')"><i class="fa fa-power-off"></i> Not Confirmed</a>';
                 }
+                $phone_format = User::getFormatWANumber($key->student_phone);
+                // $phone_redirect = "https://wa.me/".$phone_format."?text=Hai ".$key->username.", Kami dari admin Flash Academia memberikan informasi bahwa ";
+                $phone_redirect = "https://api.whatsapp.com/send?phone=".$phone_format."&text=Hai%20".$key->student_name.",%20Kami%20dari%20admin%20Flash%20Academia%20memberikan%20informasi%20bahwa%20";
+                $phone_redirect .= Order::getTextInvoice($key->id);
+                // echo $phone_redirect;
+                // die;
+                $phone = ' <a href="'.$phone_redirect.'" target="_blank"><i class="fa fa-whatsapp"></i></a>';
+                $student_name .= $phone;
             }else{
                 if($key->order_status == 0){
                     $status .= '<a class="btn btn-danger m-5"><i class="fa fa-power-off"></i> Canceled</a> ';
@@ -128,9 +138,10 @@ class Order extends Model
 
             $bill_paid = OrderPayment::where('order_id', $key->id)->where('payment_confirmation', 1)->sum('payment_amount');
 
+            
             $detail->put('no', $i++);
-            $detail->put('order_id', $key->order_id);
-            $detail->put('student_name', $key->student_name);
+            $detail->put('order_id', '#'.$key->order_id);
+            $detail->put('student_name', $student_name);
             $detail->put('grade_id', $key->get_grade->name);
             $detail->put('course_name', $key->course_name);
             $detail->put('teacher_name', $key->teacher_name);
@@ -241,7 +252,7 @@ class Order extends Model
             }
 
             $detail->put('no', $i++);
-            $detail->put('order_id', $key->order_id);
+            $detail->put('order_id', '#'.$key->order_id);
             $detail->put('student_name', $key->student_name);
             $detail->put('grade_id', $key->get_grade->name);
             $detail->put('course_name', $key->course_name);
@@ -260,5 +271,36 @@ class Order extends Model
         );
 
         return $response;
+    }
+
+    public static function getTextInvoice($id){
+        // $tes = "https://api.whatsapp.com/send?phone=6285155431131&text=terdapat%20invoice%20order%20yang%20perlu%20anda%20bayarkan%20sebelum%20memulai%20kursus%20yang%20anda%20inginkan.%20Berikut%20detail%20invoicenya%20%3A%0A%0A*Nomor%20Invoice*%20%3A%0A*Jumlah%20yang%20harus%20dibayar*%20%3A%0A*Layanan*%20%3A%0A%0ALakukan%20transfer%20pembayaran%20dan%20jangan%20lupa%20screenshot%20bukti%20transfernya%20untuk%20diupload%20melalui%20link%20berikut%20%3A%0Ahttps%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbWe62bJKR5k%26t%3D732s%0A%0AJika%20memiliki%20pertanyaan%2C%20silahkan%20hubungi%20kami%20melalui%20nomor%20Whatsapp%20ini.%0A%0ATerimakasih%20%3A)%0AFlash%20Academia";
+        $order = Order::where('id', $id)->first();
+        $amount = OrderPayment::getRemainingPayment($id);
+        $link = route('paymentOrderPage', ['order_id'=>$order->order_id, 'token'=>$order->order_token]);
+
+        $text = "terdapat%20invoice%20order%20yang%20perlu%20anda%20bayarkan%20sebelum%20memulai%20kursus%20yang%20anda%20inginkan.%20Berikut%20detail%20invoicenya%20%3A%0A%0A";
+        $text .= "%0A*Nomor%20Invoice*%20%3A%20".$order->order_id;
+        $text .= "%0A*Jumlah%20yang%20harus%20dibayar*%20%3A%20Rp%20".number_format($amount,2,",",".");
+        $text .= "%0A*Layanan*%20%3A%20".$order->get_package->name;
+        $text .= "%0ALakukan%20transfer%20pembayaran%20dan%20jangan%20lupa%20screenshot%20bukti%20transfernya%20untuk%20diupload%20melalui%20link%20berikut%20:%20%0A";
+        $text .= "%0A".$link."%0A";
+        $text .= "%0AJika%20memiliki%20pertanyaan,%20silahkan%20hubungi%20kami%20melalui%20nomor%20Whatsapp%20ini.";
+        $text .= "%0ATerimakasih :)";
+        $text .= "%0AFlash Academia";
+
+        return $text;
+    }
+
+    public static function getDataOrderforPayment($order_id, $token){
+        $order = Order::where('order_id', $order_id)->where('order_token', $token)->first();
+
+        $data = array(
+            "id_order" => $order->id,
+            "order_id" => $order->order_id,
+            "order_bill" => $order->order_bill,
+        );
+
+        return json_decode(json_encode($data),FALSE);
     }
 }

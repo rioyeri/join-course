@@ -21,7 +21,7 @@ class OrderPayment extends Model
     }
 
     public static function generateInvoiceID($id){
-        $invoice_id = "#FAPAY".date('Ymd')."-".$id;
+        $invoice_id = "FAPAY".date('Ymd')."-".$id;
         return $invoice_id;
     }
 
@@ -36,7 +36,21 @@ class OrderPayment extends Model
             $result = 0;
         }
         $order->payment_status = $result;
+        $order->order_token = null;
         $order->save();
+
+        if(session()->has('order_id') && session()->has('order_token')){
+            session()->forget('order_id');
+            session()->forget('order_token');    
+        }
+    }
+
+    public static function getRemainingPayment($order_id){
+        $order = Order::where('id', $order_id)->first();
+        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', 1)->sum('payment_amount');
+        $remainingPayment = $order->order_bill - $payment;
+
+        return $remainingPayment;
     }
 
     public static function dataIndex(Request $request){
@@ -104,8 +118,8 @@ class OrderPayment extends Model
             }
 
             $detail->put('no', $i++);
-            $detail->put('invoice_id', $key->invoice_id);
-            $detail->put('order_id', $key->order_id);
+            $detail->put('invoice_id', '#'.$key->invoice_id);
+            $detail->put('order_id', '#'.$key->order_id);
             $detail->put('order_bill', $key->order_bill);
             $detail->put('payment_amount', $key->payment_amount);
             $detail->put('payment_method', $payment_method);

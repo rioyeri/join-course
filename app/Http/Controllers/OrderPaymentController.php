@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Order;
 use App\Models\OrderPayment;
 use App\Models\PaymentAccount;
+use App\Models\Student;
 use App\Models\MenuMapping;
 use App\Models\Log;
 use App\Models\RecycleBin;
@@ -38,7 +39,12 @@ class OrderPaymentController extends Controller
      */
     public function create()
     {
-        $orders = Order::all();
+        if(session('role_id') == 4){
+            $student = Student::where('user_id', session('user_id'))->first();
+            $orders = Order::where('student_id', $student->id)->get();
+        }else{
+            $orders = Order::all();
+        }
         $accounts = PaymentAccount::all();
         return response()->json(view('dashboard.order.payment.form', compact('orders','accounts'))->render());
     }
@@ -51,6 +57,9 @@ class OrderPaymentController extends Controller
      */
     public function store(Request $request)
     {
+        // echo "<pre>";
+        // print_r($request->all());
+        // die;
         $validator = Validator::make($request->all(), [
             'order_id' => 'required',
             'payment_amount' => 'required',
@@ -64,13 +73,18 @@ class OrderPaymentController extends Controller
         }else{
             try{
                 $order = Order::where('id', $request->order_id)->first();
-
+                
+                if($request->order_token == $order->order_token){
+                    $user_id = $order->get_student->user_id;
+                }else{
+                    $user_id = session('user_id');
+                }
                 $data = new OrderPayment(array(
                     "order_id" => $request->order_id,
                     "payment_amount" => $request->payment_amount,
                     "payment_method" => $request->payment_method,
                     "payment_confirmation" => 0,
-                    "creator" => session('user_id'),
+                    "creator" => $user_id,
                 ));
                 $data->save();
 
@@ -78,11 +92,11 @@ class OrderPaymentController extends Controller
                 // Upload Evidence
                 if($request->payment_evidence <> NULL|| $request->payment_evidence <> ''){
                     $path = 'dashboard/assets/payment/';
-                    $new_path = $path.substr($order->order_id,1);
+                    $new_path = $path.$order->order_id;
                     if(!file_exists($new_path)){
                         mkdir($new_path);
                     }
-                    $payment_evidence = substr($invoice_id,1).'.'.$request->payment_evidence->getClientOriginalExtension();
+                    $payment_evidence = $invoice_id.'.'.$request->payment_evidence->getClientOriginalExtension();
                     $request->payment_evidence->move(public_path($new_path),$payment_evidence);
                 }
 
@@ -154,8 +168,8 @@ class OrderPaymentController extends Controller
                 // Upload Evidence
                 if($request->payment_evidence <> NULL|| $request->payment_evidence <> ''){
                     $path = 'dashboard/assets/payment/';
-                    $old_path = $path.substr($old_order->order_id,1).'/';
-                    $new_path = $path.substr($new_order->order_id,1);
+                    $old_path = $path.$old_order->order_id.'/';
+                    $new_path = $path.$new_order->order_id;
 
                     if(!file_exists($new_path)){
                         mkdir($new_path);
@@ -165,7 +179,7 @@ class OrderPaymentController extends Controller
                         unlink(public_path($old_path.$data->payment_evidence));
                     }
 
-                    $payment_evidence = substr($data->invoice_id,1).'.'.$request->payment_evidence->getClientOriginalExtension();
+                    $payment_evidence = $data->invoice_id.'.'.$request->payment_evidence->getClientOriginalExtension();
                     $request->payment_evidence->move(public_path($new_path),$payment_evidence);
                 }else{
                     $payment_evidence = $data->payment_evidence;
@@ -207,7 +221,7 @@ class OrderPaymentController extends Controller
         try{
             $data = OrderPayment::where('id', $id)->first();
             $order_id = $data->order_id;
-            $path = 'dashboard/assets/payment/'.substr($data->get_order->order_id,1).'/';
+            $path = 'dashboard/assets/payment/'.$data->get_order->order_id.'/';
             $recycle_bin_path = 'dashboard/assets/recyclebin/';
             if (file_exists(public_path($path.$data->payment_evidence)) && $data->payment_evidence != null) {
                 rename(public_path($path.$data->payment_evidence), public_path($recycle_bin_path.$data->payment_evidence));
@@ -253,4 +267,21 @@ class OrderPaymentController extends Controller
         }
     }
 
+    public function paymentOrderPage(Request $request, $order_id, $token){
+        $count_data = Order::where('order_id', $order_id)->where('order_token', $token)->count();
+        if($request->session()->has('user_id')){
+            $request->session()->put('order_id', $order_id);
+            $request->session()->put('order_token', $token);
+            return redirect()->route('orderpayment.index');
+        }else{
+            if($count_data != 0){
+                $data = Order::where('order_id', $order_id)->where('order_token', $token)->first();
+                $accounts = PaymentAccount::all();
+                return view('dashboard.order.payment.single-form', compact('data','accounts'));
+            }else{
+                $order_id = $order_id;
+                return view('dashboard.order.payment.payment-not-found',compact('order_id'));
+            }
+        }
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Order;
+use App\Models\OrderPayment;
 use App\Models\Course;
 use App\Models\Teacher;
 use App\Models\TeacherCourse;
@@ -113,8 +114,10 @@ class HelperController extends Controller
 
     public function getOrderBill(Request $request){
         $order = Order::where('id', $request->id)->first();
+        $payment = OrderPayment::where('order_id', $request->id)->where('payment_confirmation', 1)->sum('payment_amount');
+        $order_bill = $order->order_bill - $payment;
 
-        return response()->json($order->order_bill);
+        return response()->json($order_bill);
     }
 
     public function showTeacherDetail($id){

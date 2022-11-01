@@ -49,7 +49,7 @@
                             <td style="width:5%">{{ $i }}</td>
                             <td style="width:25%">{{ $key->created_at->format('Y-m-d H:i:s') }}</td>
                             <td style="width:20%">{{ $key->title }}</a></td>
-                            <td style="width:30%"><a href="{{ asset('dashboard/assets/order/'.substr($data->order_id,1).'/'.$key->file) }}" target="_blank"><i class="fa fa-file-text-o"></i> {{ $key->file }}</a></td>
+                            <td style="width:30%"><a href="{{ asset('dashboard/assets/order/'.$data->order_id.'/'.$key->file) }}" target="_blank"><i class="fa fa-file-text-o"></i> {{ $key->file }}</a></td>
                             @if(array_search("DSRPD", $submoduls))
                             <td class="text-center" style="width:20%">
                                 <a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-xs waves-danger m-b-5" onclick="deleteItem({{ $key->id }}, {{ $i }})">Delete</a>

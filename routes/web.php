@@ -55,7 +55,11 @@ Route::get('searchTeacherOrSubject', 'HelperController@searchTeacherOrSubject')-
 Route::post('/search', 'HelperController@showSearchResult')->name('showSearchResult');
 Route::get('/showTeacherDetail/{id}', 'HelperController@showTeacherDetail')->name('showTeacherDetail');;
 
+// Order Controller
 Route::post('/neworder', 'OrderController@neworder')->name('neworder');
+
+// Payment Order Controller
+Route::get('/payment/{order_id}/{token}', 'OrderPaymentController@paymentOrderPage')->name('paymentOrderPage');
 
 Route::middleware(['checkUser'])->group(function () {
     // Resources

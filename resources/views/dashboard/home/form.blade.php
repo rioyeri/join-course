@@ -3,6 +3,9 @@
         width:'100%',
     });
 </script>
+@php
+    use App\Models\OrderDetail;
+@endphp
 <form class="form-horizontal style-form" method="post" action="{{ route('home.update', ['id' => $data->id]) }}">
     {{ method_field('PUT') }}
     @csrf
@@ -52,6 +55,7 @@
                     <th>Time</th>
                     <th>Zoom Link</th>
                     <th>Asset Link</th>
+                    <th>Share Zoom Link</th>
                     @if(array_search("DSSCU",$submoduls) && array_search("DSSCD",$submoduls))
                     <th>Options</th>
                     @endif
@@ -63,10 +67,14 @@
                             <td style="width:5%">{{ $i }}</td>
                             <td style="width:15%">{{ date_format(date_create($key->schedule_time), "D, d-m-Y H:i:s") }}</td>
                             <input type="hidden" name="schedule_datetime[]" id="schedule_datetime{{ $i }}" value="{{ $key->schedule_time }}">
-                            <td style="width:30%"><a href="{{ $key->link_zoom }}" target="_blank" id="alink_zoom{{ $i }}">{{ $key->link_zoom }}</a></td>
+                            <td style="width:25%"><a href="{{ $key->link_zoom }}" target="_blank" id="alink_zoom{{ $i }}">{{ $key->link_zoom }}</a></td>
                             <input type="hidden" name="link_zoom[]" id="link_zoom{{ $i }}" value="{{ $key->link_zoom }}">
-                            <td style="width:30%"><a href="{{ $key->link_drive }}" target="_blank" id="alink_drive{{ $i }}">{{ $key->link_drive }}</a></td>
+                            <td style="width:25%"><a href="{{ $key->link_drive }}" target="_blank" id="alink_drive{{ $i }}">{{ $key->link_drive }}</a></td>
                             <input type="hidden" name="link_drive[]" id="link_drive{{ $i }}" value="{{ $key->link_drive }}">
+                            <td style="width:10%">
+                                <a href="{{ OrderDetail::getWALink($key->id,'student') }}" class="btn btn-round btn-theme btn-sm" target="_blank" style="margin:1px;"><i class="fa fa-whatsapp"></i> Student</a>
+                                <a href="{{ OrderDetail::getWALink($key->id,'teacher') }}" class="btn btn-round btn-theme btn-sm" target="_blank" style="margin:1px;"><i class="fa fa-whatsapp"></i> Teacher</a>
+                            </td>
                             @if(array_search("DSSCU", $submoduls) || array_search("DSSCD", $submoduls))
                             <td class="text-center" style="width:20%">
                                 @if(array_search("DSSCU", $submoduls))

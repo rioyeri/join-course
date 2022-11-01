@@ -87,14 +87,17 @@ class OrderController extends Controller
                     "course_start" => $request->course_start,
                     "order_status" => 0,
                     "payment_status" => 0,
+                    "order_token" => $request->_token,
                 ));
                 $data->save();
 
                 $data->order_id = Order::generateOrderID($data->id);
                 $data->save();
  
-                $request->session()->forget('user_data');
-                $request->session()->forget('order');
+                if($request->session()->has('user_data') && $request->session()->has('order')){
+                    $request->session()->forget('user_data');
+                    $request->session()->forget('order');    
+                }
 
                 Log::setLog('ORORC','Create Order : '.$data->order_id);
                 return redirect()->route('order.index')->with('status','Successfully saved');
@@ -168,6 +171,7 @@ class OrderController extends Controller
                 $data->package_id = $request->package_id;
                 $data->order_bill = $request->order_bill;
                 $data->course_start = $request->course_start;
+                $data->order_token = $request->_token;
                 $data->save();
 
                 Log::setLog('ORORU','Update Order : '.$data->id);
