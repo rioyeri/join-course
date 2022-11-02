@@ -127,8 +127,7 @@
 
         .select2 {
             font-size: 14px;
-            /* height: 1%; */
-            height: 20px;
+            height: 25px;
         }
 
         h2{
@@ -217,7 +216,6 @@
 
         .select-box {
             margin : 31px auto;
-            /* padding-top: 10px; */
             padding-bottom: 10px;
         }
 
@@ -227,10 +225,7 @@
             outline: none;
             background: transparent;
             color: #000;
-            /* margin-left: 5%; */
-            /* margin-left: -15px; */
-            /* margin-top:2px; */
-            margin-top:10px;
+            margin-top:5px;
         }
 
         .select-box label {
@@ -268,13 +263,13 @@
             /* margin-left: 5%; */
             margin-left: -15px;
             /* margin-bottom:20px; */
-            margin-top:2.9px;
         }
 
         .mix-box .col-md-6 input {
             width: 100%;
             border-bottom: 1px solid #000;
             margin-left: 3%;
+            margin-top: 2px;
         }
 
         .mix-box .col-md-6 .select2 {
@@ -309,9 +304,6 @@
             outline: none;
             background: transparent;
             color: #000;
-            /* margin-left: 5%; */
-            /* margin-left: -15px; */
-            /* margin-top:2px; */
             margin-top:10px;
         }
 
@@ -321,6 +313,11 @@
         }
 
         .mix-box3 .col-md-9 .select2 {
+            width: 100%;
+            border-bottom: 1px solid #000;
+        }
+
+        .mix-box .col-md-6 .select2-grade {
             width: 100%;
             border-bottom: 1px solid #000;
         }
@@ -335,6 +332,11 @@
         }
         a:hover {
             color: #f82;
+        }
+
+        .select2-container--default .select2-selection--single{
+            background-color: rgba(0,0,0,0);
+            border: rgba(0,0,0,0);
         }
     </style>
 </head>
@@ -483,12 +485,7 @@
     @endsection
     @section('script-js')
         <script>
-            $('.select2').select2({
-                theme: "themes-dark",
-                // width: 'resolve', // need to override the changed default
-                scrollAfterSelect:true,
-            });
-
+            $('.select2').select2();
 
             $('#teacher_subjects').select2({
                 // theme: "themes-dark",
