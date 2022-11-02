@@ -9,6 +9,24 @@
     .select2-container {
         height: 50px;
     }
+
+    .select2-container--default .select2-selection--single{
+        border-radius: 1;
+        height: 50px;
+        border-color: #d8d8d8;
+        border-radius: 1%;
+        padding-top:10px;
+        padding-left:5px;
+        font-size: 15px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color:gray;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        padding-top: 40px;
+    }
 </style>
 <!-- ======= Contact Section ======= -->
 <section id="contact" class="contact">
@@ -79,7 +97,7 @@
                     <div class="row">
                         <div class="col-md-12 form-group mt-3 mt-md-0">
                             <select class="form-control select2" parsley-trigger="change" name="grade_id" id="grade_id">
-                                <option value="#" disabled selected>-- Kelas --</option>
+                                <option value="#" disabled selected>Kelas</option>
                                 @foreach ($grades as $grade)
                                     <option value="{{$grade->id}}">{{$grade->name}}</option>
                                 @endforeach
@@ -89,7 +107,7 @@
                     <div class="row">
                         <div class="col-md-12 form-group mt-3 mt-md-0">
                             <select class="form-control select2" parsley-trigger="change" name="course_id" id="course_id">
-                                <option value="#" disabled selected>-- Mata Pelajaran --</option>
+                                <option value="#" disabled selected>Mata Pelajaran</option>
                                 @foreach ($courses as $course)
                                     <option value="{{$course->id}}">{{$course->name}}</option>
                                 @endforeach
@@ -99,7 +117,7 @@
                     <div class="row">
                         <div class="col-md-12 form-group mt-3 mt-md-0">
                             <select class="form-control select2" parsley-trigger="change" name="package_id" id="package_id">
-                                <option value="#" disabled selected>-- Paket --</option>
+                                <option value="#" disabled selected>Paket</option>
                                 @foreach ($packages as $package)
                                     <option value="{{$package->id}}">{{$package->name}}</option>
                                 @endforeach
