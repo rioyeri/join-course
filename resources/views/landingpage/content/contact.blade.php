@@ -10,6 +10,10 @@
         height: 50px;
     }
 
+    .select2-multiple {
+        height: 50px;
+    }
+
     .select2-container--default .select2-selection--single{
         border-radius: 1;
         height: 50px;
@@ -20,8 +24,31 @@
         font-size: 15px;
     }
 
+    .select2-container--default .select2-selection--multiple{
+        border-radius: 1;
+        height: 50px;
+        border-color: #d8d8d8;
+        border-radius: 1%;
+        padding-top:10px;
+        padding-left:10px;
+        font-size: 15px;
+        width: 100%;
+    }
+
     .select2-container--default .select2-selection--single .select2-selection__rendered {
         color:gray;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        color:gray;
+    }
+
+    .select2-container--default .select2-selection--single[aria-expanded=true] {
+        border-color: var(--color-primary);   
+    }
+
+    .select2-container--default .select2-selection--multiple[aria-expanded=true] {
+        border-color: var(--color-primary);
     }
 
     .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -76,9 +103,9 @@
             <div class="col-lg-6">        
                 <form action="{{ route('neworder') }}" method="post" role="form" class="php-email-form">
                     @csrf
-                    <div class="section-header">
+                    <div class="section-header" style="margin-bottom:-40px">
                         <h2>Mulai Kursus</h2>
-                    </div>    
+                    </div>
                     <div class="row">
                         <div class="col-md-12 form-group">
                             <input type="text" class="form-control" name="user_name" id="user_name" placeholder="Nama Lengkap Siswa" required>
@@ -106,10 +133,20 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 form-group mt-3 mt-md-0">
-                            <select class="form-control select2" parsley-trigger="change" name="course_id" id="course_id">
+                            <select class="form-control select2" parsley-trigger="change" name="course_id" id="course_id" onchange="get_teacher(this.value)">
                                 <option value="#" disabled selected>Mata Pelajaran</option>
                                 @foreach ($courses as $course)
                                     <option value="{{$course->id}}">{{$course->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 form-group mt-3 mt-md-0">
+                            <select class="form-control" parsley-trigger="change" name="teacher_id" id="teacher_id" onchange="get_package(this.value)">
+                                <option value="#" disabled selected>Guru</option>
+                                @foreach ($teachers as $teacher)
+                                    <option value="{{$teacher->id}}" data-text="{{ $teacher->isItInstantOrder() }}">{{$teacher->teacher->name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -124,7 +161,15 @@
                             </select>
                         </div>
                     </div>
-                    <div class="text-center"><button type="submit">Buat janji</button></div>
+                    <div id="line_schedule" style="display:none;">
+                        <div class="row">
+                            <div class="col-md-12 form-group mt-3 mt-md-0">
+                                <select class="form-control select2 select2-multiple" style="width: 100%" multiple="multiple" multiple parsley-trigger="change" name="teacher_schedules[]" id="teacher_schedules" data-placeholder="Pilih Jadwal belajarmu">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center" style="margin:50px 0 50px 0"><button type="submit">Order Sekarang</button></div>
                 </form>
             </div><!-- End Contact Form -->
 

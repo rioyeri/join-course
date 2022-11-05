@@ -19,8 +19,6 @@ use App\Models\Package;
 use App\Models\Student;
 use App\Models\Teacher;
 
-use File;
-
 class HomeController extends Controller
 {
     public function index(Request $request){
@@ -31,11 +29,14 @@ class HomeController extends Controller
         }else{
             $content = ContentHome::getContent();
             $company_profile = ContentProfile::all();
-            $promos = ContentPromo::getContent();
+            // $promos = ContentPromo::getContent();
+            $promos = Package::getContent();
             $grades = Grade::all();
             $packages = Package::all();
             $courses = Course::all();
-            return view('landingpage.content.main',compact('content', 'company_profile','promos','grades','packages','courses'));
+            $teachers = Teacher::all();
+
+            return view('landingpage.content.main',compact('content', 'company_profile','promos','grades','packages','courses','teachers'));
         }
     }
 
@@ -87,6 +88,9 @@ class HomeController extends Controller
                 if($role_id == 4){
                     $student = Student::where('user_id', $user->id)->first();
                     $request->session()->put('student_id', $student->id);
+                }elseif($role_id == 5){
+                    $teacher = Teacher::where('user_id', $user->id)->first();
+                    $request->session()->put('teacher_id', $teacher->id);
                 }
                 // $request->session()->put('isItMaintenance', 'maintenance');
 

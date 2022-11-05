@@ -52,7 +52,8 @@ Route::get('pilihtemplate', 'TemplateController@index');
 
 // Helper Controller
 Route::get('searchTeacherOrSubject', 'HelperController@searchTeacherOrSubject')->name('searchTeacherOrSubject');
-Route::post('/search', 'HelperController@showSearchResult')->name('showSearchResult');
+Route::post('/search', 'HelperController@searching')->name('searching');
+Route::get('/search/{keyword}', 'HelperController@showSearchResult')->name('showSearchResult');
 Route::get('/showTeacherDetail/{id}', 'HelperController@showTeacherDetail')->name('showTeacherDetail');;
 
 // Order Controller
@@ -60,6 +61,9 @@ Route::post('/neworder', 'OrderController@neworder')->name('neworder');
 
 // Payment Order Controller
 Route::get('/payment/{order_id}/{token}', 'OrderPaymentController@paymentOrderPage')->name('paymentOrderPage');
+
+// 
+Route::get('/getDatas','HelperController@getDatas')->name('getDatas');
 
 Route::middleware(['checkUser'])->group(function () {
     // Resources
@@ -98,6 +102,8 @@ Route::middleware(['checkUser'])->group(function () {
         'contentpromo' => 'ContentPromoController',
         // Dashboard
         'home' => 'DashboardController',
+        // Teacher Schedule
+        'teacherschedule' => 'TeacherScheduleController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');

@@ -157,29 +157,6 @@
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
         });
-
-        // Select2
-        $(".select2").select2({
-            templateResult: formatState,
-            templateSelection: formatState
-        });
-
-        function formatState (opt) {
-            if (!opt.id) {
-                return opt.text.toUpperCase();
-            }
-
-            var optimage = $(opt.element).attr('data-image');
-            console.log(optimage)
-            if(!optimage){
-            return opt.text.toUpperCase();
-            } else {
-                var $opt = $(
-                '<span><img src="' + optimage + '" width="60px" /> ' + opt.text.toUpperCase() + '</span>'
-                );
-                return $opt;
-            }
-        };
     });
 
     function create_data(){
@@ -420,6 +397,7 @@
 
     function get_package(params){
         var jenisdata = "get_package";
+        get_schedule(params);
         $.ajax({
             url : "{{route('getData')}}",
             type : "get",
@@ -435,6 +413,33 @@
         });
     }
 
+    function get_schedule(params) {
+        var jenisdata = "get_schedule";
+        var element_teacher = document.getElementById('teacher_id');
+        var select_value = element_teacher.options[element_teacher.selectedIndex].getAttribute('data-text');
+
+        var line_schedule = document.getElementById('line_schedule');
+
+        if(select_value == 1){
+            line_schedule.style.display = "block";
+            $.ajax({
+                url : "{{route('getData')}}",
+                type : "get",
+                dataType: 'json',
+                data:{
+                    params: params,
+                    jenisdata: jenisdata,
+                },
+            }).done(function (data) {
+                $('#teacher_schedules').html(data.append);
+            }).fail(function (msg) {
+                alert('Gagal menampilkan data, silahkan refresh halaman.');
+            });
+        }else{
+            line_schedule.style.display = "none";
+        }
+    }
+
     function get_bill(){
         var teacher_id = $('#teacher_id').val();
         var package_id = $('#package_id').val();
@@ -448,6 +453,7 @@
                     "package_id": package_id,
                 },
             }).done(function (data) {
+                $('#order_bill_display').val(number_format(data));
                 $('#order_bill').val(data);
             }).fail(function (msg) {
                 swal(

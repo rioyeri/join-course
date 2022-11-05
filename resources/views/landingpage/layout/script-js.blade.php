@@ -136,4 +136,90 @@
     function closeDetail(){
         $('#myModal').modal('hide');
     }
+
+    $("#teacher_id").select2({
+        templateResult: formatText,
+        templateSelection: formatText,
+    });
+
+    function formatText (obj) {
+        if($(obj.element).data('text') == 1){
+            return $('<span>'+obj.text+' <span style="align:right; background: #008374; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white">Bisa langsung pilih jadwal</span></span>');
+        }else{
+            return $('<span>'+obj.text+'</span>');
+        }
+    }
+
+    function getOptionByValue (select, value) {
+        var options = select.options;
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].value == value) {
+                console.log(options[i].value, value)
+                return options[i];
+            }
+        }
+        return null
+    }
+
+    function get_teacher(params) {
+        var jenisdata = "get_teacher";
+        $.ajax({
+            url : "{{route('getDatas')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                params: params,
+                jenisdata: jenisdata,
+            },
+        }).done(function (data) {
+            $('#teacher_id').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function get_package(params){
+        var jenisdata = "get_package";
+        get_schedule(params);
+        $.ajax({
+            url : "{{route('getDatas')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                params: params,
+                jenisdata: jenisdata,
+            },
+        }).done(function (data) {
+            $('#package_id').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function get_schedule(params) {
+        var jenisdata = "get_schedule";
+        var element_teacher = document.getElementById('teacher_id');
+        var select_value = element_teacher.options[element_teacher.selectedIndex].getAttribute('data-text');
+
+        var line_schedule = document.getElementById('line_schedule');
+
+        if(select_value == 1){
+            line_schedule.style.display = "block";
+            $.ajax({
+                url : "{{route('getDatas')}}",
+                type : "get",
+                dataType: 'json',
+                data:{
+                    params: params,
+                    jenisdata: jenisdata,
+                },
+            }).done(function (data) {
+                $('#teacher_schedules').html(data.append);
+            }).fail(function (msg) {
+                alert('Gagal menampilkan data, silahkan refresh halaman.');
+            });
+        }else{
+            line_schedule.style.display = "none";
+        }
+    }
 </script>

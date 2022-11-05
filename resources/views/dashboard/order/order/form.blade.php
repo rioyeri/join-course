@@ -1,12 +1,19 @@
 @php
     use App\Models\Order;
+    use App\Models\Teacher;
     if(session('order') && session('user_data')){
         $data = Order::getFormatData(session('user_data'), session('order'));
+        $teachers = Teacher::getTeacherCourse($data->course_id);
+        $schedules = Teacher::getTeacherSchedules($data->teacher_id);
     }
 @endphp
 
 <script>
     $(".select2").select2({
+        width:'100%',
+    });
+
+    $("#teacher_id").select2({
         width:'100%',
     });
 </script>
@@ -78,17 +85,13 @@
                 <option value="#" disabled selected>-- Select --</option>
                 @foreach ($courses as $course)
                     @isset($data->course_id)
-                        {{-- <optgroup label="{{ $course->name }}"> --}}
                         @if($data->course_id == $course->id)
                             <option value="{{$course->id}}" selected>{{$course->name}}</option>
                         @else
                             <option value="{{$course->id}}" >{{$course->name}}</option>
                         @endif
-                        {{-- </optgroup> --}}
                     @else
-                        <optgroup label="{{ $course->name }}">
-                            <option value="{{$course->id}}" >{{$course->name}}</option>
-                        </optgroup>
+                        <option value="{{$course->id}}" >{{$course->name}}</option>
                     @endisset
                 @endforeach
             </select>
@@ -97,14 +100,14 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Teacher</label>
         <div class="col-sm-9">
-            <select class="form-control select2" parsley-trigger="change" name="teacher_id" id="teacher_id" onchange="get_package(this.value)">
+            <select class="form-control" parsley-trigger="change" name="teacher_id" id="teacher_id" onchange="get_package(this.value)">
                 <option value="#" selected disabled>-- Select --</option>
                 @isset($data->teacher_id)
                     @foreach ($teachers as $teacher)
                         @if($data->teacher_id == $teacher->id)
-                            <option value="{{ $teacher->id }}" selected>{{ $teacher->teacher->name }}</option>
+                            <option value="{{ $teacher->id }}" data-text="{{ $teacher->isItInstantOrder() }}" selected>{{ $teacher->teacher->name }}</option>
                         @else
-                            <option value="{{ $teacher->id }}">{{ $teacher->teacher->name }}</option>
+                            <option value="{{ $teacher->id }}"data-text="{{ $teacher->isItInstantOrder() }}">{{ $teacher->teacher->name }}</option>
                         @endif
                     @endforeach
                 @endisset
@@ -128,10 +131,33 @@
             </select>
         </div>
     </div>
+    <div id="line_schedule" @isset($data->schedule_id)style="display:none;"@endisset>
+        <div class="form-group">
+            <label class="col-sm-3 col-sm-3 control-label">Schedule</label>
+            <div class="col-sm-9">
+                <select class="form-control select2 select2-multiple" multiple="multiple" multiple parsley-trigger="change" name="teacher_schedules[]" id="teacher_schedules" data-placeholder="-- Select --">
+                    @isset($data->schedules_id)
+                        @foreach ($schedules as $schedule)
+                            @if(in_array($schedule->id, $data->schedules_id))
+                                <option value="{{$schedule->id}}" selected>{{$schedule->get_day->day_name}}, {{ $schedule->time_start }} - {{ $schedule->time_end }}</option>
+                            @else
+                                <option value="{{$schedule->id}}" >{{$schedule->get_day->day_name}}, {{ $schedule->time_start }} - {{ $schedule->time_end }}</option>
+                            @endif
+                        @endforeach
+                    @endisset
+                </select>
+            </div>
+        </div>
+    </div>
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Order Bill</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="order_bill" id="order_bill" value="@isset($data->order_bill){{ $data->order_bill }}@endisset">
+            @if(session('role_id') == 4)
+                <input type="hidden" name="order_bill" id="order_bill" value="@isset($data->order_bill){{ $data->order_bill }}@endisset">
+                <input type="text" class="form-control" name="order_bill_display" id="order_bill_display" value="Rp @isset($data->order_bill){{ number_format($data->order_bill,2,",",".") }}@else{{ number_format(0,2,",",".") }}@endisset" disabled>
+            @else
+                <input type="text" class="form-control" name="order_bill" id="order_bill" value="@isset($data->order_bill){{ $data->order_bill }}@endisset">
+            @endif
         </div>
     </div>
     <div class="form-group">
@@ -154,10 +180,49 @@
 @if (session('user_data') && session('order'))
 <script>
     $(document).ready(function() {
-        var subject = $('#course_id').val();
-        if(subject != "#"){
-            get_teacher(subject);
+        // Select2
+        $(".select2").select2({
+            templateResult: formatState,
+            templateSelection: formatState
+        });
+
+        function formatState (opt) {
+            if (!opt.id) {
+                return opt.text.toUpperCase();
+            }
+
+            var optimage = $(opt.element).attr('data-image');
+            console.log(optimage)
+            if(!optimage){
+            return opt.text.toUpperCase();
+            } else {
+                var $opt = $(
+                '<span><img src="' + optimage + '" width="60px" /> ' + opt.text.toUpperCase() + '</span>'
+                );
+                return $opt;
+            }
+        };
+
+        $("#teacher_id").select2({
+            templateResult: formatText,
+            templateSelection: formatText,
+        });
+
+        function formatText (obj) {
+            if($(obj.element).data('text') == 1){
+                return $('<span>'+obj.text+' <span style="background: #008374; color:white">Instant Order</span></span>');
+            }else{
+                return $('<span>'+obj.text+'</span>');
+            }
         }
+        // var subject = $('#course_id').val();
+        // if(subject != "#"){
+        //     get_teacher(subject);
+        // }
+        // var teacher = $('#teacher_id').val();
+        // if(teacher){
+        //     get_schedule(teacher);
+        // }
     })    
 </script>
 @endif

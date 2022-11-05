@@ -17,6 +17,16 @@ class Teacher extends Model
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }
 
+    public function isItInstantOrder(){
+        $result = false;
+        $count_schedule = TeacherSchedule::where('teacher_id', $this->id)->count();
+        if($count_schedule != 0){
+            $result = true;
+        }
+
+        return $result;
+    }
+
     public static function dataIndex(Request $request){
         $draw = $request->draw;
         $row = $request->start;
@@ -146,5 +156,16 @@ class Teacher extends Model
 
         return json_decode(json_encode($result), FALSE);
         // return $result;
+    }
+
+    public static function getTeacherCourse($course_id){
+        $teacher_course = TeacherCourse::select('teacher_id')->where('course_id', $course_id)->get();
+        $teacher = Teacher::whereIn('id', $teacher_course)->get();
+        return $teacher;
+    }
+
+    public static function getTeacherSchedules($teacher_id){
+        $schedules = TeacherSchedule::where('teacher_id', $teacher_id)->get();
+        return $schedules;
     }
 }

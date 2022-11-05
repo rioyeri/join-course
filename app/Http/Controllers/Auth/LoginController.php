@@ -10,6 +10,8 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use App\Models\RoleMapping;
 use App\Models\Grade;
+use App\Models\Teacher;
+use App\Models\Student;
 
 class LoginController extends Controller
 {
@@ -42,11 +44,16 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
-    public function redirect(){
+    public function redirect(Request $request){
+        if(isset($request->data) && isset($request->order)){
+            $request->session()->put('user_data', $request->data);
+            $request->session()->put('order', $request->order);    
+        }
+
         return Socialite::driver('google')->redirect();
     }
 
-    public function callback(Request $request,$data=null,$order=null){
+    public function callback(Request $request){
         try{
             $user = Socialite::driver('google')->stateless()->user();
         }catch(\Exception $e){
@@ -85,15 +92,34 @@ class LoginController extends Controller
             "last_login" => now(),
         ));
 
+        $role_id = $user_exist->rolemapping()->first()->role_id;
         $request->session()->put('username', $user_exist->username);
         $request->session()->put('role', $user_exist->rolemapping()->first()->role()->first()->role_name);
-        $request->session()->put('role_id', $user_exist->rolemapping()->first()->role_id);
+        $request->session()->put('role_id', $role_id);
         $request->session()->put('name', $user_exist->name);
         $request->session()->put('user_id', $user_exist->id);
         $request->session()->put('photo', $foto);
         $request->session()->put('isLoggedIn', 'Ya');
         $request->session()->put('isItMaintenance', 'aktif');
         // $request->session()->put('isItMaintenance', 'maintenance');
-        return redirect()->route('getHome');
+        // return redirect()->route('getHome');
+        if($role_id == 4){
+            $student = Student::where('user_id', $user_exist->id)->first();
+            $request->session()->put('student_id', $student->id);
+        }elseif($role_id == 5){
+            $teacher = Teacher::where('user_id', $user_exist->id)->first();
+            $request->session()->put('teacher_id', $teacher->id);
+        }
+
+        User::where('id', $user_exist->id)->update(array(
+            "last_login" => now(),
+        ));
+
+
+        if($request->session()->has('order') && $request->session()->has('user_data')){
+            return redirect()->route('order.index');
+        }else{
+            return redirect()->route('getHome');
+        }
     }
 }

@@ -22,7 +22,8 @@ class ContentPromo extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"CTPR");
-        $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->select('content_promo.id','content_promo.name','icon','price','time_signature','link_text','link','category', 'content_promo.creator', 'u.name as creator_name');
+        // $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->select('content_promo.id','content_promo.name','icon','price','time_signature','link_text','link','category', 'content_promo.creator', 'u.name as creator_name');
+        $promos = Package::join('users as u', 'package.creator', 'u.id')->select('package.id','package.name','icon','price','time_signature','link_text','category', 'package.creator', 'u.name as creator_name');
 
         $totalRecords = $promos->count();
 
@@ -68,7 +69,6 @@ class ContentPromo extends Model
             $detail->put('price', $key->price);
             $detail->put('time_signature', $key->time_signature);
             $detail->put('link_text', $key->link_text);
-            $detail->put('link', $key->link);
             $detail->put('category', $category);
             $detail->put('options', $options);
             $data->push($detail);

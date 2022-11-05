@@ -28,9 +28,7 @@
                         @endif
                         {{-- </optgroup> --}}
                     @else
-                        <optgroup label="{{ $course->name }}">
-                            <option value="{{$course->id}}" >{{$course->name}}</option>
-                        </optgroup>
+                        <option value="{{$course->id}}" >{{$course->name}}</option>
                     @endisset
                 @endforeach
             </select>

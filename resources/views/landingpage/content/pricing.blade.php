@@ -15,7 +15,7 @@
                     <div class="icon">
                         <i class="{{ $promo->icon }}"></i>
                     </div>
-                    <h4><sup>Rp </sup>@if(is_int($promo->price)) {{ number_format($promo->price,0,",",".") }} @else {{ $promo->price }} @endif<span> / {{ $promo->time_signature }}</span></h4>
+                    <h4>@if(is_int($promo->price)) {{ number_format($promo->price,0,",",".") }} @else {{ $promo->price }} @endif<span> / {{ $promo->time_signature }}</span></h4>
                     <ul>
                         @foreach ($promo->detail as $det)
                             @if ($det->status==0)
@@ -25,7 +25,7 @@
                             @endif
                         @endforeach
                     </ul>
-                    <div class="text-center"><a href="{{ $promo->link }}" class="buy-btn">{{ $promo->link_text }}</a></div>
+                    <div class="text-center"><a href="#contact" class="buy-btn">{{ $promo->link_text }}</a></div>
                 </div>
             </div><!-- End Pricing Item -->                
             @endforeach

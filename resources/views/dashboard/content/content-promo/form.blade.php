@@ -1,10 +1,10 @@
 @isset($data)
-    <h4 class="mb"><i class="fa fa-angle-right"></i> Update Promo</h4>
+    <h4 class="mb"><i class="fa fa-angle-right"></i> Update Package</h4>
     <form class="form-horizontal style-form" method="post" action="{{ route('contentpromo.update', ['id' => $data->id]) }}">
         {{ method_field('PUT') }}
-        <input type="hidden" id="promo_id" value="{{ $data->id }}">
+        <input type="hidden" id="package_id" value="{{ $data->id }}">
 @else
-    <h4 class="mb"><i class="fa fa-angle-right"></i> Add Promo</h4>
+    <h4 class="mb"><i class="fa fa-angle-right"></i> Add Package</h4>
     <form class="form-horizontal style-form" method="post" action="{{ route('contentpromo.store') }}">
 @endif
     @csrf
@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Promo Price</label>
+        <label class="col-sm-3 col-sm-3 control-label">Package Price</label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="price" id="price" placeholder="100000 / 100k" value="@isset($data->price){{ $data->price }}@endisset">
         </div>
@@ -32,12 +32,12 @@
             <input type="text" class="form-control" name="link_text" id="link_text" placeholder="Pesan sekarang / Ambil Promo" value="@isset($data->link_text){{ $data->link_text }}@endisset">
         </div>
     </div>
-    <div class="form-group">
+    {{-- <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Link</label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="link" id="link" placeholder="https://" value="@isset($data->link){{ $data->link }}@endisset">
         </div>
-    </div>
+    </div> --}}
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Icon</label>
         <div class="col-sm-9">
@@ -171,10 +171,10 @@
         var token = $("meta[name='csrf-token']").attr("content");
         var status = $('#status').val();
         var feature = $('#feature').val();
-        var promo_id = $('#promo_id').val();
+        var package_id = $('#package_id').val();
 
         if(feature != ""){
-            if(promo_id == undefined){
+            if(package_id == undefined){
                 var i = $('#table-detail tbody tr.trow').length + 1;
                 if(status == 1){
                     get_status = "Included";
@@ -199,7 +199,7 @@
                     dataType: 'json',
                     data: {
                         "_token" : $('meta[name="csrf-token"]').attr('content'),
-                        "promo_id" : promo_id,
+                        "package_id" : package_id,
                         "status" : status,
                         "feature" : feature,
                     },
@@ -220,11 +220,11 @@
         var row_number = $('#row_number').val();
         var new_status = $('#status').val();
         var new_feature = $('#feature').val();
-        var promo_id = $('#promo_id').val();
+        var package_id = $('#package_id').val();
 
         console.log(new_detail_id);
         if(new_feature != ""){
-            if(promo_id == undefined){
+            if(package_id == undefined){
                 $("#table-body-detail tr").each(function(){
                     var number = $(this).find('td:eq(0)').text();
                     if(row_number == number){
@@ -279,10 +279,10 @@
     }
 
     function delete_row(id){
-        var promo_id = $('#promo_id').val();
-        console.log(promo_id);
+        var package_id = $('#package_id').val();
+        console.log(package_id);
 
-        if(promo_id == undefined){
+        if(package_id == undefined){
             $('#trow'+id).remove();
         }else{
             var detail_id = $('#detail_id'+id).val();
@@ -309,7 +309,7 @@
         $('#status').val(1).change();
         document.getElementById('button_adddetail').style.display = 'block';
         document.getElementById('button_updatedetail').style.display = 'none';
-        document.getElementById('title-edit').innerHTML ="<strong>Add Promo Detail</strong>";
+        document.getElementById('title-edit').innerHTML ="<strong>Add Package Detail</strong>";
     }
 
     function correctionNumber(){

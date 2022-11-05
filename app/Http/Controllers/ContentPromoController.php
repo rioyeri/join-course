@@ -10,6 +10,8 @@ use App\Models\MenuMapping;
 use App\Models\BootstrapIcon;
 use App\Models\ContentPromoDetail;
 use App\Models\Log;
+use App\Models\Package;
+use App\Models\PackageDetail;
 use App\Models\RecycleBin;
 
 class ContentPromoController extends Controller
@@ -144,9 +146,11 @@ class ContentPromoController extends Controller
      */
     public function edit($id)
     {
-        $data = ContentPromo::where('id', $id)->first();
+        // $data = ContentPromo::where('id', $id)->first();
+        $data = Package::where('id', $id)->first();
         $icons = BootstrapIcon::all();
-        $details = ContentPromoDetail::where('promo_id', $id)->get();
+        // $details = ContentPromoDetail::where('promo_id', $id)->get();
+        $details = PackageDetail::where('package_id', $id)->get();
         return response()->json(view('dashboard.content.content-promo.form',compact('data','icons','details'))->render());
     }
 

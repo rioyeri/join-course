@@ -23,6 +23,16 @@ class TeacherCourse extends Model
         return $teacher;
     }
 
+    public function isItInstantOrder(){
+        $result = false;
+        $count_schedule = TeacherSchedule::where('teacher_id', $this->teacher_id)->count();
+        if($count_schedule != 0){
+            $result = true;
+        }
+
+        return $result;
+    }
+
     public static function setData($id, $courses_id){
         $old_list = TeacherCourse::where('teacher_id', $id)->get();
         if($old_list->count() != 0){

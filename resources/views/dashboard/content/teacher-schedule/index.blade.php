@@ -10,10 +10,11 @@
     <link href="{{ asset('dashboard/additionalplugins/datatables/select.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Select2 -->
     <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Time Picker -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-timepicker/compiled/timepicker.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-datetimepicker/css/datetimepicker.css') }}" />
     <!-- Sweet Alert css -->
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Bootstrap Icon -->
-    <link href="{{ asset('landingpage/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
@@ -54,17 +55,17 @@
 @endsection
 
 @section('title')
-    Our Promo
+    Teacher Reguler Schedule
 @endsection
 
 @section('content')
     <!-- page start-->
     <div class="content-panel">
-        @if(array_search("CTPRC", $submoduls))
+        @if(array_search("CTTSC", $submoduls))
             <button class="btn btn-theme btn-round m-20" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
         @endif
             <!-- Modal -->
-        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -77,15 +78,11 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-promo">
+            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-teacherschedule">
                 <thead>
                     <th>No</th>
-                    <th>Title</th>
-                    <th>Icon</th>
-                    <th>Price</th>
-                    <th>/ Time</th>
-                    <th>Link Text</th>
-                    <th>Category</th>
+                    <th>Teacher Name</th>
+                    <th>Reguler Schedules</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -107,6 +104,11 @@
     <!-- Select2 -->
     <script src="{{ asset('dashboard/additionalplugins/select2/js/select2.min.js') }}" type="text/javascript"></script>
 
+    <!-- Time Picker -->
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-daterangepicker/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-timepicker/js/bootstrap-timepicker.js') }}"></script>
+
     <!-- Sweet Alert Js  -->
     <script src="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('dashboard/additionalpages/jquery.sweet-alert.init.js') }}"></script>
@@ -115,23 +117,19 @@
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table-promo').DataTable({
+        $('#table-teacherschedule').DataTable({
             "processing" : true,
             "serverSide" : true,
-            "order": [[ 0, "asc" ]],
+            "order": [[ 1, "asc" ]],
             "ajax" : {
-                "url" : "{{ route('contentpromo.index') }}",
+                "url" : "{{ route('teacherschedule.index') }}",
                 "type" : "get",
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
-                    {data : "name", name : "name"},
-                    {data : "icon", name : "icon", orderable : false, searchable : false},
-                    {data : "price", name : "price", orderable : false},
-                    {data : "time_signature", name : "time_signature"},
-                    {data : "link_text", name : "link_text"},
-                    {data : "category", name : "category", searchable : false},
+                    {data : "teacher_name", name : "teacher_name"},
+                    {data : "teacher_schedules", name : "teacher_schedules", orderable : false},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
@@ -156,7 +154,7 @@
 
     function create_data(){
         $.ajax({
-            url : "{{route('contentpromo.create')}}",
+            url : "{{route('teacherschedule.create')}}",
             type : "get",
             dataType: 'json',
         }).done(function (data) {
@@ -168,7 +166,7 @@
 
     function edit_data(id){
         $.ajax({
-            url : "/contentpromo/"+id+"/edit",
+            url : "/teacherschedule/"+id+"/edit",
             type : "get",
             dataType: 'json',
         }).done(function (data) {
@@ -193,7 +191,7 @@
             buttonsStyling: false
         }).then(function () {
             $.ajax({
-                url: "contentpromo/"+id,
+                url: "teacherschedule/"+id,
                 type: 'DELETE',
                 data: {
                     "_token": token,

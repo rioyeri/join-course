@@ -1146,6 +1146,8 @@ section {
   .testimonials .testimonial-item .testimonial-img {
     position: static;
     left: auto;
+    width: 20%;
+    height: 20%;
   }
 }
 
@@ -1415,6 +1417,7 @@ section {
   padding: 15px;
   overflow: hidden;
   box-shadow: 0px 2px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .team .member img {
@@ -1863,7 +1866,7 @@ section {
 }
 
 .contact .php-email-form input,
-.contact .php-email-form textarea{
+.contact .php-email-form textarea {
   border-radius: 0;
   box-shadow: none;
   font-size: 14px;
@@ -1871,8 +1874,7 @@ section {
 
 .contact .php-email-form input[type=text],
 .contact .php-email-form input[type=email],
-.contact .php-email-form textarea,
-.contact .php-email-form {
+.contact .php-email-form textarea {
   padding: 12px 15px;
 }
 
@@ -2801,4 +2803,99 @@ section {
 .row {
   margin-right: -10px;
   margin-left: -10px;
+}
+
+/* BUTTON */
+.bg-theme {
+	/* background-color: #4ECDC4; */
+    background-color: #008374;;
+}
+
+.bg-theme02 {
+	background-color: #ac92ec;
+}
+
+.bg-theme03 {
+  background-color: #48cfad;
+}
+
+.bg-theme04 {
+  background-color: #ed5565;
+}
+/*Theme Buttons*/
+
+.btn-theme {
+  color: #fff;
+  /* background-color: #4ECDC4;
+  border-color: #48bcb4; */
+  background-color: #008374;
+  border-color: #00A8B3;
+}
+.btn-theme:hover,
+.btn-theme:focus,
+.btn-theme:active,
+.btn-theme.active,
+.open .dropdown-toggle.btn-theme {
+  color: #fff;
+  background-color: #48bcb4;
+  border-color: #48bcb4;
+}
+
+.btn-theme02 {
+  color: #fff;
+  background-color: #ac92ec;
+  border-color: #967adc;
+}
+.btn-theme02:hover,
+.btn-theme02:focus,
+.btn-theme02:active,
+.btn-theme02.active,
+.open .dropdown-toggle.btn-theme02 {
+  color: #fff;
+  background-color: #967adc;
+  border-color: #967adc;
+}
+
+.btn-theme03 {
+  color: #fff;
+  background-color: #48cfad;
+  border-color: #37bc9b;
+}
+.btn-theme03:hover,
+.btn-theme03:focus,
+.btn-theme03:active,
+.btn-theme03.active,
+.open .dropdown-toggle.btn-theme03 {
+  color: #fff;
+  background-color: #37bc9b;
+  border-color: #37bc9b;
+}
+
+.btn-theme04 {
+  color: #fff;
+  background-color: #ed5565;
+  border-color: #da4453;
+}
+.btn-theme04:hover,
+.btn-theme04:focus,
+.btn-theme04:active,
+.btn-theme04.active,
+.open .dropdown-toggle.btn-theme04 {
+  color: #fff;
+  background-color: #da4453;
+  border-color: #da4453;
+}
+
+.btn-clear-g {
+	color: #48bcb4;
+	background: transparent;
+	border-color: #48bcb4;
+}
+
+.btn-clear-g:hover {
+	color: white;
+}
+
+.goright {
+	text-align: right;
 }

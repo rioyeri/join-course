@@ -104,7 +104,7 @@
                 <h2>{{ $content[0]->title }}</h2>
                 <p>{{ $content[0]->subtitle }}</p>
                 <div class="wrapper">
-                    <form action="{{ route('showSearchResult') }}" method="POST">
+                    <form action="{{ route('searching') }}" method="POST">
                         @csrf
                         <div class="search-input">
                             <input type="text" name="searchbox" id="searchbox" placeholder="Apa yang ingin Anda Pelajari" onkeyup="searchTeacherOrSubject()">

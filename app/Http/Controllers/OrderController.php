@@ -14,7 +14,10 @@ use App\Models\Log;
 use App\Models\MenuMapping;
 use App\Models\RecycleBin;
 use App\Models\OrderPayment;
-
+use App\Models\TeacherSchedule;
+use App\Models\Day;
+use App\Models\OrderDetail;
+use DateTime;
 use PDF;
 
 class OrderController extends Controller
@@ -52,8 +55,9 @@ class OrderController extends Controller
         $courses = Course::where('status', 1)->get();
         $grades = Grade::all();
         $packages = Package::where('status', 1)->get();
+        $schedules = TeacherSchedule::all();
         // $users = User::getUserListByRole('!=', 4);
-        return response()->json(view('dashboard.order.order.form',compact('students','teachers','courses','grades','packages'))->render());
+        return response()->json(view('dashboard.order.order.form',compact('students','teachers','courses','grades','packages','schedules'))->render());
     }
 
     /**
@@ -94,6 +98,21 @@ class OrderController extends Controller
 
                 $data->order_id = Order::generateOrderID($data->id);
                 $data->save();
+
+                if(isset($request->teacher_schedules)){
+                    foreach($request->teacher_schedules as $key){
+                        $schedule = TeacherSchedule::where('id', $key)->first();
+                        $date = Day::getStartOfWeekDate($request->course_start, $schedule->day_id);
+                        $schedule_time = date_format(date_create($date->format('Y-m-d')." ".$schedule->time_start), "Y-m-d H:i:s");
+    
+                        $detail = new OrderDetail(array(
+                            'order_id' => $data->id,
+                            'schedule_time' => $schedule_time,
+                            'creator' => session('user_id'),
+                        ));
+                        $detail->save();
+                    }
+                }
  
                 if($request->session()->has('user_data') && $request->session()->has('order')){
                     $request->session()->forget('user_data');
@@ -243,12 +262,23 @@ class OrderController extends Controller
     public function neworder(Request $request){
         ini_set('max_execution_time', 30000);
 
-        $data = str_replace("&"," ",$request->user_name);
-        $data.= "+".str_replace("&"," ",$request->user_phone);
-        $data.= "+".str_replace("&"," ",$request->user_school);
-        $data.= "+".str_replace("&"," ",$request->grade_id);
-        $order = str_replace("&"," ",$request->course_id);
-        $order.= "+".str_replace("&"," ",$request->package_id);
+        $data = str_replace(" ","&",$request->user_name);
+        $data.= "+".str_replace(" ","&",$request->user_phone);
+        $data.= "+".str_replace(" ","&",$request->user_school);
+        $data.= "+".str_replace(" ","&",$request->grade_id);
+        $order = str_replace(" ","&",$request->course_id);
+        $order.= "+".str_replace(" ","&",$request->teacher_id);
+        $order.= "+".str_replace(" ","&",$request->package_id);
+
+        if(isset($request->teacher_schedules)){
+            for($i=0; $i < count($request->teacher_schedules); $i++){
+                if($i == 0){
+                    $order.="_".str_replace("&"," ",$request->teacher_schedules[$i]);
+                }else{
+                    $order.="+".str_replace("&"," ",$request->teacher_schedules[$i]);
+                }
+            }
+        }
 
         return redirect()->route('get_login_to_order', ['data'=>$data, 'order'=>$order]);
     }

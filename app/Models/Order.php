@@ -173,20 +173,48 @@ class Order extends Model
         $school = $pieces[2];
         $grade = $pieces[3];
 
-        $pieces2 = explode("+", $order);
+        $course_and_teacher_and_package = substr($order, 0, strpos($order, "_"));
+        $pieces2 = explode("+", $course_and_teacher_and_package);
         $course_id = $pieces2[0];
-        $package_id = $pieces2[1];
+        $teacher_id = $pieces2[1];
+        $package_id = $pieces2[2];
 
-        $data = array(
-            "name" => $name,
-            "student_id" => session('student_id'),
-            "phone" => $phone,
-            "school" => $school,
-            "grade_id" => $grade,
-            "course_id" => $course_id,
-            "package_id" => $package_id,
-        );
+        $order_bill = TeacherPrice::where('teacher_id', $teacher_id)->where('package_id', $package_id)->first()->price;
 
+        $schedules = substr($order, strpos($order, "_") + 1);
+        $schedules_id = array();
+        $pieces3 = explode("+", $schedules);
+        foreach($pieces3 as $piece){
+            array_push($schedules_id, $piece);
+        }
+
+        if(count($schedules_id) != 0){
+            $data = array(
+                "name" => $name,
+                "student_id" => session('student_id'),
+                "phone" => $phone,
+                "school" => $school,
+                "grade_id" => $grade,
+                "course_id" => $course_id,
+                "teacher_id" => $teacher_id,
+                "package_id" => $package_id,
+                "schedules_id" => $schedules_id,
+                "order_bill" => $order_bill,
+            );    
+        }else{
+            $data = array(
+                "name" => $name,
+                "student_id" => session('student_id'),
+                "phone" => $phone,
+                "school" => $school,
+                "grade_id" => $grade,
+                "course_id" => $course_id,
+                "teacher_id" => $teacher_id,
+                "package_id" => $package_id,
+                "order_bill" => $order_bill,
+            );    
+        }
+        
         return json_decode(json_encode($data),FALSE);
     }
 

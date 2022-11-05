@@ -15,9 +15,9 @@
             <div class="row gy-4">
                 @php($i=1)
                 @foreach ($results as $result)
-                    <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="@php(100 * $i)">
+                    <div class="col-xl-3 col-md-6 d-md-flex" data-aos="fade-up" data-aos-delay="@php(100 * $i)">
                         <div class="member">
-                            <img src="{{ $result->image }}" class="img-fluid" style="object-fit:cover; min-height: 250px; min-width: 250px; max-height:250px;" alt="">
+                            <img src="{{ $result->image }}" class="img-fluid" style="object-fit:cover; min-height: 250px; min-width: 250px; max-height:250px; max-width:250px;" alt="">
                             <h4>{{ $result->title }}</h4>
                             <span>{{ $result->subtitle }}</span>
                             <p>{{ $result->description }}... <a href="javascript:;" data-toggle="modal" data-target="#exampleModalCenter" onclick="showDetail({{ $result->id }})">lihat lebih banyak</a></p>

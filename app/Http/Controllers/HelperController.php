@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\Teacher;
 use App\Models\TeacherCourse;
 use App\Models\TeacherPrice;
+use App\Models\TeacherSchedule;
 use App\Models\User;
 use App\Models\ContentProfile;
 use App\Models\ContentHome;
@@ -20,7 +21,9 @@ class HelperController extends Controller
         return response()->json($fee);
     }
 
+    // use in middleware
     public function getData(Request $request){
+        $data = NULL;
         if($request->jenisdata == "get_teacher"){
             if($request->params != NULL){
                 $course = Course::where('id', $request->params)->first();
@@ -28,14 +31,12 @@ class HelperController extends Controller
                 $append = '<option value="#" disabled selected>Pick your '.$course->name.'\'s Teacher</option>';
         
                 foreach($list as $key){
-                    $append.='<option value="'.$key->teacher_id.'">'.$key->teacher->name.'</option>';
+                    $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
                 }
         
                 $data = array(
                     'append' => $append,
                 );
-            }else{
-                $data = NULL;
             }
         }elseif($request->jenisdata == "get_package"){
             if($request->params != NULL){
@@ -49,8 +50,74 @@ class HelperController extends Controller
                 $data = array(
                     'append' => $append,
                 );
-            }else{
-                $data = NULL;
+            }
+        }elseif($request->jenisdata == "get_schedule"){
+            if($request->params != NULL){
+                $list = TeacherSchedule::where('teacher_id', $request->params)->get();
+                $append = '';
+        
+                foreach($list as $key){
+                    $time_start = date('H:i', strtotime($key->time_start));
+                    $time_end = date('H:i', strtotime($key->time_end));
+
+                    $append.='<option value="'.$key->id.'">'.$key->get_day->nama_hari.', '.$time_start.' - '.$time_end.'</option>';
+                }
+        
+                $data = array(
+                    'append' => $append,
+                );
+            }
+        }
+
+        return response()->json($data);
+    }
+
+    // use Out of Middleware
+    public function getDatas(Request $request){
+        $data = NULL;
+
+        if($request->jenisdata == "get_teacher"){
+            if($request->params != NULL){
+                $course = Course::where('id', $request->params)->first();
+                $list = TeacherCourse::where('course_id', $request->params)->get();
+                $append = '<option value="#" disabled selected>Guru '.$course->name.'</option>';
+
+                foreach($list as $key){
+                    $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
+                }
+
+                $data = array(
+                    'append' => $append,
+                );
+            }
+        }elseif($request->jenisdata == "get_package"){
+            if($request->params != NULL){
+                $list = TeacherPrice::where('teacher_id', $request->params)->get();
+                $append = '<option value="#" disabled selected>Paket</option>';
+        
+                foreach($list as $key){
+                    $append.='<option value="'.$key->package_id.'">'.$key->get_package->name.'</option>';
+                }
+
+                $data = array(
+                    'append' => $append,
+                );
+            }
+        }elseif($request->jenisdata == "get_schedule"){
+            if($request->params != NULL){
+                $list = TeacherSchedule::where('teacher_id', $request->params)->get();
+                $append = '';
+        
+                foreach($list as $key){
+                    $time_start = date('H:i', strtotime($key->time_start));
+                    $time_end = date('H:i', strtotime($key->time_end));
+
+                    $append.='<option value="'.$key->id.'">'.$key->get_day->nama_hari.', '.$time_start.' - '.$time_end.'</option>';
+                }
+        
+                $data = array(
+                    'append' => $append,
+                );
             }
         }
 
@@ -75,8 +142,11 @@ class HelperController extends Controller
         return response()->json($result);
     }
 
-    public function showSearchResult(Request $request){
-        $keyword = $request->searchbox;
+    public function searching(Request $request){
+        return redirect()->route('showSearchResult', ['keyword' => $request->searchbox]);
+    }
+
+    public function showSearchResult($keyword){
         $courses = Course::where(function ($query) use ($keyword){
             $query->orWhere('name', 'LIKE', $keyword.'%')->orWhere('topic', 'LIKE', $keyword.'%');
         })->where('status', 1)->select('id')->get();
@@ -122,6 +192,7 @@ class HelperController extends Controller
 
     public function showTeacherDetail($id){
         $teacher = Teacher::getTeacherListByTeacherId($id);
-        return response()->json(view('landingpage.layout.profile',compact('teacher'))->render());
+        $id = $id;
+        return response()->json(view('landingpage.layout.profile',compact('teacher','id'))->render());
     }
 }
