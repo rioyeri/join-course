@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContentHomeDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,7 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        $courses = Course::all();
+        $courses = Course::where('status',1)->get();
         $users = User::getUserListByRole('!=', 4);
         return response()->json(view('dashboard.masterdata.teacher.form',compact('courses','users'))->render());
     }
@@ -59,7 +60,6 @@ class TeacherController extends Controller
             'user_id' => 'required',
             'title' => 'required',
             'description' => 'required',
-            'location' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -71,7 +71,6 @@ class TeacherController extends Controller
                     'user_id' => $request->user_id,
                     'title' => $request->title,
                     'description' => $request->description,
-                    'location' => $request->location,
                 ));
                 $teacher->save();
                 Log::setLog('MDTCC','Create Teacher : '.$request->user_id);
@@ -118,7 +117,6 @@ class TeacherController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
-            'location' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -129,7 +127,6 @@ class TeacherController extends Controller
                 $teacher = Teacher::where('id', $id)->first();
                 $teacher->title = $request->title;
                 $teacher->description = $request->description;
-                $teacher->location = $request->location;
                 $teacher->save();
                 Log::setLog('MDTCU','Update Teacher : '.$teacher->user_id);
                 return redirect()->route('teacher.index')->with('status','Successfully saved');
@@ -149,6 +146,9 @@ class TeacherController extends Controller
     {
         try{
             $data = Teacher::where('id', $id)->first();
+            if(ContentHomeDetail::where('content_id', 3)->where('link', $id)->count() != 0){
+                ContentHomeDetail::where('content_id', 3)->where('link', $id)->delete();
+            }
             $log_id = Log::setLog('MDTCD','Delete Teacher : '.$data->teacher->name);
             RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
             $data->delete();
@@ -192,7 +192,7 @@ class TeacherController extends Controller
     public function editTeacherCourse(Request $request, $id){
         $data = Teacher::where('id', $id)->first();
         $exist_course = array_values(array_column(DB::select("SELECT course_id FROM teacher_course WHERE teacher_id LIKE $id"), 'course_id'));
-        $courses = Course::all();
+        $courses = Course::where('status',1)->get();
         return response()->json(view('dashboard.masterdata.teacher.course.form',compact('data','courses','exist_course'))->render());
     }
 
@@ -218,7 +218,7 @@ class TeacherController extends Controller
     public function editTeacherPrice(Request $request, $id){
         $data = Teacher::where('id', $id)->first();
         $exist_packages = TeacherPrice::where('teacher_id', $id)->get();
-        $packages = Package::all();
+        $packages = Package::where('status',1)->get();
         
         return response()->json(view('dashboard.masterdata.teacher.price.form',compact('data','packages','exist_packages'))->render());
     }
@@ -247,7 +247,6 @@ class TeacherController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
-            'location' => 'required',
             'teacher_subjects' => 'required',
         ]);
         // IF Validation fail
@@ -259,7 +258,6 @@ class TeacherController extends Controller
                 $teacher = Teacher::where('id', $id)->first();
                 $teacher->title = $request->title;
                 $teacher->description = $request->description;
-                $teacher->location = $request->location;
                 $teacher->save();
 
                 TeacherCourse::setData($id, $request->teacher_subjects);

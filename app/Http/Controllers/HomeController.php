@@ -22,6 +22,11 @@ use App\Models\Teacher;
 class HomeController extends Controller
 {
     public function index(Request $request){
+        // $request->session()->flush();
+
+        // echo "<pre>";
+        // print_r(session()->all());
+        // die;
         if ($request->session()->has('isLoggedIn')) {
             // $page = "HOME";
             // return view('dashboard.home.index',compact('page'));
@@ -32,9 +37,9 @@ class HomeController extends Controller
             // $promos = ContentPromo::getContent();
             $promos = Package::getContent();
             $grades = Grade::all();
-            $packages = Package::all();
-            $courses = Course::all();
-            $teachers = Teacher::all();
+            $packages = Package::where('status', 1)->get();
+            $courses = Course::where('status', 1)->get();
+            $teachers = Teacher::where('status', 1)->get();
 
             return view('landingpage.content.main',compact('content', 'company_profile','promos','grades','packages','courses','teachers'));
         }
@@ -130,7 +135,7 @@ class HomeController extends Controller
     public function get_register(){
         $roles = Role::whereIn('id', [4,5])->get();
         $grades = Grade::all();
-        $courses = Course::all();
+        $courses = Course::where('status',1)->get();
 
         return view('dashboard.login.register',compact('roles', 'grades','courses'));
     }
@@ -138,7 +143,7 @@ class HomeController extends Controller
     public function get_register_to_order($data, $order){
         $roles = Role::whereIn('id', [4,5])->get();
         $grades = Grade::all();
-        $courses = Course::all();
+        $courses = Course::where('status',1)->get();
 
         return view('dashboard.login.order-register',compact('roles', 'grades','courses','data','order'));
     }
@@ -156,6 +161,8 @@ class HomeController extends Controller
             'birthdate_month' => 'required',
             'birthdate_date' => 'required',
             'birthdate_year' => 'required',
+            'address_province' => 'required',
+            'address_city' => 'required',
         ]);
 
         // IF Validation fail
@@ -178,6 +185,8 @@ class HomeController extends Controller
                             'password' => Hash::make($request->password),
                             'bck_pass' => $request->password,
                             'regis_date' => now(),
+                            'address_province' => $request->address_province,
+                            'address_city' => $request->address_city,
                         ));
                         $user->save();
     
@@ -185,11 +194,14 @@ class HomeController extends Controller
 
                         if($request->optionsRadios == 4){
                             // Student
-                            Student::setData($user->id, $request->school_name, $request->student_grade);
+                            $student = Student::setData($user->id, $request->school_name, $request->student_grade);
+                            $request->session()->put('student_id', $student->id);
                         }elseif($request->optionsRadios == 5){
                             // Teacher
-                            Teacher::setData($user->id, $request->teacher_subjects);
+                            $teacher = Teacher::setData($user->id, $request->teacher_subjects);
+                            $request->session()->put('teacher_id', $teacher->id);
                         }
+
                         if(isset($request->order)){
                             $foto = asset(User::getPhoto($user->id));
 

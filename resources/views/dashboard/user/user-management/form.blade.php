@@ -1,3 +1,61 @@
+<script>
+    function getProvinces(params=null) {
+        var jenisdata = "getProvinces";
+        $.ajax({
+            url : "{{route('getLocation')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                jenisdata: jenisdata,
+                current_province: params,
+            },
+        }).done(function (data) {
+            $('#address_province').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function getCities(params,current=null) {
+        var jenisdata = "getCities";
+        $.ajax({
+            url : "{{route('getLocation')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                province: params,
+                jenisdata: jenisdata,
+                current_city: current,
+            },
+        }).done(function (data) {
+            $('#address_city').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+</script>
+@isset($data->address_province)
+<script>
+    $(document).ready(function() {
+        var prov = $('#current_prov').val();
+        var city = $('#current_city').val();
+        getProvinces(prov);
+        getCities(prov, city);
+        $('.select2').select2({
+            width: '100%',
+        });
+    });
+</script>
+@else
+<script>
+    $(document).ready(function() {
+        getProvinces();
+        $('.select2').select2({
+            width:'100%',
+        });
+    });
+</script>
+@endisset
 @isset($data->id)
     <h4 class="mb"><i class="fa fa-angle-right"></i> Update User</h4>
     <form id="form" role="form" class="form-horizontal style-form" method="post" action="{{ route('user.update', ['id' => $data->id]) }}" enctype="multipart/form-data">
@@ -56,11 +114,75 @@
     </div>
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Date of Birth</label>
-        <div class="col-sm-9">
-            <input type="text" class="form-control datepicker" name="birthdate" id="birthdate" data-date-format='yyyy-mm-dd' onchange="checkfield()" value="@isset($data->birthdate){{ $data->birthdate }}@endisset">
+        <div class="col-sm-3">
+            {{-- <input type="text" class="form-control datepicker" name="birthdate" id="birthdate" data-date-format='yyyy-mm-dd' onchange="checkfield()" value="@isset($data->birthdate){{ $data->birthdate }}@endisset" required> --}}
+            <select class="form-control select2" parsley-trigger="change" name="birthdate_month" id="birthdate_month" required>
+                <option value="#" disabled selected>Month</option>
+                @for ($i=1; $i <= 12; $i++)
+                    @isset($data->birthdate)
+                        @if (date("m", strtotime($data->birthdate)) == $i)
+                            <option value="{{$i}}" selected>{{date("F", mktime(0, 0, 0, $i, 10))}}</option>
+                        @else
+                            <option value="{{$i}}">{{date("F", mktime(0, 0, 0, $i, 10))}}</option>
+                        @endif
+                    @else
+                        <option value="{{$i}}">{{date("F", mktime(0, 0, 0, $i, 10))}}</option>
+                    @endisset
+                @endfor
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <select class="form-control select2" parsley-trigger="change" name="birthdate_date" id="birthdate_date" required>
+                <option value="#" disabled selected>Date</option>
+                @for ($i=1; $i <= 31; $i++)
+                    @isset($data->birthdate)
+                        @if(date("d", strtotime($data->birthdate)) == $i)
+                            <option value="{{$i}}" selected>{{$i}}</option>
+                        @else
+                            <option value="{{$i}}">{{$i}}</option>
+                        @endif
+                    @else
+                        <option value="{{$i}}">{{$i}}</option>
+                    @endisset
+                @endfor
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <select class="form-control select2" parsley-trigger="change" name="birthdate_year" id="birthdate_year" required>
+                <option value="#" disabled selected>Year</option>
+                @for ($i=1950; $i <= date('Y'); $i++)
+                    @isset($data->birthdate)
+                        @if (date("Y", strtotime($data->birthdate)) == $i)
+                            <option value="{{$i}}" selected>{{$i}}</option>
+                        @else
+                            <option value="{{$i}}">{{$i}}</option>
+                        @endif
+                    @else
+                        <option value="{{$i}}">{{$i}}</option>
+                    @endisset
+                @endfor
+            </select>
         </div>
     </div>
-
+    <div class="form-group">
+        <label class="col-sm-3 col-sm-3 control-label">Location</label>
+        <div class="col-sm-4">
+            <select class="form-control select2" parsley-trigger="change" name="address_province" id="address_province" onchange="getCities(this.value)" required>
+                <option value="#" disabled selected>Province</option>
+            </select>
+            @isset($data->address_province)
+                <input type="hidden" id="current_prov" value="{{ $data->address_province }}">
+            @endisset
+        </div>
+        <div class="col-sm-5">
+            <select class="form-control select2" parsley-trigger="change" name="address_city" id="address_city" required>
+                <option value="#" disabled selected>City</option>
+            </select>
+            @isset($data->address_city)
+                <input type="hidden" id="current_city" value="{{ $data->address_city }}">
+            @endisset
+        </div>
+    </div>
     <div class="form-group">
         <label class="control-label col-sm-3 col-sm-3">Image Upload</label>
         <div class="col-md-9">
@@ -89,11 +211,6 @@
 </form>
 
 <script>
-    // Date Picker
-    jQuery('.datepicker').datepicker({
-        autoclose: true
-    });
-
     function moveToBox(){
         $('#birthdate').data("datepicker").show();
     }
@@ -218,4 +335,81 @@
             document.getElementById('submit-button').setAttribute('disabled','');
         }
     }
+
+    function getProvinces(params=null) {
+        var jenisdata = "getProvinces";
+        $.ajax({
+            url : "{{route('getLocation')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                jenisdata: jenisdata,
+                current_province: params,
+            },
+        }).done(function (data) {
+            $('#address_province').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function getCities(params,current=null) {
+        var jenisdata = "getCities";
+        $.ajax({
+            url : "{{route('getLocation')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                province: params,
+                jenisdata: jenisdata,
+                current_city: current,
+            },
+        }).done(function (data) {
+            $('#address_city').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    $("#form").submit(function(event) {
+        password = $('#password').val();
+        retype = $('#password_retype').val();
+
+        if(password != retype){
+            // document.getElementById("checkpassword").style.display = 'block';
+            toastr.error("Confirm password failed!", 'Failed!')
+            $('#password').val("");
+            $('#password_retype').val("");
+            event.preventDefault();
+            return false;
+        }
+
+        month = $('#birthdate_month').val();
+        date = $('#birthdate_date').val();
+        year = $('#birthdate_year').val();
+
+        if(month == null || year == null || date == null){
+            // document.getElementById("checkpassword").style.display = 'block';
+            toastr.error("Date of Birth required!", 'Failed!')
+            $('#birthdate_month').val("#").change();
+            $('#birthdate_date').val("#").change();
+            $('#birthdate_year').val("#").change();
+            event.preventDefault();
+            return false;
+        }
+
+        address_province = $('#address_province').val();
+        address_city = $('#address_city').val();
+        
+        if(address_city == null || address_province == null){
+            // document.getElementById("checkpassword").style.display = 'block';
+            toastr.error("Your Location is required!", 'Failed!')
+            $('#address_province').val("#").change();
+            $('#address_city').val("#").change();
+            event.preventDefault();
+            return false;
+        }
+
+        document.getElementById("form").submit();
+    });
 </script>

@@ -26,6 +26,9 @@
                     <div class="member">
                         <img src="{{ $teacher->image }}" class="img-fluid" style="object-fit:cover; min-height: 350px; min-width: 250px; max-height:250px;" alt="">
                         <h4>{{ $teacher->title }}</h4>
+                        @if($teacher->link_text != "")
+                            <p><i class="bi bi-pin-map"></i> {{ $teacher->link_text }}</p>
+                        @endif
                         <span>{{ $teacher->subtitle }}</span>
                         <p>{{ $teacher->description }}... <a href="javascript:;" data-toggle="modal" data-target="#exampleModalCenter" onclick="showDetail({{ $teacher->link }})">lihat lebih banyak</a></p>
                     </div>

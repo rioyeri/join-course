@@ -23,7 +23,7 @@ class ContentPromo extends Model
 
         $page = MenuMapping::getMap(session('role_id'),"CTPR");
         // $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->select('content_promo.id','content_promo.name','icon','price','time_signature','link_text','link','category', 'content_promo.creator', 'u.name as creator_name');
-        $promos = Package::join('users as u', 'package.creator', 'u.id')->select('package.id','package.name','icon','price','time_signature','link_text','category', 'package.creator', 'u.name as creator_name');
+        $promos = Package::join('users as u', 'package.creator', 'u.id')->select('package.id','package.name','icon','price','time_signature','link_text','category', 'package.creator', 'u.name as creator_name')->where('status', 1);
 
         $totalRecords = $promos->count();
 

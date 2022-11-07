@@ -6,6 +6,12 @@ MAIN SIDEBAR MENU
     use App\Models\MenuMapping;
     use App\Models\Modul;
     use App\Models\SubModul;
+    use App\Models\Teacher;
+    use App\Models\ContentProfile;
+    use App\Models\User;
+
+    $phone_format = User::getFormatWANumber(ContentProfile::where('id',5)->first()->content);
+    $phone_redirect = "https://api.whatsapp.com/send?phone=".$phone_format;
 @endphp
 <aside>
     <div id="sidebar" class="nav-collapse">
@@ -15,8 +21,14 @@ MAIN SIDEBAR MENU
             <h5 class="centered">{{ session('username') }}</h5>
             <h6 class="centered">{{ session('name') }}</h6>
             <h4 class="centered">{{ session('role') }}</h4>
+            {{-- @isset(session('role_id')) --}}
+                @if(session('role_id') == 5 && Teacher::where('user_id', session('user_id'))->first()->status != 1) 
+                    <h6 class="centered" style="color:red;padding: 0 10% 0 10%;">(As a Teacher you need a approval by Admin)</h6>
+                @endif
+            {{-- @endif --}}
             <div class="centered">
-                <a href="{{ route('viewProfile') }}" class="btn-setting"><i class="fa fa-gear"></i></a>
+                <a href="{{ route('viewProfile') }}" class="btn-setting" title="Setting"><i class="fa fa-gear"></i></a>
+                <a href="{{ $phone_redirect }}" class="btn-setting" target="_blank" title="Whatsapp Admin"><i class="fa fa-whatsapp"></i></a>
             </div>
             <li class="mt">
                 <a @if(substr($page, 0,2) == "DS") class="active" @endif href="{{ route('getHome') }}">

@@ -2,17 +2,12 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 use App\Models\ForgotPassword;
 
 class ResetPasswordMail extends Mailable
 {
-    use Queueable, SerializesModels;
-
     /**
      * Create a new message instance.
      *
@@ -33,6 +28,6 @@ class ResetPasswordMail extends Mailable
     {
         $data = ForgotPassword::where('email', $this->email)->first();
         $uri = $this->url."/resetpassword/".$this->email."/".$data->token;
-        return $this->from('admin@flashacademia.nadasederhana.com', 'Admin Flash Academia')->markdown('emails.resetpassword',compact('uri'));
+        return $this->from('admin@nadasederhana.com', 'Admin Flash Academia')->subject('[NO REPLY] Reset Your Password in Flash Academia')->markdown('emails.resetpassword',compact('uri'));
     }
 }

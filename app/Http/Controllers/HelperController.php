@@ -13,6 +13,7 @@ use App\Models\TeacherSchedule;
 use App\Models\User;
 use App\Models\ContentProfile;
 use App\Models\ContentHome;
+use App\Models\City;
 
 class HelperController extends Controller
 {
@@ -31,7 +32,15 @@ class HelperController extends Controller
                 $append = '<option value="#" disabled selected>Pick your '.$course->name.'\'s Teacher</option>';
         
                 foreach($list as $key){
-                    $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
+                    $location = "";
+                    if($key->teacher->address_city != "" && $key->teacher->address_province != ""){
+                        $location .= $key->teacher->address_city.", ".$key->teacher->address_province;
+                    }
+                    if($location  != ""){
+                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.' ('.$location.')</option>';
+                    }else{
+                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
+                    }
                 }
         
                 $data = array(
@@ -83,7 +92,15 @@ class HelperController extends Controller
                 $append = '<option value="#" disabled selected>Guru '.$course->name.'</option>';
 
                 foreach($list as $key){
-                    $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
+                    $location = "";
+                    if($key->teacher->address_city != "" && $key->teacher->address_province != ""){
+                        $location .= $key->teacher->address_city.", ".$key->teacher->address_province;
+                    }
+                    if($location != ""){
+                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.' ('.$location.')</option>';
+                    }else{
+                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
+                    }
                 }
 
                 $data = array(
@@ -173,8 +190,14 @@ class HelperController extends Controller
     public function getTeachersDetailbyName(Request $request){
         $user = User::where('name', 'LIKE', '%'.$request->name.'%')->first();
         $teacher = Teacher::where('user_id', $user->id)->first();
+
+        $title = $teacher->title;
+        if($teacher->location() != ""){
+            $title .= "(".$teacher->location().")";
+        }
         $result = array(
-            "title" => $teacher->title.' ('.$teacher->location.')',
+            "title" => $title,
+            // "title" => $teacher->title,
             "description" => $teacher->description,
             "image" => $user->profilephoto,
         );
@@ -184,7 +207,7 @@ class HelperController extends Controller
 
     public function getOrderBill(Request $request){
         $order = Order::where('id', $request->id)->first();
-        $payment = OrderPayment::where('order_id', $request->id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
+        $payment = OrderPayment::where('order_id', $request->id)->where('payment_confirmation', 1)->sum('payment_amount');
         $order_bill = $order->order_bill - $payment;
 
         return response()->json($order_bill);
@@ -194,5 +217,45 @@ class HelperController extends Controller
         $teacher = Teacher::getTeacherListByTeacherId($id);
         $id = $id;
         return response()->json(view('landingpage.layout.profile',compact('teacher','id'))->render());
+    }
+
+    public function getLocation(Request $request){
+        $data = NULL;
+        if($request->jenisdata == "getCities"){
+            if($request->province != NULL){
+                $citys = City::where('provinsi',$request->province)->select('kab_kota')->get();
+                $provinsi = City::where('provinsi',$request->province)->first()->provinsi;
+                $append = '<option value="#" disabled selected>Cities of '.$provinsi.'</option>';
+        
+                foreach($citys as $key){
+                    if($request->current_city == $key->kab_kota){
+                        $append.='<option value="'.$key->kab_kota.'" selected>'.$key->kab_kota.'</option>';
+                    }else{
+                        $append.='<option value="'.$key->kab_kota.'">'.$key->kab_kota.'</option>';
+                    }
+                }
+        
+                $data = array(
+                    'append' => $append,
+                );
+            }
+        }elseif($request->jenisdata == "getProvinces"){
+            $provinces = City::getProvinsi();
+            $append = '<option value="#" disabled selected>Province</option>';
+
+            foreach($provinces as $key){
+                if($request->current_province == $key->provinsi){
+                    $append .= '<option value="'.$key->provinsi.'" selected>'.$key->provinsi.'</option>';
+                }else{
+                    $append .= '<option value="'.$key->provinsi.'">'.$key->provinsi.'</option>';
+                }
+            }
+
+            $data = array(
+                'append' => $append,
+            );
+        }
+
+        return response()->json($data);
     }
 }

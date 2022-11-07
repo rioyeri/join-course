@@ -22,7 +22,7 @@
     @endif
 
     <h5 class="mb" id="title-edit"><strong>Add Detail Schedule</strong></h5>
-    <input type="hidden" id="detail_id" value="0">
+    <input type="hidden" id="schedule_id" value="0">
     <input type="hidden" id="row_number" value="0">
     <div class="form-group-sm">
         <label class="col-sm-2 control-label" style="padding-left:-100px;">Schedule</label>
@@ -50,7 +50,7 @@
             <a class="btn btn-sm btn-theme02" onclick="addToTable()">Submit</a>
         </div>
         <div class="col-sm-1" id="button_updatedetail" style="margin-left:-25px; margin-right: 20px; display:none;">
-            <a class="btn btn-sm btn-theme02" onclick="update_row()">Update</a>
+            <a class="btn btn-sm btn-theme02" onclick="addToTable()">Update</a>
         </div>
         <div class="col-sm-1">
             <a class="btn btn-sm btn-danger" onclick="clearForm()">Clear</a>
@@ -71,7 +71,7 @@
                     @isset($details)
                         @php($i=1)
                         @foreach($details as $key)
-                            <input type="hidden" id="detail_id{{ $i }}" value="{{ $key->id }}">
+                            <input type="hidden" id="schedule_id{{ $i }}" value="{{ $key->id }}">
                             <tr style="width:100%" id="trow{{ $i }}" class="trow">
                                 <td>{{ $i }}</td>
                                 <td>{{ $key->get_day->day_name }}</td>
@@ -127,7 +127,7 @@
         $("#table-body-detail tr").each(function(){
             var number = $(this).find('td:eq(0)').text();
             if(number == row){
-                var detail_id = $('#detail_id'+row).val();
+                var schedule_id = $('#schedule_id'+row).val();
                 var day_id = $('#day_id'+row).val();
                 var time_start = $(this).find('td:eq(2)').text();
                 var time_end = $(this).find('td:eq(3)').text();
@@ -135,7 +135,7 @@
                 $('#day').val(day_id).change();
                 $('#start').val(time_start);
                 $('#end').val(time_end)
-                $('#detail_id').val(detail_id);
+                $('#schedule_id').val(schedule_id);
                 $('#row_number').val(number);
 
                 document.getElementById('button_adddetail').style.display = 'none';
@@ -151,6 +151,7 @@
         var end = $('#end').val();
         var schedule_id = $('#schedule_id').val();
         var schedule_no = $('#row_number').val();
+        console.log(day, start, end, schedule_id, schedule_no);
 
         daySelect = document.getElementById("day");
         var day_name = daySelect.options[daySelect.selectedIndex].text;
@@ -183,7 +184,7 @@
                     var value_count = $(this).find('td:eq(0)').text();
                     if(value_count == schedule_no){
                         $(this).find('td:eq(1)').text(day_name);
-                        $('#day_id'+value_count).val(day_id);
+                        $('#day_id'+value_count).val(day);
 
                         $(this).find('td:eq(2)').text(start);
                         $('#time_start'+value_count).val(start);
@@ -204,7 +205,7 @@
     }
 
     function clearForm(){
-        $('#detail_id').val("");
+        $('#schedule_id').val("");
         $('#row_number').val("");
         $('#day').val('#').change();
         $('#start').val("");

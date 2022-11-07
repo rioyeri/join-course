@@ -75,6 +75,7 @@ Dashboard
                 <th>Grade</th>
                 <th>Teacher</th>
                 <th>Package</th>
+                <th>Type</th>
                 <th>Schedule</th>
                 <th>Report</th>
             </thead>
@@ -97,6 +98,7 @@ Dashboard
                 <th>Grade</th>
                 <th>Teacher</th>
                 <th>Package</th>
+                <th>Type</th>
                 <th>Order Status</th>
             </thead>
             <tbody id="table-body-notyet-confirm-order">
@@ -166,6 +168,7 @@ Dashboard
                 {data : "grade_id", name : "grade_id"},
                 {data : "teacher_name", name : "teacher_name"},
                 {data : "package_name", name : "package_name"},
+                {data : "order_type", name : "order_type"},
                 {data : "schedule", name : "schedule", orderable : false, searchable : false,},
                 {data : "report", name : "report", orderable : false, searchable : false,}
             ],
@@ -175,6 +178,16 @@ Dashboard
                         return '<strong>'+data+'</strong>';
                     },
                     targets: [1],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 'offline'){
+                            return '<span style="background: #f96f59; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Offline</span>';
+                        }else{
+                            return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
+                        }
+                    },
+                    targets: [6],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
@@ -199,6 +212,7 @@ Dashboard
                 {data : "grade_id", name : "grade_id"},
                 {data : "teacher_name", name : "teacher_name"},
                 {data : "package_name", name : "package_name"},
+                {data : "order_type", name : "order_type"},
                 {data : "order_status", name : "order_status", orderable : false, searchable : false,}
             ],
             "columnDefs" : [
@@ -207,6 +221,16 @@ Dashboard
                         return '<strong>'+data+'</strong>';
                     },
                     targets: [1],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 'offline'){
+                            return '<span style="background: #f96f59; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Offline</span>';
+                        }else{
+                            return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
+                        }
+                    },
+                    targets: [6],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},

@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
 class Package extends Model
 {
+    use SoftDeletes;
     protected $table ='package';
     protected $fillable = [
         'name','description','status','creator'
@@ -86,7 +87,7 @@ class Package extends Model
 
     public static function getContent(){
         $result = collect();
-        $packages = Package::all();
+        $packages = Package::where('status', 1)->get();
         
         foreach($packages as $package){
             $row = collect();

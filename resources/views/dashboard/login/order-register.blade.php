@@ -465,9 +465,7 @@
                                 <select class="form-control select2 select2-multiple" multiple="multiple" multiple parsley-trigger="change" name="teacher_subjects[]" id="teacher_subjects">
                                     {{-- <option value="#" disabled selected>-- What subject do you teach--</option> --}}
                                     @foreach ($courses as $course)
-                                        <optgroup label="{{ $course->name }}">
-                                            <option value="{{$course->id}}" >{{$course->name}}</option>
-                                        </optgroup>
+                                        <option value="{{$course->id}}" >{{$course->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -615,7 +613,7 @@
                 }
             }
 
-            $("#form").submit(function(){
+            $("#form").submit(function(event){
                 password = $('#password').val();
                 retype = $('#password_retype').val();
 
@@ -625,6 +623,7 @@
                     $('#password').val("");
                     $('#password_retype').val("");
                     event.preventDefault();
+                    return false;
                 }
 
                 month = $('#birthdate_month').val();
@@ -638,6 +637,7 @@
                     $('#birthdate_date').val("#").change();
                     $('#birthdate_year').val("#").change();
                     event.preventDefault();
+                    return false;
                 }
                 
                 document.getElementById("form").submit();

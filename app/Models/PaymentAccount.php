@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
 class PaymentAccount extends Model
 {
+    use SoftDeletes;
     protected $table ='payment_account';
     protected $fillable = [
         'account_type','account_name','account_number','status','creator'

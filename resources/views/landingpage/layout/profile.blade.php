@@ -19,9 +19,12 @@
                 <div style="margin-left:40px;">
                     <h3><strong>{{ $teacher->name }}</strong></h3>
                     <h5>{{ $teacher->title }}</h5>
-                    <div class="stars" style="color:#FFD700; margin-bottom:20px">
+                    @if($teacher->location != "")
+                        <p><i class="bi bi-pin-map"></i> {{ $teacher->location }}</p>
+                    @endif
+                    {{-- <div class="stars" style="color:#FFD700; margin-bottom:20px">
                         <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    </div>
+                    </div> --}}
                     <p>
                         <i class="bi bi-quote quote-icon-left"></i>
                         {{ $teacher->description }}

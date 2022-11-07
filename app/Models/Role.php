@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
 class Role extends Model
 {
+    use SoftDeletes;
     protected $table ='role';
     protected $fillable = [
         'name','description','creator'

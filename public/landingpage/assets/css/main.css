@@ -2899,3 +2899,13 @@ section {
 .goright {
 	text-align: right;
 }
+
+.btn-wa-admin {
+  color : #fff;
+}
+
+.btn-wa-admin:hover {
+  /* color : #fff;
+  border-color: #fff; */
+  color : #f82;
+}

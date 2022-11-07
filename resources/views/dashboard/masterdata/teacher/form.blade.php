@@ -35,19 +35,13 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Your Title</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="title" id="title" placeholder="Misal: Guru Matematika, Pelatih Renang" @isset($data->title) value="{{ $data->title }}" disabled @endisset>
+            <input type="text" class="form-control" name="title" id="title" placeholder="Misal: Guru Matematika, Pelatih Renang" @isset($data->title) value="{{ $data->title }}" @endisset @isset($data)disabled @endisset>
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Description</label>
         <div class="col-sm-9">
-            <textarea class="form-control" name="description" id="description" rows="3" placeholder="Misal: Saya telah berpengalaman dalam mengajar bidang ini selama 5 tahun" @isset($data->description) disabled @endisset>@isset($data->description){{ $data->description }}@endisset</textarea>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Your Location</label>
-        <div class="col-sm-9">
-            <input type="text" class="form-control" name="location" id="location" placeholder="Misal: Kota Bandung" @isset($data->location) value="{{ $data->location }}" disabled @endisset>
+            <textarea class="form-control" name="description" id="description" rows="3" placeholder="Misal: Saya telah berpengalaman dalam mengajar bidang ini selama 5 tahun" @isset($data->description) @endisset @isset($data)disabled @endisset>@isset($data->description){{ $data->description }}@endisset</textarea>
         </div>
     </div>
     @isset($data)

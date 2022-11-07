@@ -1,3 +1,8 @@
+<style>
+    .select2-container--default .select2-selection--multiple{
+        width: 100%;
+    }
+</style>
 <script>
     $(".select2").select2({
         width:'100%',

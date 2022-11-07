@@ -64,8 +64,8 @@
             <button class="btn btn-theme btn-round m-20" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
         @endif
         <!-- Modal -->
-        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+        <div class="modal fade bs-example-modal-lg" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -86,11 +86,12 @@
                     <th>Course</th>
                     <th>Teacher</th>
                     <th>Package</th>
-                    <th>Status</th>
+                    <th>Type</th>
                     <th>Course Start</th>
                     <th>Total Bill</th>
                     <th>Bill Paid</th>
                     <th>Payment Status</th>
+                    <th>Status</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -140,11 +141,12 @@
                 {data : "course_name", name : "course_name"},
                 {data : "teacher_name", name : "teacher_name"},
                 {data : "package_name", name : "package_name"},
-                {data : "status", name : "status", orderable : false},
+                {data : "order_type", name : "order_type"},
                 {data : "course_start", name : "course_start"},
                 {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_status", name : "payment_status", orderable : false},
+                {data : "status", name : "status", orderable : false},
                 {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             "columnDefs" : [
@@ -153,6 +155,20 @@
                         return '<strong>'+data+'</strong>';
                     },
                     targets: [1],
+                },
+                {
+                    "className": "text-center",
+                    targets: [10,11,12],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 'offline'){
+                            return '<span style="background: #f96f59; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Offline</span>';
+                        }else{
+                            return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
+                        }
+                    },
+                    targets: [7],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
@@ -471,6 +487,7 @@
         windowName = "Invoice";
         var printWindow = window.open(windowUrl, windowName, 'left=50000,top=50000,width=0,height=0');
         printWindow.focus();
+        setTimeout(function(){ printWindow.close(); }, 3000);
         printWindow.print();
     }
 </script>

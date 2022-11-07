@@ -238,6 +238,31 @@
             border-bottom: 1px solid #000;
         }
 
+        .select-box2 {
+            margin : 40px auto;
+            padding-bottom: 10px;
+        }
+
+        .select-box2 .select2{
+            width: 90%;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #000;
+            margin-top:5px;
+        }
+
+        .select-box2 label {
+            margin-left:7%;
+            width: 90%;
+        }
+
+        .select-box2 .col-md-4 .select2 {
+            width: 100%;
+            border-bottom: 1px solid #000;
+            margin-left: -30px;
+        }
+
         .mix-box {
             margin : 31px auto;
             padding-top: 15px;
@@ -410,11 +435,26 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="select2 col-md-3" parsley-trigger="change" name="birthdate_year" id="birthdate_year" required style="width: 75%">
+                            <select class="form-control select2 col-md-3" parsley-trigger="change" name="birthdate_year" id="birthdate_year" required style="width: 75%">
                                 <option value="#" disabled selected>Year</option>
                                 @for ($i=1950; $i <= date('Y'); $i++)
                                     <option value="{{$i}}">{{$i}}</option>
                                 @endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-inline select-box2">
+                        <div class="col-md-4">
+                            <label style="margin-top:10%"><b>Your Location : </b></label>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-control select2 col-md-6" parsley-trigger="change" name="address_province" id="address_province" onchange="getCities(this.value)" required>
+                                <option value="#" disabled selected>Province</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-control select2 col-md-6" parsley-trigger="change" name="address_city" id="address_city" required>
+                                <option value="#" disabled selected>City</option>
                             </select>
                         </div>
                     </div>
@@ -454,9 +494,7 @@
                                 <select class="form-control select2 select2-multiple" multiple="multiple" multiple parsley-trigger="change" name="teacher_subjects[]" id="teacher_subjects">
                                     {{-- <option value="#" disabled selected>-- What subject do you teach--</option> --}}
                                     @foreach ($courses as $course)
-                                        <optgroup label="{{ $course->name }}">
-                                            <option value="{{$course->id}}" >{{$course->name}}</option>
-                                        </optgroup>
+                                        <option value="{{$course->id}}" >{{$course->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -485,6 +523,9 @@
     @endsection
     @section('script-js')
         <script>
+            $(document).ready(function() {
+                getProvinces();
+            })
             $('.select2').select2();
 
             $('#teacher_subjects').select2({
@@ -601,16 +642,18 @@
                 }
             }
 
-            $("#form").submit(function(){
+            $("#form").submit(function(event) {
                 password = $('#password').val();
                 retype = $('#password_retype').val();
 
                 if(password != retype){
                     // document.getElementById("checkpassword").style.display = 'block';
-                    toastr.error("Confirm password failed!", 'Gagal!')
+                    toastr.error("Confirm password failed!", 'Failed!')
                     $('#password').val("");
                     $('#password_retype').val("");
                     event.preventDefault();
+                    console.log(event)
+                    return false;
                 }
 
                 month = $('#birthdate_month').val();
@@ -619,15 +662,61 @@
 
                 if(month == null || year == null || date == null){
                     // document.getElementById("checkpassword").style.display = 'block';
-                    toastr.error("Date of Birth required!", 'Gagal!')
+                    toastr.error("Date of Birth required!", 'Failed!')
                     $('#birthdate_month').val("#").change();
                     $('#birthdate_date').val("#").change();
                     $('#birthdate_year').val("#").change();
                     event.preventDefault();
+                    return false;
                 }
+
+                address_province = $('#address_province').val();
+                address_city = $('#address_city').val();
                 
+                if(address_city == null || address_province == null){
+                    // document.getElementById("checkpassword").style.display = 'block';
+                    toastr.error("Your Location is required!", 'Failed!')
+                    $('#address_province').val("#").change();
+                    $('#address_city').val("#").change();
+                    event.preventDefault();
+                    return false;
+                }
+
                 document.getElementById("form").submit();
             });
+
+            function getProvinces() {
+                var jenisdata = "getProvinces";
+                $.ajax({
+                    url : "{{route('getLocation')}}",
+                    type : "get",
+                    dataType: 'json',
+                    data:{
+                        jenisdata: jenisdata,
+                    },
+                }).done(function (data) {
+                    $('#address_province').html(data.append);
+                }).fail(function (msg) {
+                    alert('Gagal menampilkan data, silahkan refresh halaman.');
+                });
+            }
+
+            function getCities(params) {
+                var jenisdata = "getCities";
+                $.ajax({
+                    url : "{{route('getLocation')}}",
+                    type : "get",
+                    dataType: 'json',
+                    data:{
+                        province: params,
+                        jenisdata: jenisdata,
+                    },
+                }).done(function (data) {
+                    $('#address_city').html(data.append);
+                }).fail(function (msg) {
+                    alert('Gagal menampilkan data, silahkan refresh halaman.');
+                });
+            }
         </script>
     @endsection
     @include('dashboard.layout.js')

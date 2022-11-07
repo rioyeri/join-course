@@ -89,10 +89,12 @@ class OrderController extends Controller
                     "course_id" => $request->course_id,
                     "package_id" => $request->package_id,
                     "order_bill" => $request->order_bill,
+                    "order_type" => $request->optionsRadios,
                     "course_start" => $request->course_start,
                     "order_status" => 0,
                     "payment_status" => 0,
                     "order_token" => $request->_token,
+                    "creator" => session('user_id'),
                 ));
                 $data->save();
 
@@ -190,6 +192,7 @@ class OrderController extends Controller
                 $data->course_id = $request->course_id;
                 $data->package_id = $request->package_id;
                 $data->order_bill = $request->order_bill;
+                $data->order_type = $request->optionsRadios;
                 $data->course_start = $request->course_start;
                 $data->order_token = $request->_token;
                 $data->save();
@@ -288,7 +291,7 @@ class OrderController extends Controller
         $data = collect();
         $order = Order::where('id', $order_id)->first();
         $order_detail = Order::where('id', $order_id)->get();
-        $paid = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
+        $paid = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', 1)->sum('payment_amount');
 
         $subtotal = 0;
         $items = collect();

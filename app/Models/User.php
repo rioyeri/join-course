@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -14,7 +13,7 @@ class User extends Model
     protected $table ='users';
     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'username', 'password','bck_pass','name','last_login','login_status','address','phone','idnumber','email','birthdate','birthplace','regis_date','profilephoto','google_id'
+        'username', 'password','bck_pass','name','last_login','login_status','address','phone','idnumber','email','birthdate','birthplace','regis_date','profilephoto','google_id','address_province','address_city'
     ];
 
     protected $hidden = [
@@ -31,6 +30,18 @@ class User extends Model
 
     public function get_student(){
         return $this->belongsTo('App\Models\Student','id','user_id');
+    }
+
+    public function location(){
+        $location = "";
+        if($this->address_city != ""){
+            $location .= $this->address_city;
+        }
+        if($this->address_province != ""){
+            $location .= ", ".$this->address_province;
+        }
+
+        return $location;
     }
 
     public static function getBirthday(){
@@ -110,13 +121,13 @@ class User extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"USUS");
-        $users = User::select('id', 'username', 'name','last_login','phone','email','birthdate','birthplace','regis_date','profilephoto','created_at', 'updated_at');
+        $users = User::select('id', 'username', 'name','last_login','phone','email','birthdate','birthplace','regis_date','profilephoto','address_province','address_city','created_at', 'updated_at');
 
         $totalRecords = $users->count();
 
         if($searchValue != ''){
             $users->where(function ($query) use ($searchValue) {
-                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('username', 'LIKE', '%'.$searchValue.'%')->orWhere('last_login', 'LIKE', '%'.$searchValue.'%')->orWhere('phone', 'LIKE', '%'.$searchValue.'%')->orWhere('email', '%'.$searchValue.'%')->orWhere('birthdate', '%'.$searchValue.'%')->orWhere('birthplace', '%'.$searchValue.'%')->orWhere('regis_date', '%'.$searchValue.'%');
+                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('username', 'LIKE', '%'.$searchValue.'%')->orWhere('last_login', 'LIKE', '%'.$searchValue.'%')->orWhere('phone', 'LIKE', '%'.$searchValue.'%')->orWhere('email', '%'.$searchValue.'%')->orWhere('birthdate', '%'.$searchValue.'%')->orWhere('birthplace', '%'.$searchValue.'%')->orWhere('regis_date', '%'.$searchValue.'%')->orWhere('address_province', '%'.$searchValue.'%')->orWhere('address_city', '%'.$searchValue.'%');
             });
         }
 
@@ -124,6 +135,8 @@ class User extends Model
 
         if($columnName == "no"){
             $users->orderBy('updated_at', $columnSortOrder);
+        }elseif($columnName == "location"){
+            $users->orderBy('address_province', $columnSortOrder);
         }else{
             $users->orderBy($columnName, $columnSortOrder);
         }
@@ -135,6 +148,16 @@ class User extends Model
 
         foreach($users as $key){
             $detail = collect();
+
+            $location = "";
+            if($key->address_city != ""){
+                $location .= $key->address_city.", ";
+            }
+
+            if($key->address_province != ""){
+                $location .= $key->address_province;
+            }
+
             if($key->phone == ""){
                 $phone = '<span class="text-danger">NOT SET YET</span>';
             }else{
@@ -158,7 +181,7 @@ class User extends Model
             $detail->put('username', $key->username);
             $detail->put('email', $key->email);
             $detail->put('phone',$phone);
-            // $detail->put('birthplace', $key->birthplace);
+            $detail->put('location', $location);
             $detail->put('birthdate',$key->birthdate);
             $detail->put('regis_date', $key->regis_date);
             $detail->put('last_login', $key->last_login);

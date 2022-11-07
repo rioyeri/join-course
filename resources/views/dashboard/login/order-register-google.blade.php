@@ -408,7 +408,7 @@
             }
         }
 
-        $("form").submit(function(){
+        $("form").submit(function(event){
             password = $('#password').val();
             retype = $('#password_retype').val();
             
@@ -419,6 +419,7 @@
                 $('#password').val("");
                 $('#password_retype').val("");
                 event.preventDefault();
+                return false;
             }else{
                 document.getElementById("form").submit();
             }

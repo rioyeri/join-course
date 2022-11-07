@@ -1,3 +1,54 @@
+<script>
+    function getProvinces(params=null) {
+        var jenisdata = "getProvinces";
+        $.ajax({
+            url : "{{route('getLocation')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                jenisdata: jenisdata,
+                current_province: params,
+            },
+        }).done(function (data) {
+            $('#address_province').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function getCities(params,current=null) {
+        var jenisdata = "getCities";
+        $.ajax({
+            url : "{{route('getLocation')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                province: params,
+                jenisdata: jenisdata,
+                current_city: current,
+            },
+        }).done(function (data) {
+            $('#address_city').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+</script>
+@isset($data->address_province)
+<script>
+    $(document).ready(function() {
+        var prov = $('#current_prov').val();
+        var city = $('#current_city').val();
+        console.log(prov,city);
+        getProvinces(prov);
+        getCities(prov, city);
+        $('.select2').select2({
+            "width":"100%",
+        });
+    });
+</script>
+@endisset
+
 @isset($data->id)
     <h4 class="mb"><i class="fa fa-angle-right"></i> Update Profile</h4>
     <form id="form" role="form" class="form-horizontal style-form" method="post" action="{{ route('user.update', ['id' => $data->id]) }}" enctype="multipart/form-data">
@@ -31,7 +82,25 @@
             <input type="text" class="form-control datepicker" name="birthdate" id="birthdate" data-date-format='yyyy-mm-dd' value="@isset($data->birthdate){{ $data->birthdate }}@endisset">
         </div>
     </div>
-
+    <div class="form-group">
+        <label class="col-sm-3 col-sm-3 control-label">Location</label>
+        <div class="col-sm-4">
+            <select class="form-control select2" parsley-trigger="change" name="address_province" id="address_province" onchange="getCities(this.value)" required>
+                <option value="#" disabled selected>Province</option>
+            </select>
+            @isset($data->address_province)
+                <input type="hidden" id="current_prov" value="{{ $data->address_province }}">
+            @endisset
+        </div>
+        <div class="col-sm-5">
+            <select class="form-control select2" parsley-trigger="change" name="address_city" id="address_city" required>
+                <option value="#" disabled selected>City</option>
+            </select>
+            @isset($data->address_city)
+                <input type="hidden" id="current_city" value="{{ $data->address_city }}">
+            @endisset
+        </div>
+    </div>
     <div class="form-group">
         <label class="control-label col-sm-3 col-sm-3">Image Upload</label>
         <div class="col-md-9">

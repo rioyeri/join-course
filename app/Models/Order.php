@@ -10,7 +10,7 @@ class Order extends Model
 {
     protected $table ='order';
     protected $fillable = [
-        'order_id','student_id','course_id','grade_id','teacher_id','package_id','course_start','order_bill','order_status','payment_status','order_token'
+        'order_id','student_id','course_id','grade_id','teacher_id','package_id','course_start','order_bill','order_status','payment_status','order_token','order_type','creator'
     ];
 
     public function get_grade(){
@@ -49,9 +49,9 @@ class Order extends Model
 
         $page = MenuMapping::getMap(session('role_id'),"OROR");
         if(session('role_id') == 4 || session('role_id') == 5){
-            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status')->where('us.id', session('user_id'));
+            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type')->where('us.id', session('user_id'));
         }else{
-            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status');
+            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type');
         }
 
         $totalRecords = $order->count();
@@ -137,7 +137,7 @@ class Order extends Model
                 $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
             }
 
-            $bill_paid = OrderPayment::where('order_id', $key->id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
+            $bill_paid = OrderPayment::where('order_id', $key->id)->where('payment_confirmation', 1)->sum('payment_amount');
 
             
             $detail->put('no', $i++);
@@ -147,6 +147,7 @@ class Order extends Model
             $detail->put('course_name', $key->course_name);
             $detail->put('teacher_name', $key->teacher_name);
             $detail->put('package_name', $key->package_name);
+            $detail->put('order_type', $key->order_type);
             $detail->put('status', $status);
             $detail->put('course_start', $key->course_start);
             $detail->put('order_bill', $key->order_bill);
@@ -173,22 +174,30 @@ class Order extends Model
         $school = $pieces[2];
         $grade = $pieces[3];
 
-        $course_and_teacher_and_package = substr($order, 0, strpos($order, "_"));
-        $pieces2 = explode("+", $course_and_teacher_and_package);
-        $course_id = $pieces2[0];
-        $teacher_id = $pieces2[1];
-        $package_id = $pieces2[2];
+        $schedules_id = array();
+
+        if(strpos($order, "_")){
+            $course_and_teacher_and_package = substr($order, 0, strpos($order, "_"));
+            $pieces2 = explode("+", $course_and_teacher_and_package);
+            $course_id = $pieces2[0];
+            $teacher_id = $pieces2[1];
+            $package_id = $pieces2[2];
+            
+            $schedules = substr($order, strpos($order, "_") + 1);
+            $pieces3 = explode("+", $schedules);
+            foreach($pieces3 as $piece){
+                array_push($schedules_id, $piece);
+            }
+        }else{
+            $pieces2 = explode("+", $order);
+            $course_id = $pieces2[0];
+            $teacher_id = $pieces2[1];
+            $package_id = $pieces2[2];
+        }
 
         $order_bill = TeacherPrice::where('teacher_id', $teacher_id)->where('package_id', $package_id)->first()->price;
 
-        $schedules = substr($order, strpos($order, "_") + 1);
-        $schedules_id = array();
-        $pieces3 = explode("+", $schedules);
-        foreach($pieces3 as $piece){
-            array_push($schedules_id, $piece);
-        }
-
-        if(count($schedules_id) != 0){
+        if(isset($schedules_id) && count($schedules_id) != 0){
             $data = array(
                 "name" => $name,
                 "student_id" => session('student_id'),
@@ -229,7 +238,7 @@ class Order extends Model
 
         $page_schedule = MenuMapping::getMap(session('role_id'),"DSSC");
         $page_report = MenuMapping::getMap(session('role_id'),"DSRP");
-        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status')->where('order_status', 1);
+        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type')->where('order_status', 1);
 
         if(session('role_id') == 4){
             $order->where('us.id', session('user_id'));
@@ -287,6 +296,7 @@ class Order extends Model
             $detail->put('course_name', $key->course_name);
             $detail->put('teacher_name', $key->teacher_name);
             $detail->put('package_name', $key->package_name);
+            $detail->put('order_type', $key->order_type);
             $detail->put('schedule', $schedule);
             $detail->put('report', $report);
             $data->push($detail);
@@ -311,7 +321,7 @@ class Order extends Model
         $columnSortOrder = $request['order'][0]['dir']; // asc or desc
         $searchValue = $request['search']['value']; // Search value
 
-        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status')->whereNotIn('order_status', [-1,1,2]);
+        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type')->whereNotIn('order_status', [-1,1,2]);
 
         if(session('role_id') == 4){
             $order->where('us.id', session('user_id'));
@@ -374,6 +384,7 @@ class Order extends Model
             $detail->put('course_name', $key->course_name);
             $detail->put('teacher_name', $key->teacher_name);
             $detail->put('package_name', $key->package_name);
+            $detail->put('order_type', $key->order_type);
             $detail->put('order_status', $status);
             $data->push($detail);
         }
@@ -412,7 +423,7 @@ class Order extends Model
         $paid = 0;
 
         if(Order::where('order_id', $order_id)->where('order_token', $token)->count() != 0){
-            $paid = OrderPayment::where('order_id', $order->id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
+            $paid = OrderPayment::where('order_id', $order->id)->where('payment_confirmation', 1)->sum('payment_amount');
         }
         $data = array(
             "id_order" => $order->id,

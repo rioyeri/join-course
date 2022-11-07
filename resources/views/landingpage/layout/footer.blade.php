@@ -1,3 +1,9 @@
+@php
+    use App\Models\User;
+
+    $phone_format = User::getFormatWANumber($company_profile[4]->content);
+    $phone_redirect = "https://api.whatsapp.com/send?phone=".$phone_format;
+@endphp
 <!-- ======= Footer ======= -->
 <footer id="footer" class="footer">
     <div class="container">
@@ -45,6 +51,9 @@
                     @endif
                     @if($company_profile[3]->status == 1)
                         <strong>Email:</strong> {{ $company_profile[3]->content }}<br>
+                    @endif
+                    @if($company_profile[4]->status == 1)
+                        <strong>Admin Whatsapp:</strong> <a href="{{ $phone_redirect }}" class="btn-wa-admin" target="_blank" title="Whatsapp Admin"><i class="fa fa-whatsapp"></i> {{ $company_profile[4]->content }}</a><br>
                     @endif
                 </p>
             </div>

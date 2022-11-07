@@ -3,18 +3,35 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
 class Teacher extends Model
 {
+    use SoftDeletes;
     protected $table ='teacher';
     protected $fillable = [
-        'user_id','title','description','location','status'
+        'user_id','title','description','status'
     ];
 
     public function teacher(){
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
+    }
+
+    public function location(){
+        $user = User::where('id', $this->user_id)->first();
+        // echo "<pre>";
+        // print_r($user);
+        // die;
+        $location = "";
+        if($user->address_city != ""){
+            $location .= $user->address_city;
+        }
+        if($user->address_province != ""){
+            $location .= ", ".$user->address_province;
+        }
+
+        return $location;
     }
 
     public function isItInstantOrder(){
@@ -37,20 +54,23 @@ class Teacher extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"MDTC");
-        $teachers = Teacher::join('users as u', 'teacher.user_id', 'u.id')->select('teacher.id','u.name as teacher_name', 'teacher.user_id', 'title', 'description', 'location','status');
+        $teachers = Teacher::join('users as u', 'teacher.user_id', 'u.id')->select('teacher.id','u.name as teacher_name', 'teacher.user_id', 'title', 'description','status');
 
         $totalRecords = $teachers->count();
 
         if($searchValue != ''){
             $teachers->where(function ($query) use ($searchValue) {
-                $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('title', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhere('location', 'LIKE', '%'.$searchValue.'%');
+                $user_id = User::select('id')->where(function ($query2) use ($searchValue){
+                    $query2->orWhere('address_city', 'LIKE', '%'.$searchValue.'%')->orWhere('address_province', 'LIKE', '%'.$searchValue.'%');
+                })->get();
+                $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('title', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $user_id);
             });
         }
 
         $totalRecordwithFilter = $teachers->count();
 
         if($columnName == "no"){
-            $teachers->orderBy('updated_at', $columnSortOrder);
+            $teachers->orderBy('teacher.updated_at', $columnSortOrder);
         }else{
             $teachers->orderBy($columnName, $columnSortOrder);
         }
@@ -149,9 +169,17 @@ class Teacher extends Model
         }else{
             $image = asset('dashboard/assets/users/photos/'.$teacher->teacher->profilephoto);
         }
+        $location = "";
+        if($teacher->teacher->address_city){
+            $location .= $teacher->teacher->address_city.", ";
+        }
+        if($teacher->teacher->address_province){
+            $location .= $teacher->teacher->address_province;
+        }
         $result->put('name', $teacher->teacher->name);
         $result->put('title', $teacher->title);
         $result->put('description', $teacher->description);
+        $result->put('location', $location);
         $result->put('image', $image);
 
         return json_decode(json_encode($result), FALSE);
@@ -167,5 +195,19 @@ class Teacher extends Model
     public static function getTeacherSchedules($teacher_id){
         $schedules = TeacherSchedule::where('teacher_id', $teacher_id)->get();
         return $schedules;
+    }
+
+    public static function setData($user_id, $teacher_subjects){
+        $data = new Teacher(array(
+            "user_id" => $user_id,
+        ));
+        $data->save();
+
+        $user = User::where('id', $user_id)->first();
+        Log::setLog('MDTCC','Create Teacher : '.$user->name);
+
+        TeacherCourse::setData($data->id, $teacher_subjects);
+
+        return $data;
     }
 }

@@ -27,7 +27,7 @@ class OrderPayment extends Model
 
     public static function checkPaid($order_id, $new_token=null){
         $order = Order::where('id', $order_id)->first();
-        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
+        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', 1)->sum('payment_amount');
         if($payment == $order->order_bill){
             $result = 1;
             $token = null;
@@ -49,7 +49,7 @@ class OrderPayment extends Model
 
     public static function getRemainingPayment($order_id){
         $order = Order::where('id', $order_id)->first();
-        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', '!=', -1)->sum('payment_amount');
+        $payment = OrderPayment::where('order_id', $order_id)->where('payment_confirmation', 1)->sum('payment_amount');
         $remainingPayment = $order->order_bill - $payment;
 
         return $remainingPayment;

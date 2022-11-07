@@ -57,6 +57,7 @@ class LoginController extends Controller
         try{
             $user = Socialite::driver('google')->stateless()->user();
         }catch(\Exception $e){
+            $request->session()->flush();
             return redirect()->route('getHome')->withErrors($e->getMessage());
         }
 
@@ -101,8 +102,7 @@ class LoginController extends Controller
         $request->session()->put('photo', $foto);
         $request->session()->put('isLoggedIn', 'Ya');
         $request->session()->put('isItMaintenance', 'aktif');
-        // $request->session()->put('isItMaintenance', 'maintenance');
-        // return redirect()->route('getHome');
+
         if($role_id == 4){
             $student = Student::where('user_id', $user_exist->id)->first();
             $request->session()->put('student_id', $student->id);
@@ -114,7 +114,6 @@ class LoginController extends Controller
         User::where('id', $user_exist->id)->update(array(
             "last_login" => now(),
         ));
-
 
         if($request->session()->has('order') && $request->session()->has('user_data')){
             return redirect()->route('order.index');

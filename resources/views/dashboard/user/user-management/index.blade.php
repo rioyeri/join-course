@@ -114,7 +114,7 @@
             <button class="btn btn-theme btn-round m-20" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
         @endif
         <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -142,6 +142,7 @@
                     <th>Phone</th>
                     {{-- <th>Place of Birth</th> --}}
                     <th>Date of Birth</th>
+                    <th>Location</th>
                     <th>Registration Date</th>
                     <th>Last Time Login</th>
                     <th>Options</th>
@@ -200,6 +201,7 @@
                     {data : "phone", name : "phone"},
                     // {data : "birthplace", name : "birthplace"},
                     {data : "birthdate", name : "birthdate"},
+                    {data : "location", name : "location"},
                     {data : "regis_date", name : "regis_date"},
                     {data : "last_login", name : "last_login"},
                     {data : "options", name : "options", orderable : false, searchable : false,}

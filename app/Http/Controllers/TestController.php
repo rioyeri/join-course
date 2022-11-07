@@ -2,81 +2,72 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BootstrapIcon;
+use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Http\Request;
 
 use App\Models\Order;
+use App\Models\User;
+use App\Models\Teacher;
+use App\Models\RoleMapping;
+
+use App\Imports\TeacherImport;
+
+use Excel;
 
 class TestController extends Controller
 {
     public function index(){
-        // echo Order::generateInvoiceID(4);
-        // die;
-        $business_details = array(
-            "name" => "businessname",
-            "id" => "adafasf",
-            "phone" => "081221231231",
-            "location" => "Jl. afdasfashha asdfasdfsa",
-            "zip" => "55445",
-            "city" => "Jakarta",
-            "country" => "Indonesia",
-        );
+        $filename = "TeachersList.xlsx"; // pake Avail 3
+        $path = public_path($filename);
+        $array = Excel::toArray(new TeacherImport, $path);
 
-        $customer_details = array(
-            "name" => "customername",
-            "id" => "adafasf",
-            "phone" => "081221231231",
-            "location" => "Jl. afdasfashha asdfasdfsa",
-            "zip" => "55445",
-            "city" => "Jakarta",
-            "country" => "Indonesia",
-        );
-        $item = array(
-            "id" => 123,
-            "name" => "name",
-            "price" => "234324234",
-            "amount" => 1,
-            "totalPrice" => "2342342",
-        );
+        $result = array();
+        $count = count($array[0]);
+        $xls = array_chunk($array[0],$count);
 
-        $items = array();
+        for ($i=1; $i < $count ; $i++) {
+            $names = str_replace(",", "", $xls[0][$i][1]);
+            $names = str_replace("Dr.","", $names);
+            $names = str_replace("S.Pd.","", $names);
+            $names = str_replace("S.Si","", $names);
+            $names = str_replace("M.Si.","", $names);
+            $names = str_replace("S.T.","", $names);
+            $names = str_replace(".","", $names);
+            $strings_name = explode(" ", $names);
 
-        for($i=0; $i<3; $i++){
-            array_push($items, $item);
+            $name = $xls[0][$i][1];
+            $username = "";
+            foreach($strings_name as $key){
+                $username .= $key;
+            }
+
+            $desc = $xls[0][$i][2];
+
+            if($username != ''){
+                $lower = strtolower($username);
+                $username_string = $lower;
+                $password = $lower;
+
+                $user = new User(array(
+                    // Informasi Pribadi
+                    'name' => $name,
+                    'regis_date' => now(),
+                    'username' => $username_string,
+                    'password' => Hash::make($password),
+                    'bck_pass' => $password,            
+                ));
+                // success
+                $user->save();
+
+                $teacher = new Teacher(array(
+                    'user_id' => $user->id,
+                    'description' => $desc,
+                ));
+                $teacher->save();
+
+                RoleMapping::setData($user->username,5);
+            }
         }
-
-        $tax = array(
-            "name" => "name",
-            "tax_type" => "percentage",
-            "tax" => 11,
-            "taxPrice" => 1213,
-        );
-        $tax_rates = array();
-        for($i=0; $i<2; $i++){
-            array_push($tax_rates, $tax);
-        }
-        $data = array(
-            "duplicate_header" => FALSE,
-            "name" => "Flash Academia",
-            "logo_height" => "50px",
-            "logo" => "",
-            "date" => "2022-10-10",
-            "due_date" => "2022-10-10",
-            "number" => "1111113323131231",
-            "business_details" => $business_details,
-            "customer_details" => $customer_details,
-            "items" => $items,
-            "notes" => "aslndfaslfkasnfas",
-            "footnote" => "kkkkkkkkkkk",
-            "tax_rates" => $tax_rates,
-            "subTotalPrice" => "342242",
-            "totalPrice" => "123131",
-        );
-
-        $invoice = json_decode(json_encode($data),FALSE);
-        // echo "<pre>";
-        // print_r($invoice);
-        // die;
-        return view('dashboard.order.order.invoice', compact('invoice'));
     }
 }

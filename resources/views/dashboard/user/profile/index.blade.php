@@ -118,6 +118,7 @@ Your Profile
         <div class="col-md-8 col-md-4 profile-text">
             <h3>{{ $data->name }}</h3>
             <h6 style="font-size: 17px">{{ session('role') }}</h6>
+            <p>Your Location : {{ $data->location() }}</p>
             <p>Birthdate : {{ $data->birthdate }}</p>
             <p>Whatsapp Number : {{ $data->phone }}</p>
             <br>
@@ -256,12 +257,6 @@ Your Profile
                                     <label class="col-lg-2 control-label">Description</label>
                                     <div class="col-lg-6">
                                         <textarea class="form-control" name="description" id="description" rows="3" placeholder="Misal: Saya telah berpengalaman dalam mengajar bidang ini selama 5 tahun">@isset($data->get_teacher->description){{ $data->get_teacher->description }}@endisset</textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-lg-2 control-label">Your Location</label>
-                                    <div class="col-lg-6">
-                                        <input type="text" class="form-control" name="location" id="location" placeholder="Misal: Kota Bandung" value="{{ $data->get_teacher->location }}">
                                     </div>
                                 </div>
                                 <br>

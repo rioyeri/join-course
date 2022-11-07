@@ -6,7 +6,7 @@
 <form class="form-horizontal style-form" method="post" action="">
     {{ method_field('PUT') }}
     @csrf
-    <h4 class="mb"><i class="fa fa-angle-right"></i> Report for Order ID : <strong>{{ $data->order_id }}</strong></h4>
+    <h4 class="mb"><i class="fa fa-angle-right"></i> Report for Order ID : <strong>#{{ $data->order_id }}</strong></h4>
     @if(array_search("DSRPU",$submoduls))
     <h5 id="row_title" style="display:none;">Update Schedule no : <strong><span id="row_number"></span></strong> <a class="btn btn-xs btn-danger" href="javascript:;" onclick="resetForm()"><i class="fa fa-eraser"></i> Cancel Editing</a></h5>
 

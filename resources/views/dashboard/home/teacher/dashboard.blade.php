@@ -75,6 +75,7 @@ Dashboard
                 <th>Course</th>
                 <th>Grade</th>
                 <th>Package</th>
+                <th>Type</th>
                 <th>Schedule</th>
                 <th>Report</th>
             </thead>
@@ -145,6 +146,7 @@ Dashboard
                 {data : "course_name", name : "course_name"},
                 {data : "grade_id", name : "grade_id"},
                 {data : "package_name", name : "package_name"},
+                {data : "order_type", name : "order_type"},
                 {data : "schedule", name : "schedule", orderable : false, searchable : false,},
                 {data : "report", name : "report", orderable : false, searchable : false,}
             ],
@@ -154,38 +156,16 @@ Dashboard
                         return '<strong>'+data+'</strong>';
                     },
                     targets: [1],
-                }
-            ],
-            oLanguage : {sProcessing: "<div id='loader'></div>"},
-        });
-
-        $('#table-notyet-confirm-order').DataTable({
-            "processing" : true,
-            "serverSide" : true,
-            "order": [[ 0, "desc" ]],
-            "lengthMenu": [[5,10,25,50,100], [5,10,25, 50, 100]],
-            "pageLength": 5,
-            "ajax" : {
-                "url" : "{{ route('home.index') }}",
-                "type" : "get",
-                "data" : {
-                    "_token" : $("meta[name='csrf-token']").attr("content"),
-                    "type" : "notyet-confirm-order",
-                }
-            },"columns" : [{data : "no", name : "no", searchable : false},
-                {data : "order_id", name : "order_id"},
-                {data : "student_name", name : "student_name"},
-                {data : "course_name", name : "course_name"},
-                {data : "grade_id", name : "grade_id"},
-                {data : "package_name", name : "package_name"},
-                {data : "order_status", name : "order_status", orderable : false, searchable : false,}
-            ],
-            "columnDefs" : [
+                },
                 {
                     render: function (data, type, full, meta) {
-                        return '<strong>'+data+'</strong>';
+                        if(data == 'offline'){
+                            return '<span style="background: #f96f59; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Offline</span>';
+                        }else{
+                            return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
+                        }
                     },
-                    targets: [1],
+                    targets: [6],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},

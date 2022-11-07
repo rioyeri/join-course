@@ -9,12 +9,51 @@
 @endphp
 
 <script>
-    $(".select2").select2({
-        width:'100%',
-    });
+    $(document).ready(function() {
+        // $(".select2").select2({
+        //     width:'100%',
+        // });
 
-    $("#teacher_id").select2({
-        width:'100%',
+        // $("#teacher_id").select2({
+        //     width:'100%',
+        // });
+
+        // Select2
+        $(".select2").select2({
+            templateResult: formatState,
+            templateSelection: formatState,
+            width:'100%',
+        });
+
+        function formatState (opt) {
+            if (!opt.id) {
+                return opt.text;
+            }
+
+            var optimage = $(opt.element).attr('data-image');
+            if(!optimage){
+            return opt.text;
+            } else {
+                var $opt = $(
+                '<span><img src="' + optimage + '" width="60px" /> ' + opt.text + '</span>'
+                );
+                return $opt;
+            }
+        };
+
+        $("#teacher_id").select2({
+            templateResult: formatText,
+            templateSelection: formatText,
+            width:'100%',
+        });
+
+        function formatText (obj) {
+            if($(obj.element).data('text') == 1){
+                return $('<span>'+obj.text+' <span style="background: #008374; color:white; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px;">Instant Order</span></span>');
+            }else{
+                return $('<span>'+obj.text+'</span>');
+            }
+        }
     });
 </script>
 @isset($data->id)
@@ -131,7 +170,7 @@
             </select>
         </div>
     </div>
-    <div id="line_schedule" @isset($data->schedule_id)style="display:none;"@endisset>
+    <div id="line_schedule" @if(!isset($data->schedule_id))style="display:none;"@endif>
         <div class="form-group">
             <label class="col-sm-3 col-sm-3 control-label">Schedule</label>
             <div class="col-sm-9">
@@ -161,6 +200,19 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="col-sm-3 col-sm-3 control-label">Class Type</label>
+        <div class="col-sm-2">
+            <div class="radio">
+                <label><input type="radio" name="optionsRadios" id="options-online" value="online" @isset($data->order_type)@if($data->order_type=="online") checked @endif @endisset onchange="checkType(this.value)"> Online</label>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="radio">
+                <label><input type="radio" name="optionsRadios" id="options-offline" value="offline" @isset($data->order_type)@if($data->order_type=="offline") checked @endif @endisset onchange="checkType(this.value)"> Offline</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Select Date to Start</label>
         <div class="col-sm-9">
             {{-- <input type="text" class="form-control datepicker" name="course_start" id="course_start" value="@isset($data){{ $data->course_start }}@endisset"> --}}
@@ -179,51 +231,6 @@
 
 @if (session('user_data') && session('order'))
 <script>
-    $(document).ready(function() {
-        // Select2
-        $(".select2").select2({
-            templateResult: formatState,
-            templateSelection: formatState
-        });
-
-        function formatState (opt) {
-            if (!opt.id) {
-                return opt.text.toUpperCase();
-            }
-
-            var optimage = $(opt.element).attr('data-image');
-            console.log(optimage)
-            if(!optimage){
-            return opt.text.toUpperCase();
-            } else {
-                var $opt = $(
-                '<span><img src="' + optimage + '" width="60px" /> ' + opt.text.toUpperCase() + '</span>'
-                );
-                return $opt;
-            }
-        };
-
-        $("#teacher_id").select2({
-            templateResult: formatText,
-            templateSelection: formatText,
-        });
-
-        function formatText (obj) {
-            if($(obj.element).data('text') == 1){
-                return $('<span>'+obj.text+' <span style="background: #008374; color:white">Instant Order</span></span>');
-            }else{
-                return $('<span>'+obj.text+'</span>');
-            }
-        }
-        // var subject = $('#course_id').val();
-        // if(subject != "#"){
-        //     get_teacher(subject);
-        // }
-        // var teacher = $('#teacher_id').val();
-        // if(teacher){
-        //     get_schedule(teacher);
-        // }
-    })    
 </script>
 @endif
 <script>

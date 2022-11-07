@@ -126,6 +126,7 @@
         windowName = "Invoice";
         var printWindow = window.open(windowUrl, windowName, 'left=50000,top=50000,width=0,height=0');
         printWindow.focus();
+        setTimeout(function(){ printWindow.close(); }, 3000);
         printWindow.print();
     }
 </script>

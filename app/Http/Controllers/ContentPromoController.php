@@ -165,7 +165,7 @@ class ContentPromoController extends Controller
     {
         if($request->ajax()){
             try{
-                $data = ContentPromoDetail::where('id', $id)->first();
+                $data = PackageDetail::where('id', $id)->first();
                 $data->text = $request->feature;
                 $data->status = $request->status;
                 $data->creator = session('user_id');
@@ -190,13 +190,12 @@ class ContentPromoController extends Controller
             // Validation success
             }else{
                 try{
-                    $data = ContentPromo::where('id', $id)->first();
+                    $data = Package::where('id', $id)->first();
                     $data->name = $request->name;
                     $data->icon = $request->icon;
                     $data->price = $request->price;
                     $data->time_signature = $request->time_signature;
                     $data->link_text = $request->link_text;
-                    $data->link = $request->link;
                     $data->category = $request->category;
                     $data->creator = session('user_id');
                     $data->save();

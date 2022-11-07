@@ -140,6 +140,7 @@
             </div>
         </div>
     </div>
+    @if($data->id != 7)
     <div class="adv-table">
         <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-detail">
             <thead>
@@ -189,6 +190,7 @@
         </table>
     </div>
     @endif
+    @endif
     <div class="form-group">
         <div class="col-lg-offset-3 col-lg-9">
             <button class="btn btn-theme" type="submit">Update</button>
@@ -231,14 +233,16 @@ function edit_row(row){
             $('#detail_description').val(description);
             $('#detail_link').val(link);
             $('#detail_linktext').val(link_text);
-            if(content_id == 2){
-                $('#detail_image').val(image).change();
-            }else{
-                console.log(image);
-                if(image != undefined){
-                    document.getElementById('image-display').src = image;
+            if(content_id != 6){
+                if(content_id == 2){
+                    $('#detail_image').val(image).change();
                 }else{
-                    document.getElementById('image-display').src = "";
+                    console.log(image);
+                    if(image != undefined){
+                        document.getElementById('image-display').src = image;
+                    }else{
+                        document.getElementById('image-display').src = "";
+                    }
                 }
             }
 

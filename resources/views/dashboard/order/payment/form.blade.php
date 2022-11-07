@@ -28,12 +28,12 @@
                     @foreach ($orders as $order)
                         @isset($data->order_id)
                             @if($data->order_id == $order->id)
-                                <option value="{{$order->id}}" selected>{{$order->order_id}}</option>
+                                <option value="{{$order->id}}" selected>{{$order->order_id}}  ({{ $order->get_student->student->name }} | {{ $order->get_course->name }} | {{ $order->get_teacher->teacher->name }})</option>
                             @else
-                                <option value="{{$order->id}}">{{$order->order_id}}</option>
+                                <option value="{{$order->id}}">{{$order->order_id}}  ({{ $order->get_student->student->name }} | {{ $order->get_course->name }} | {{ $order->get_teacher->teacher->name }})</option>
                             @endif
                         @else
-                            <option value="{{$order->id}}">{{$order->order_id}}</option>
+                            <option value="{{$order->id}}">{{$order->order_id}}  ({{ $order->get_student->student->name }} | {{ $order->get_course->name }} | {{ $order->get_teacher->teacher->name }})</option>
                         @endisset
                     @endforeach
                 </select>
@@ -155,6 +155,7 @@
         windowName = "Invoice";
         var printWindow = window.open(windowUrl, windowName, 'left=50000,top=50000,width=0,height=0');
         printWindow.focus();
+        setTimeout(function(){ printWindow.close(); }, 3000);
         printWindow.print();
     }
 </script>

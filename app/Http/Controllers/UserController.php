@@ -49,7 +49,9 @@ class UserController extends Controller
             'password_retype' => 'required|string',
             'email' => 'required|email|unique:users',
             'phone' => 'required',
-            'birthdate' => 'required',
+            'birthdate_year' => 'required',
+            'birthdate_month' => 'required',
+            'birthdate_date' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -61,17 +63,22 @@ class UserController extends Controller
             try{
                 $profilephoto = "noimage.jpg";
 
+                $birthdate = $request->birthdate_year."-".$request->birthdate_month."-".$request->birthdate_date;
+
                 $user = new User(array(
                     // Informasi Pribadi
                     'name' => $request->name,
                     'phone' => $request->phone,
                     'email' => $request->email,
-                    'birthdate' => $request->birthdate,
-                    // 'profilephoto' => $profilephoto,
+                    'birthdate' => $birthdate,
+                    'regis_date' => now(),
                     // Account
                     'username' => $request->username,
                     'password' => Hash::make($request->password),
                     'bck_pass' => $request->password,
+                    'address_province' => $request->address_province,
+                    'address_city' => $request->address_city,
+            
                 ));
                 // success
                 $user->save();
@@ -118,7 +125,9 @@ class UserController extends Controller
             'username' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required',
-            'birthdate' => 'required',
+            'birthdate_year' => 'required',
+            'birthdate_month' => 'required',
+            'birthdate_date' => 'required',
         ]);
 
         // IF Validation fail
@@ -127,6 +136,8 @@ class UserController extends Controller
         // Validation success
         }else{
             try {
+                $birthdate = $request->birthdate_year."-".$request->birthdate_month."-".$request->birthdate_date;
+
                 $user = User::where('id',$id)->first();
 
                 // Informasi Pribadi
@@ -134,7 +145,9 @@ class UserController extends Controller
                 $user->username = $request->username;
                 $user->phone = $request->phone;
                 $user->email = $request->email;
-                $user->birthdate = $request->birthdate;
+                $user->birthdate = $birthdate;
+                $user->address_province = $request->address_province;
+                $user->address_city = $request->address_city;
 
                 // Upload Foto
                 if($request->profilephoto != NULL || $request->profilephoto != ''){
@@ -204,9 +217,8 @@ class UserController extends Controller
         $user = User::where('id', $id)->first();
         $roles = Role::whereIn('id', [4,5])->get();
         $grades = Grade::all();
-        $courses = Course::all();
+        $courses = Course::where('status',1)->get();
 
-        // return view('dashboard.login.register-google', compact('user','roles','grades'));
         return view('dashboard.login.register',compact('roles', 'grades', 'user','courses'));
     }
 
@@ -222,29 +234,41 @@ class UserController extends Controller
             $user->phone = $request->phonenumber;
             $user->birthdate = $birthdate;
             $user->regis_date = now();
+            $user->address_province = $request->address_province;
+            $user->address_city = $request->address_city;
             $user->update();
 
             RoleMapping::setData($user->username,$request->optionsRadios);
 
             if($request->optionsRadios == 4){
                 // Student
-                Student::setData($user->id, $request->school_name, $request->student_grade);
+                $student = Student::setData($user->id, $request->school_name, $request->student_grade);
+                $request->session()->put('student_id', $student->id);
             }elseif($request->optionsRadios == 5){
                 // Teacher
-                Teacher::setData($user->id, $request->teacher_subjects);
+                $teacher = Teacher::setData($user->id, $request->teacher_subjects);
+                $request->session()->put('teacher_id', $teacher->id);
             }
+            $foto = asset(User::getPhoto($user->id));
 
+            $role_id = $user->rolemapping()->first()->role_id;
+            $request->session()->put('role', $user->rolemapping->role->name);
+            $request->session()->put('role_id', $role_id);
             $request->session()->put('username', $user->username);
-            $request->session()->put('role', $user->rolemapping()->first()->role()->first()->name);
             $request->session()->put('name', $user->name);
             $request->session()->put('user_id', $user->id);
-            $request->session()->put('photo', $user->profilephoto);
+            $request->session()->put('photo', $foto);
             $request->session()->put('isLoggedIn', 'Ya');
             $request->session()->put('isItMaintenance', 'aktif');
 
-            return redirect()->route('getHome');
+            if(session()->has('user_data') && session()->has('order')){
+                return redirect()->route('order.index');
+            }else{
+                return redirect()->route('getHome');
+            }
         }catch(\Exception $e){
-            return redirect()->back()->with($e->getMessage());
+            $request->session()->flush();
+            return redirect()->back()->withErrors($e->getMessage());
         }
 
     }
@@ -342,11 +366,11 @@ class UserController extends Controller
             $teacher = Teacher::where('user_id', session('user_id'))->first();
             // Subject Course
             $exist_course = array_values(array_column(DB::select("SELECT course_id FROM teacher_course WHERE teacher_id LIKE $teacher->id"), 'course_id'));
-            $courses = Course::all();
+            $courses = Course::where('status',1)->get();
 
             // PRICING
             $exist_packages = TeacherPrice::where('teacher_id', $teacher->id)->get();
-            $packages = Package::all();
+            $packages = Package::where('status',1)->get();
     
             return  view('dashboard.user.profile.index', compact('page','data','courses','exist_course','exist_packages','packages'));
         }else{

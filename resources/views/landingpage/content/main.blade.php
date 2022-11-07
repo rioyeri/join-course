@@ -9,11 +9,16 @@
         {{-- @include('landingpage.content.cta') --}}
         @include('landingpage.content.services')
         {{-- @include('landingpage.content.portofolio') --}}
-        @include('landingpage.content.team')
-        @include('landingpage.content.testimonial')
-        @include('landingpage.content.pricing')
-        @include('landingpage.content.faq')
-        {{-- @include('landingpage.content.blog') --}}
+        {{-- @include('landingpage.content.team') --}}
+        @if($content[3]->status == 1)
+            @include('landingpage.content.testimonial')
+        @endif
+        @if($content[4]->status == 1)
+            @include('landingpage.content.faq')
+        @endif
+        @if($content[5]->status == 1)
+            @include('landingpage.content.pricing')
+        @endif
         @include('landingpage.content.contact')
     </main>
 @endsection

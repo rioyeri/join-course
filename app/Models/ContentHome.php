@@ -85,12 +85,14 @@ class ContentHome extends Model
             if (array_search("CTHOU",$page)){
                 $options .= '<a class="btn btn-primary btn-block btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
             }
-            if (array_search("CTHOS",$page)){
-                if($key->status == 0){
-                    $options .= '<a class="btn btn-warning btn-block btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Non-Active</a> ';
-                }else{
-                    $options .= '<a class="btn btn-success btn-block btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Active</a> ';
-                }
+            if($key->id != 1 && $key->id != 2 && $key->id != 3){
+                if (array_search("CTHOS",$page)){
+                    if($key->status == 0){
+                        $options .= '<a class="btn btn-warning btn-block btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Non-Active</a> ';
+                    }else{
+                        $options .= '<a class="btn btn-success btn-block btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Active</a> ';
+                    }
+                }   
             }
 
             $detail->put('no', $i++);
@@ -112,7 +114,8 @@ class ContentHome extends Model
 
     public static function getContent(){
         $result = collect();
-        $contents = ContentHome::where('status', 1)->get();
+        // $contents = ContentHome::where('status', 1)->get();
+        $contents = ContentHome::all();
         
         foreach($contents as $content){
             $row = collect();
@@ -126,7 +129,7 @@ class ContentHome extends Model
                         $teacher_image = Teacher::where('id', $det->link)->first()->teacher->profilephoto;
                         $image = asset('dashboard/assets/users/photos/'.$teacher_image);
                     }elseif($content->id == 4){
-                        $image = asset('landingpage/assets/testimonial/photos/'.$det->image);
+                        $image = asset('landingpage/assets/img/testimonials/'.$det->image);
                     }else{
                         $image = $det->image;
                     }
@@ -136,9 +139,16 @@ class ContentHome extends Model
                     $teacher = Teacher::where('id', $det->link)->first();
                     $title = $teacher->teacher->name;
                     $subtitle = $teacher->title;
-                    $description = $teacher->description;
+                    $description = substr($teacher->description, 0, 50);
                     $link = $det->link;
                     $link_text = "";
+                    if($teacher->teacher->address_city != ""){
+                        $link_text .= $teacher->teacher->address_city.", ";
+                    }
+
+                    if($teacher->teacher->address_province != ""){
+                        $link_text .= $teacher->teacher->address_province;
+                    }
                 }else{
                     $title = $det->title;
                     $subtitle = $det->subtitle;
@@ -158,6 +168,7 @@ class ContentHome extends Model
             $row->put('title', $content->title);
             $row->put('subtitle', $content->subtitle);
             $row->put('detail', $row_detail);
+            $row->put('status', $content->status);
             $result->push($row);
         }
 
