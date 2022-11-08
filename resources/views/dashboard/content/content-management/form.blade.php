@@ -50,7 +50,7 @@
                     </div>
                 </div>
             @endif
-            @if($data->id != 2 && $data->id != 6 && $data->id != 3)
+            @if($data->id != 2 && $data->id != 6 && $data->id != 3 && $data->id != 8 && $data->id != 9)
                 <div class="form-group-sm">
                     <label class="col-sm-3 col-sm-3 control-label">Subtitle</label>
                     <div class="col-sm-9">
@@ -80,7 +80,7 @@
                     </div>
                 </div>
             @endif
-            @if($data->id != 6 && $data->id != 2)
+            @if($data->id != 6 && $data->id != 2 && $data->id != 9)
                 <div class="form-group-sm">
                     <label class="control-label col-sm-3 col-sm-3">Image</label>
                     <div class="col-md-9">
@@ -116,7 +116,7 @@
                     </div>
                 </div>
             @endif
-            @if($data->id != 3 && $data->id != 4 && $data->id != 6)
+            @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9)
                 <div class="form-group-sm">
                     <label class="col-sm-3 col-sm-3 control-label">Link</label>
                     <div class="col-sm-9">
@@ -124,7 +124,7 @@
                     </div>
                 </div>
             @endif
-            @if($data->id != 3 && $data->id != 4 && $data->id != 6)
+            @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9)
                 <div class="form-group-sm">
                     <label class="col-sm-3 col-sm-3 control-label">Link Text</label>
                     <div class="col-sm-9">
@@ -146,11 +146,11 @@
             <thead>
                 <th>No</th>
                 <th>Title</th>
-                <th @if($data->id == 2 || $data->id == 6) style="display:none;" @endif>Subtitle</th>
+                <th @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>Subtitle</th>
                 <th>Description</th>
-                <th @if($data->id == 6) style="display:none;" @endif>@if($data->id == 2) Icon @else Image @endif</th>
-                <th @if($data->id == 3 || $data->id == 4 || $data->id == 6) style="display:none;" @endif>Link</th>
-                <th @if($data->id == 3 || $data->id == 4 || $data->id == 6) style="display:none;" @endif>Link Text</th>
+                <th @if($data->id == 6 || $data->id == 9) style="display:none;" @endif>@if($data->id == 2) Icon @else Image @endif</th>
+                <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>Link</th>
+                <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>Link Text</th>
                 <th>Options</th>
             </thead>
             <tbody id="table-body-detail">
@@ -160,9 +160,9 @@
                     <tr style="width:100%" id="trow{{ $i }}" class="trow" role="row">
                         <td>{{ $i }}</td>
                         <td>{{ $key->title }}</td>
-                        <td @if($data->id == 2 || $data->id == 6) style="display:none;" @endif>{{ $key->subtitle }}</td>
+                        <td @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>{{ $key->subtitle }}</td>
                         <td>{{ $key->description }}</td>
-                        <td @if($data->id == 6) style="display:none;" @endif>
+                        <td @if($data->id == 6 || $data->id == 9) style="display:none;" @endif>
                             @if($key->image != "")
                                 @if($data->id == 2)
                                     <input type="hidden" id="image_name{{ $i }}" value="{{ $key->image }}">
@@ -171,6 +171,10 @@
                                     @php($path = 'dashboard/assets/users/photos/')
                                     <input type="hidden" id="image_name{{ $i }}" value="{{ asset($path.$key->image) }}">
                                     <img id="image{{ $i }}" src="{{ asset($path.$key->image) }}" style="object-fit:cover; min-height: 50px; max-height:50px;">
+                                @elseif($data->id == 8)
+                                    @php($path = 'landingpage/assets/img/'.$key->image)
+                                    <input type="hidden" id="image_name{{ $i }}" value="{{ asset($path) }}">
+                                    <img id="image{{ $i }}" src="{{ asset($path) }}" style="object-fit:cover; min-height: 50px; max-height:50px;">
                                 @else
                                     @php($path = 'landingpage/assets/img/testimonials/')
                                     <input type="hidden" id="image_name{{ $i }}" value="{{ asset($path.$key->image) }}">
@@ -180,8 +184,8 @@
                                 NOT SET YET
                             @endif
                         </td>
-                        <td @if($data->id == 3 || $data->id == 4 || $data->id == 6) style="display:none;" @endif>{{ $key->link }}</td>
-                        <td @if($data->id == 3 || $data->id == 4 || $data->id == 6) style="display:none;" @endif>{{ $key->link_text }}</td>
+                        <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>{{ $key->link }}</td>
+                        <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>{{ $key->link_text }}</td>
                         <td class="text-center"><a href="javascript:;" type="button" class="btn btn-primary btn-trans waves-effect w-xs waves-danger m-b-5" onclick="edit_row({{ $i }})">Edit</a></td>
                     </tr>
                     @php($i++)
@@ -233,7 +237,8 @@ function edit_row(row){
             $('#detail_description').val(description);
             $('#detail_link').val(link);
             $('#detail_linktext').val(link_text);
-            if(content_id != 6){
+            console.log(content_id);
+            if(content_id != 6 && content_id != 9){
                 if(content_id == 2){
                     $('#detail_image').val(image).change();
                 }else{
@@ -260,7 +265,7 @@ function update_row(){
 
     var title = $('#detail_title').val();
 
-    if(content_id == 2 || content_id == 6){
+    if(content_id == 2 || content_id == 6 || content_id == 8 || content_id == 9){
         var subtitle = "";
     }else{
         var subtitle = $('#detail_subtitle').val();
@@ -268,7 +273,7 @@ function update_row(){
 
     var description = $('#detail_description').val();
 
-    if(content_id != 6 && content_id != 2 && content_id != 3){
+    if(content_id != 2 && content_id != 3 && content_id != 6 && content_id != 9){
         var selector = document.getElementById('detail_image');
         var image = selector.files[0];
         if(image == undefined){
@@ -280,13 +285,13 @@ function update_row(){
         var image = "";
     }
 
-    if(content_id == 4 || content_id == 6){
+    if(content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9){
         var link = "";    
     }else{
         var link = $('#detail_link').val();
     }
 
-    if(content_id == 3 || content_id == 4 || content_id == 6){
+    if(content_id == 3 || content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9){
         var link_text = "";
     }else{
         var link_text = $('#detail_linktext').val();
@@ -343,6 +348,8 @@ function update_row(){
                     if(data.image != "" && data.image != null){
                         if(content_id == 3){
                             image_path = 'dashboard/assets/users/photos/';
+                        }else if(content_id == 8){
+                            image_path = 'landingpage/assets/img/';
                         }else{
                             image_path = 'landingpage/assets/img/testimonials/';
                         }

@@ -146,11 +146,9 @@ class ContentPromoController extends Controller
      */
     public function edit($id)
     {
-        // $data = ContentPromo::where('id', $id)->first();
-        $data = Package::where('id', $id)->first();
+        $data = ContentPromo::where('id', $id)->first();
         $icons = BootstrapIcon::all();
-        // $details = ContentPromoDetail::where('promo_id', $id)->get();
-        $details = PackageDetail::where('package_id', $id)->get();
+        $details = ContentPromoDetail::where('promo_id', $id)->get();
         return response()->json(view('dashboard.content.content-promo.form',compact('data','icons','details'))->render());
     }
 
@@ -165,7 +163,7 @@ class ContentPromoController extends Controller
     {
         if($request->ajax()){
             try{
-                $data = PackageDetail::where('id', $id)->first();
+                $data = ContentPromoDetail::where('id', $id)->first();
                 $data->text = $request->feature;
                 $data->status = $request->status;
                 $data->creator = session('user_id');
@@ -190,7 +188,7 @@ class ContentPromoController extends Controller
             // Validation success
             }else{
                 try{
-                    $data = Package::where('id', $id)->first();
+                    $data = ContentPromo::where('id', $id)->first();
                     $data->name = $request->name;
                     $data->icon = $request->icon;
                     $data->price = $request->price;

@@ -9,13 +9,13 @@
 
         <div class="row g-4 py-lg-5" data-aos="zoom-out" data-aos-delay="100">
             @foreach ($promos as $promo)
-            <div class="col-lg-4">
+            <div class="{{ $promo->column_size_detail }}">
                 <div class="pricing-item @if($promo->category == 1) featured @endif">
                     <h3>{{ $promo->name }}</h3>
                     <div class="icon">
                         <i class="{{ $promo->icon }}"></i>
                     </div>
-                    <h4>@if(is_int($promo->price)) {{ number_format($promo->price,0,",",".") }} @else {{ $promo->price }} @endif<span> / {{ $promo->time_signature }}</span></h4>
+                    <h5><span>Mulai dari</span><br>@if(is_int($promo->price)) {{ number_format($promo->price,0,",",".") }} @else {{ $promo->price }} @endif<span> / {{ $promo->time_signature }}</span></h5>
                     <ul>
                         @foreach ($promo->detail as $det)
                             @if ($det->status==0)

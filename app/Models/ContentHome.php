@@ -61,14 +61,16 @@ class ContentHome extends Model
                 }
                 foreach($details as $det){
                     if($key->id == 3){
-                        $teacher = Teacher::where('id', $det->link)->first();
-                        if($teacher->title != null){
-                            $subtitle = '('.$teacher->title.')';
-                        }else{
-                            $subtitle = "";
+                        if($det->link != ""){
+                            $teacher = Teacher::where('id', $det->link)->first();
+                            if($teacher->title != null){
+                                $subtitle = '('.$teacher->title.')';
+                            }else{
+                                $subtitle = "";
+                            }
+                            $contents .= '<ul><strong>'.$j++.'. '.$teacher->teacher->name.' '.$subtitle.'</strong></ul>';
+                            $contents .= '<ul>'.$teacher->description.'</ul>';
                         }
-                        $contents .= '<ul><strong>'.$j++.'. '.$teacher->teacher->name.' '.$subtitle.'</strong></ul>';
-                        $contents .= '<ul>'.$teacher->description.'</ul>';
                     }else{
                         if($det->subtitle != null){
                             $subtitle = '('.$det->subtitle.')';
@@ -116,11 +118,22 @@ class ContentHome extends Model
         $result = collect();
         // $contents = ContentHome::where('status', 1)->get();
         $contents = ContentHome::all();
-        
+
         foreach($contents as $content){
             $row = collect();
             $row_detail = collect();
             $contdet = ContentHomeDetail::where('content_id', $content->id)->get();
+
+            $count_detail = $contdet->count();
+            if($count_detail == 3){
+                $column_size = "col-lg-4";
+            }elseif($count_detail == 4){
+                $column_size = "col-lg-3";
+            }elseif($count_detail == 5){
+                $column_size = "col-lg-2";
+            }else{
+                $column_size = "col-lg-6";
+            }
             foreach($contdet as $det){
                 if($det->image == null){
                     $image = asset('dashboard/assets/noimage.jpg');
@@ -165,9 +178,11 @@ class ContentHome extends Model
                 $detail->put('link_text', $link_text);
                 $row_detail->push($detail);
             }
+
             $row->put('title', $content->title);
             $row->put('subtitle', $content->subtitle);
             $row->put('detail', $row_detail);
+            $row->put('column_size_detail', $column_size);
             $row->put('status', $content->status);
             $result->push($row);
         }

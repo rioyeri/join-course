@@ -3,13 +3,13 @@
     @include('landingpage.content.hero')
 
     <main id="main">
-        {{-- @include('landingpage.content.aboutus') --}}
         {{-- @include('landingpage.content.clients') --}}
         {{-- @include('landingpage.content.statscounter') --}}
         {{-- @include('landingpage.content.cta') --}}
         @include('landingpage.content.services')
+        @include('landingpage.content.aboutus')
         {{-- @include('landingpage.content.portofolio') --}}
-        {{-- @include('landingpage.content.team') --}}
+        @include('landingpage.content.team')
         @if($content[3]->status == 1)
             @include('landingpage.content.testimonial')
         @endif

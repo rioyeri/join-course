@@ -2,7 +2,7 @@
     <h4 class="mb"><i class="fa fa-angle-right"></i> Update Package</h4>
     <form class="form-horizontal style-form" method="post" action="{{ route('contentpromo.update', ['id' => $data->id]) }}">
         {{ method_field('PUT') }}
-        <input type="hidden" id="package_id" value="{{ $data->id }}">
+        <input type="hidden" id="promo_id" value="{{ $data->id }}">
 @else
     <h4 class="mb"><i class="fa fa-angle-right"></i> Add Package</h4>
     <form class="form-horizontal style-form" method="post" action="{{ route('contentpromo.store') }}">
@@ -171,10 +171,10 @@
         var token = $("meta[name='csrf-token']").attr("content");
         var status = $('#status').val();
         var feature = $('#feature').val();
-        var package_id = $('#package_id').val();
+        var promo_id = $('#promo_id').val();
 
         if(feature != ""){
-            if(package_id == undefined){
+            if(promo_id == undefined){
                 var i = $('#table-detail tbody tr.trow').length + 1;
                 if(status == 1){
                     get_status = "Included";
@@ -199,7 +199,7 @@
                     dataType: 'json',
                     data: {
                         "_token" : $('meta[name="csrf-token"]').attr('content'),
-                        "package_id" : package_id,
+                        "promo_id" : promo_id,
                         "status" : status,
                         "feature" : feature,
                     },
@@ -220,11 +220,11 @@
         var row_number = $('#row_number').val();
         var new_status = $('#status').val();
         var new_feature = $('#feature').val();
-        var package_id = $('#package_id').val();
+        var promo_id = $('#promo_id').val();
 
         console.log(new_detail_id);
         if(new_feature != ""){
-            if(package_id == undefined){
+            if(promo_id == undefined){
                 $("#table-body-detail tr").each(function(){
                     var number = $(this).find('td:eq(0)').text();
                     if(row_number == number){
@@ -279,10 +279,10 @@
     }
 
     function delete_row(id){
-        var package_id = $('#package_id').val();
-        console.log(package_id);
+        var promo_id = $('#promo_id').val();
+        console.log(promo_id);
 
-        if(package_id == undefined){
+        if(promo_id == undefined){
             $('#trow'+id).remove();
         }else{
             var detail_id = $('#detail_id'+id).val();

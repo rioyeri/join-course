@@ -104,7 +104,7 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
         @isset($content)
         <nav id="navbar" class="navbar">
             <ul>
-                <li><a href="#services">Tentang Kami</a></li>
+                <li><a href="#about">Tentang Kami</a></li>
                 <li><a href="#team">Guru-guru</a></li>
                 <li><a href="#contact">Pesan Sekarang</a></li>
                 <li class="dropdown">

@@ -22,8 +22,7 @@ class ContentPromo extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"CTPR");
-        // $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->select('content_promo.id','content_promo.name','icon','price','time_signature','link_text','link','category', 'content_promo.creator', 'u.name as creator_name');
-        $promos = Package::join('users as u', 'package.creator', 'u.id')->select('package.id','package.name','icon','price','time_signature','link_text','category', 'package.creator', 'u.name as creator_name')->where('status', 1);
+        $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->select('content_promo.id','content_promo.name','icon','price','time_signature','link_text','link','category', 'content_promo.creator', 'u.name as creator_name');
 
         $totalRecords = $promos->count();
 
@@ -88,6 +87,17 @@ class ContentPromo extends Model
         $result = collect();
         $promos = ContentPromo::all();
         
+        $count_detail = $promos->count();
+        if($count_detail == 3){
+            $column_size = "col-lg-4";
+        }elseif($count_detail == 4){
+            $column_size = "col-lg-3";
+        }elseif($count_detail == 5){
+            $column_size = "col-lg-2";
+        }else{
+            $column_size = "col-lg-6";
+        }
+
         foreach($promos as $promo){
             $row = collect();
             $row_detail = collect();
@@ -98,6 +108,7 @@ class ContentPromo extends Model
                 $detail->put('status', $det->status);
                 $row_detail->push($detail);
             }
+
             $row->put('name', $promo->name);
             $row->put('icon', $promo->icon);
             $row->put('price', $promo->price);
@@ -106,6 +117,7 @@ class ContentPromo extends Model
             $row->put('link', $promo->link);
             $row->put('category', $promo->category);
             $row->put('detail', $row_detail);
+            $row->put('column_size_detail', $column_size);
             $result->push($row);
         }
 

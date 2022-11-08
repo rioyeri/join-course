@@ -34,8 +34,7 @@ class HomeController extends Controller
         }else{
             $content = ContentHome::getContent();
             $company_profile = ContentProfile::all();
-            // $promos = ContentPromo::getContent();
-            $promos = Package::getContent();
+            $promos = ContentPromo::getContent();
             $grades = Grade::all();
             $packages = Package::where('status', 1)->get();
             $courses = Course::where('status', 1)->get();

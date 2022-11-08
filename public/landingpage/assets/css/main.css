@@ -1561,6 +1561,25 @@ section {
   font-weight: 400;
 }
 
+.pricing h5 {
+  font-size: 30px;
+  color: var(--color-secondary);
+  font-weight: 700;
+  font-family: var(--font-secondary);
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.pricing h5 sup {
+  font-size: 20px;
+}
+
+.pricing h5 span {
+  color: rgba(108, 117, 125, 0.8);
+  font-size: 15px;
+  font-weight: 400;
+}
+
 .pricing ul {
   padding: 20px 0;
   list-style: none;

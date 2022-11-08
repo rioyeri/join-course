@@ -61,6 +61,8 @@ class ContentManagementController extends Controller
                     if($request->image != null || $request->image != '' && $request->content_id != 3){
                         if($request->content_id == 4){
                             $path = "landingpage/assets/img/testimonials/";
+                        }elseif($request->content_id == 8){
+                            $path = "landingpage/assets/img/";
                         }
                         if (file_exists(public_path($path).$data->image) && $data->image != null && isset($path)) {
                             unlink(public_path($path).$data->image);
@@ -155,7 +157,6 @@ class ContentManagementController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'subtitle' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {

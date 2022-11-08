@@ -84,31 +84,4 @@ class Package extends Model
 
         return $response;
     }
-
-    public static function getContent(){
-        $result = collect();
-        $packages = Package::where('status', 1)->get();
-        
-        foreach($packages as $package){
-            $row = collect();
-            $row_detail = collect();
-            $packagedet = PackageDetail::where('package_id', $package->id)->get();
-            foreach($packagedet as $det){
-                $detail = collect();
-                $detail->put('text', $det->text);
-                $detail->put('status', $det->status);
-                $row_detail->push($detail);
-            }
-            $row->put('name', $package->name);
-            $row->put('icon', $package->icon);
-            $row->put('price', $package->price);
-            $row->put('time_signature', $package->time_signature);
-            $row->put('link_text', $package->link_text);
-            $row->put('category', $package->category);
-            $row->put('detail', $row_detail);
-            $result->push($row);
-        }
-
-        return json_decode(json_encode($result), FALSE);
-    }
 }
