@@ -85,4 +85,56 @@ class Course extends Model
 
         return $response;
     }
+
+    public static function mostSubject($month=null){
+        $data = collect();
+        $periodic = "";
+        if($month != null){
+            $start = date('Y-'.$month.'-01'); // hard-coded '01' for first day
+            $end  = date('Y-'.$month.'-t');
+            $periodic = date('M Y');    
+        }
+        $colors = Color::getColor()->shuffle();
+        $i=0;
+
+        foreach(Course::where('status', 1)->get() as $key){
+            $temp = collect();
+
+            if($month != null){
+                $count_orders = Order::whereIn('order_status', [1,2])->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end)->where('course_id', $key->id)->count();
+            }else{
+                $count_orders = Order::whereIn('order_status', [1,2])->where('course_id', $key->id)->count();
+            }
+
+            if($count_orders != 0){
+                $temp->put('course_name', $key->name);
+                $temp->put('course_count', $count_orders);
+                $temp->put('color', $colors[$i]);
+                $temp->put('month_name', $periodic);
+                $data->push($temp);
+                if($i++ <= 9){
+                    $i++;
+                }else{
+                    $i=0;
+                }
+            }
+        }
+
+        if(count($data) > 10){
+            $qtys = array();
+            foreach ($data as $key => $row){
+                $qtys[$key] = $row['course_count'];
+            }
+            array_multisort($qtys, SORT_DESC, $data);
+    
+            $result = collect();
+            for($i=0; $i<10; $i++){
+                $result->push($data[$i]);
+            }
+        }else{
+            $result = $data;
+        }
+
+        return $result;
+    }
 }

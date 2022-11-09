@@ -10,7 +10,7 @@ class Order extends Model
 {
     protected $table ='order';
     protected $fillable = [
-        'order_id','student_id','course_id','grade_id','teacher_id','package_id','course_start','order_bill','order_status','payment_status','order_token','order_type','creator'
+        'order_id','student_id','course_id','grade_id','teacher_id','package_id','course_start','order_bill','order_status','payment_status','order_token','order_type','creator','approved_by'
     ];
 
     public function get_grade(){
@@ -432,5 +432,56 @@ class Order extends Model
         );
 
         return json_decode(json_encode($data),FALSE);
+    }
+
+    public static function orderTypeStats($month=null){
+        $data = collect();
+        $periodic = "";
+        if($month != null){
+            $start = date('Y-'.$month.'-01'); // hard-coded '01' for first day
+            $end  = date('Y-'.$month.'-t');
+            $periodic = date('M Y');    
+        }
+        $colors = Color::getColor()->shuffle();
+        $i=0;
+
+        $array_of_type = array("online", "offline");
+
+        foreach($array_of_type as $key){
+            $temp = collect();
+            if($month != null){
+                $count_order = Order::whereIn('order_status', [1,2])->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end)->where('order_type', 'LIKE', $key)->count();
+            }else{
+                $count_order = Order::whereIn('order_status', [1,2])->where('order_type', 'LIKE', $key)->count();
+            }
+
+            $temp->put('order_type', $key);
+            $temp->put('order_count', $count_order);
+            $temp->put('color', $colors[$i]);
+            $temp->put('month_name', $periodic);
+            $data->push($temp);
+            if($i < 9){
+                $i++;
+            }else{
+                $i=0;
+            }
+        }
+
+        if(count($data) > 10){
+            $qtys = array();
+            foreach ($data as $key => $row){
+                $qtys[$key] = $row['order_count'];
+            }
+            array_multisort($qtys, SORT_DESC, $data);
+    
+            $result = collect();
+            for($i=0; $i<10; $i++){
+                $result->push($data[$i]);
+            }
+        }else{
+            $result = $data;
+        }
+
+        return $result;
     }
 }

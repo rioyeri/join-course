@@ -211,4 +211,18 @@ class User extends Model
 
         return $phone_format;
     }
+
+    public static function shortenName($name){
+        $result = "";
+        $array = explode(" ", $name);
+        if(count($array) >= 2){
+            for($i=0; $i<2; $i++){
+                $result .= $array[$i]." ";
+            }
+        }else{
+            $result = $name;
+        }
+
+        return $result;
+    }
 }

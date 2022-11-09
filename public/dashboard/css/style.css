@@ -197,6 +197,22 @@ hr {
 	margin-top: 25px;
 }
 
+.mt-5 {
+	margin-top: 5px;
+}
+
+.mt-10 {
+	margin-top: 10px;
+}
+
+.mt-15 {
+	margin-top: 15px;
+}
+
+.mt-20 {
+	margin-top: 20px;
+}
+
 .mb {
 	margin-bottom: 25px;
 }
@@ -1174,6 +1190,18 @@ PANELS CONFIGURATIONS
 }
 .content-panel h4 {
 	margin-left: 10px;
+}
+
+/* additional */
+/*Content Panel*/
+.content-panel-gray {
+	/* background: #ffffff; */
+    background: #EAEFF2;
+	box-shadow: 0px 3px 2px #aab2bd;
+	/* padding-top: 15px;
+	padding-bottom: 5px; */
+    margin: 5px 0px 15px 0px;
+    padding-top: 10px;
 }
 
 /*WEATHER PANELS*/

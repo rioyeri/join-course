@@ -21,6 +21,8 @@ Dashboard
 <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-datetimepicker/css/datetimepicker.css') }}" />
 <!-- Sweet Alert css -->
 <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+{{-- <!--Morris Chart CSS -->
+<link rel="stylesheet" href="{{ asset('dashboard/additionalplugins/morris/morris.css') }}"/> --}}
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <style>
@@ -62,6 +64,86 @@ Dashboard
 
 @section('content')
 <!-- page start-->
+<div class="content-panel">
+    <div class="text-right" style="margin: 0 10px 10px 0;">
+        <label style="margin-right: 10px;">Show : </label>
+        <select id="sort" onchange="filter(this.value)">
+            <option value="all">All</option>
+            <option value="thismonth">This Month</option>
+        </select>
+    </div>
+    <div class="row mb-5">
+        <div class="col-lg-4">
+            <div class="content-panel-gray" id="graph_grade" style="margin-left: 10px">
+                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-grade">Statistic of Student Grade</h5>
+                <div class="widget-chart" style="text-align: center;">
+                    <div id="grade" class="text-center"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="content-panel-gray" id="graph_mostsubject">
+                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-mostsubject">Most Subject has Ordered</h5>
+                <div class="widget-chart" style="text-align: center;">
+                    <div id="mostsubject" class="text-center"></div>
+                    {{-- <ul class="list-inline chart-detail-list mb-0">
+                        @foreach ($best_teacher as $sh)
+                            <li class="list-inline-item">
+                                <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
+                            </li>
+                        @endforeach
+                    </ul> --}}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="content-panel-gray" id="graph_bestteacher">
+                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-bestteacher">10 Best Teacher on</h5>
+                <div class="widget-chart" style="text-align: center;">
+                    <div id="bestTeacher" class="text-center"></div>
+                    {{-- <ul class="list-inline chart-detail-list mb-0">
+                        @foreach ($best_teacher as $sh)
+                            <li class="list-inline-item">
+                                <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
+                            </li>
+                        @endforeach
+                    </ul> --}}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="content-panel-gray" id="graph_ordertype">
+                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-ordertype">Type of Order</h5>
+                <div class="widget-chart" style="text-align: center;">
+                    <div id="ordertype" class="text-center"></div>
+                    {{-- <ul class="list-inline chart-detail-list mb-0">
+                        @foreach ($best_teacher as $sh)
+                            <li class="list-inline-item">
+                                <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
+                            </li>
+                        @endforeach
+                    </ul> --}}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="content-panel-gray" id="graph_package" style="margin-right: 10px">
+                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-package">Package</h5>
+                <div class="widget-chart" style="text-align: center;">
+                    <div id="package" class="text-center"></div>
+                    {{-- <ul class="list-inline chart-detail-list mb-0">
+                        @foreach ($best_teacher as $sh)
+                            <li class="list-inline-item">
+                                <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
+                            </li>
+                        @endforeach
+                    </ul> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
 <div class="content-panel">
     <div class="mb">
         <h4><strong>Ongoing Course</strong></h4>
@@ -146,11 +228,23 @@ Dashboard
 <!-- Sweet Alert Js  -->
 <script src="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('dashboard/additionalpages/jquery.sweet-alert.init.js') }}"></script>
+
+<script src="{{ asset('dashboard/lib/raphael/raphael.min.js') }}"></script>
+<script src="{{ asset('dashboard/lib/morris/morris.min.js') }}"></script>
+<!--Morris Chart-->
+{{-- <script src="{{ asset('dashboard/additionalplugins/morris/morris.min.js') }}"></script>
+<script src="{{ asset('dashboard/additionalplugins/raphael/raphael-min.js') }}"></script>
+
+<!-- Sparkline -->
+<script src="{{ asset('dashboard/additionalplugins/jquery-sparkline/jquery.sparkline.min.js') }}"></script> --}}
 @endsection
 
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
+
+        filter("all");
+
         $('#table-ongoing-order').DataTable({
             "processing" : true,
             "serverSide" : true,
@@ -252,7 +346,6 @@ Dashboard
             }
 
             var optimage = $(opt.element).attr('data-image');
-            console.log(optimage)
             if(!optimage){
             return opt.text.toUpperCase();
             } else {
@@ -293,7 +386,6 @@ Dashboard
 
     function confirm_order(id){
         var token = $("meta[name='csrf-token']").attr("content");
-        console.log(id)
         swal({
             title: 'Confirm this Order?',
             text: "Confirmed Order will be forward to Student!",
@@ -434,6 +526,254 @@ Dashboard
                 )
             });
         })
+    }
+
+    function getGraphBestTeacher(value){
+        // Refresh Chart
+        $('#bestTeacher').html("");
+
+        $.ajax({
+            url : "{{ route('home.index') }}",
+            type : "get",
+            dataType: 'json',
+            data: {
+                type:"chart_bestteacher",
+                sort:value,
+            },
+        }).done(function (data) {
+            $("#bestTeacher").css("height","180");
+            $("#graph_bestteacher").css("height", "210px");
+
+            if(value == "all"){
+                $("#title-bestteacher").html("Teacher Stats");
+            }else{
+                $("#title-bestteacher").html("Teacher of the "+data[0].month_name);
+            }
+
+            var count = data.length;
+            var datas = [];
+            var colors = [];
+
+            data.forEach(function(key){
+                name = key.teacher_name;
+                qty = key.order_qty;
+                color = key.color;
+
+                var x = {label:name, value:qty};
+                datas.push(x);
+                colors.push(color);
+            });
+
+            Morris.Donut({
+                element: 'bestTeacher',
+                data : datas,
+                colors: colors,
+                height: "180",
+                formatter: function (y) { return y }
+            });
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function getGraphMostSubject(value){
+        // Refresh Chart
+        $('#mostsubject').html("");
+
+        $.ajax({
+            url : "{{ route('home.index') }}",
+            type : "get",
+            dataType: 'json',
+            data: {
+                type:"chart_mostsubject",
+                sort:value,
+            },
+        }).done(function (data) {
+            $("#mostsubject").css("height","180");
+            $("#graph_mostsubject").css("height", "210px");
+
+            if(value == "all"){
+                $("#title-mostsubject").html("Most Subject Stats");
+            }else{
+                $("#title-mostsubject").html("Most Subject in "+data[0].month_name);
+            }
+
+            var count = data.length;
+            var datas = [];
+            var colors = [];
+
+            data.forEach(function(key){
+                name = key.course_name;
+                qty = key.course_count;
+                color = key.color;
+
+                var x = {label:name, value:qty};
+                datas.push(x);
+                colors.push(color);
+            });
+
+            Morris.Donut({
+                element: 'mostsubject',
+                data : datas,
+                colors: colors,
+                height: "180",
+                formatter: function (y) { return y }
+            });
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function getGradeStatistic(value){
+        // Refresh Chart
+        $('#grade').html("");
+
+        $.ajax({
+            url : "{{ route('home.index') }}",
+            type : "get",
+            dataType : "json",
+            data: {
+                type:"chart_grade",
+                sort:value,
+            },
+        }).done(function (data) {
+            $("#grade").css("height","180");
+            $("#graph_grade").css("height", "210px");
+            if(value == "all"){
+                $("#title-grade").html("Grade Statistic");
+            }else{
+                $("#title-grade").html("Grade Statistic in "+data[0].month_name);
+            }
+
+            var colors = [];
+
+            data.forEach(function(key){
+                color = key.color;
+                colors.push(color);
+            });
+
+            Morris.Bar({
+                element: 'grade',
+                data: data,
+                xkey: 'grade_name',
+                ykeys: ['grade_count','order_count'],
+                labels: ['Jumlah murid','Jumlah Order'],
+                xLabelAngle: 90,
+                hideHover: true,
+                hoverCallback: function(index, options, content, row) {
+                    return '<div style="background:rgba(255,255,255,1); border-radius:4px; margin: 0 30% 0 30%">'+content+'</div>';
+                },
+                gridTextSize: 10,
+                barColors: colors,
+                resize: true,
+            });
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        })
+    }
+
+    function getGraphOrderType(value){
+        // Refresh Chart
+        $('#ordertype').html("");
+        $.ajax({
+            url : "{{ route('home.index') }}",
+            type : "get",
+            dataType: 'json',
+            data: {
+                type:"chart_ordertype",
+                sort:value,
+            },
+        }).done(function (data) {
+            $("#ordertype").css("height","180");
+            $("#graph_ordertype").css("height", "210px");
+
+            if(value == "all"){
+                $("#title-ordertype").html("Type of Order Stats");
+            }else{
+                $("#title-ordertype").html("Type of Order Stats in "+data[0].month_name);
+            }
+
+            var count = data.length;
+            var datas = [];
+            var colors = [];
+
+            data.forEach(function(key){
+                name = key.order_type;
+                qty = key.order_count;
+                color = key.color;
+
+                var x = {label:name, value:qty};
+                datas.push(x);
+                colors.push(color);
+            });
+
+            Morris.Donut({
+                element: 'ordertype',
+                data : datas,
+                colors: colors,
+                height: "180",
+                formatter: function (y) { return y }
+            });
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function getGraphPackage(value){
+        // Refresh Chart
+        $('#package').html("");
+
+        $.ajax({
+            url : "{{ route('home.index') }}",
+            type : "get",
+            dataType: 'json',
+            data: {
+                type:"chart_package",
+                sort:value,
+            },
+        }).done(function (data) {
+            $("#package").css("height","180");
+            $("#graph_package").css("height", "210px");
+
+            if(value == "all"){
+                $("#title-package").html("Package Stats");
+            }else{
+                $("#title-package").html("Package Stats in "+data[0].month_name);
+            }
+
+            var count = data.length;
+            var datas = [];
+            var colors = [];
+
+            data.forEach(function(key){
+                name = key.package_name;
+                qty = key.order_qty;
+                color = key.color;
+
+                var x = {label:name, value:qty};
+                datas.push(x);
+                colors.push(color);
+            });
+
+            Morris.Donut({
+                element: 'package',
+                data : datas,
+                colors: colors,
+                height: "180",
+                formatter: function (y) { return y }
+            });
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function filter(value=null){
+        // Get Chart
+        getGraphBestTeacher(value);
+        getGraphMostSubject(value);
+        getGradeStatistic(value);
+        getGraphOrderType(value);
+        getGraphPackage(value);
     }
 </script>
 @endsection
