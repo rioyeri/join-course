@@ -1,5 +1,5 @@
 <!-- ======= Our Team Section ======= -->
-<section id="team" class="team">
+<section id="team" class="team sections-bg">
     {{-- <!-- Modal -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -35,6 +35,9 @@
                 </div><!-- End Team Member -->
                 @php($i++)
             @endforeach
+        </div>
+        <div class="text-center" style="margin: 40px 0 0 0">
+            <a href="{{ route('showAllTeacher') }}">Tampilkan semua guru <i class="bi bi-caret-down-fill"></i></a>
         </div>
     </div>
 </section><!-- End Our Team Section -->

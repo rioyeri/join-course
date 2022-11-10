@@ -258,4 +258,11 @@ class HelperController extends Controller
 
         return response()->json($data);
     }
+
+    public function showAllTeacher(){
+        $results = Teacher::getTeacherList();
+        $company_profile = ContentProfile::all();
+        $keyword = "";
+        return view('landingpage.content.searchresult', compact('company_profile', 'keyword', 'results'));
+    }
 }

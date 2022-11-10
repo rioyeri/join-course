@@ -1197,7 +1197,8 @@ PANELS CONFIGURATIONS
 /*Content Panel*/
 .content-panel-gray {
 	/* background: #ffffff; */
-    background: #EAEFF2;
+    /* background: #EAEFF2; */
+    background: #F5f5f5;
 	box-shadow: 0px 3px 2px #aab2bd;
 	/* padding-top: 15px;
 	padding-bottom: 5px; */

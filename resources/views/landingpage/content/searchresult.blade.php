@@ -6,7 +6,11 @@
     <div class="container" data-aos="fade-up">
 
         <div class="section-header" style="margin-top: 40px;">
-            <h2>Hasil Pencarian : <span style="font-style: italic"><strong>"{{ $keyword }}"</strong></span></h2>
+            @if($keyword != "")
+                <h2>Hasil Pencarian : <span style="font-style: italic"><strong>"{{ $keyword }}"</strong></span></h2>
+            @else
+                <h2>Guru</h2>
+            @endif
         </div>
 
         @if (!$results)

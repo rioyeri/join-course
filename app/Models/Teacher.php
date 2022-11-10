@@ -145,6 +145,7 @@ class Teacher extends Model
         $teacher_ids = TeacherCourse::whereIn('course_id',$courses)->select('teacher_id')->get();
         $teachers = Teacher::whereIn('id', $teacher_ids)->get();
         foreach($teachers as $teacher){
+            $description = substr($teacher->description, 0, 50);
             if($teacher->teacher->profilephoto == null){
                 $image = asset('dashboard/assets/noimage.jpg');
             }else{
@@ -152,9 +153,9 @@ class Teacher extends Model
             }
             $detail = collect();
             $detail->put('id', $teacher->id);
-            $detail->put('title', $teacher->title);
-            $detail->put('subtitle', $teacher->subtitle);
-            $detail->put('description', $teacher->description);
+            $detail->put('title', $teacher->teacher->name);
+            $detail->put('subtitle', $teacher->title);
+            $detail->put('description', $description);
             $detail->put('image', $image);
             $result->push($detail);
         }
@@ -261,5 +262,26 @@ class Teacher extends Model
         }
 
         return $result;
+    }
+
+    public static function getTeacherList(){
+        $result = collect();
+        $teachers = Teacher::where('status', 1)->get();
+        foreach($teachers as $teacher){
+            $description = substr($teacher->description, 0, 50);
+            if($teacher->teacher->profilephoto == null){
+                $image = asset('dashboard/assets/noimage.jpg');
+            }else{
+                $image = asset('dashboard/assets/users/photos/'.$teacher->teacher->profilephoto);
+            }
+            $detail = collect();
+            $detail->put('id', $teacher->id);
+            $detail->put('title', $teacher->teacher->name);
+            $detail->put('subtitle', $teacher->title);
+            $detail->put('description', $description);
+            $detail->put('image', $image);
+            $result->push($detail);
+        }
+        return json_decode(json_encode($result), FALSE);
     }
 }
