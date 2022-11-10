@@ -150,4 +150,27 @@ class OrderPayment extends Model
 
         return $response;
     }
+
+    public static function incomeReport(){
+        $data = collect();
+        $year  = date('Y');
+        $i=0;
+
+        for($month=1; $month<=12; $month++){
+            $temp = collect();
+            // $month_name = date('M');
+            $month_name = date('Y-m', strtotime($year."-".$month."-01"));
+            $count_order = OrderPayment::where('payment_confirmation', 1)->whereMonth('created_at', $month)->whereYear('created_at', $year)->sum('payment_amount');
+
+            $temp->put('report_period', $month_name);
+            $temp->put('report_count', $count_order);
+            $data->push($temp);
+            if($i < 9){
+                $i++;
+            }else{
+                $i=0;
+            }
+        }
+        return $data;
+    }
 }

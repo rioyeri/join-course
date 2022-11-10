@@ -13,6 +13,7 @@ use App\Models\Package;
 use App\Models\Log;
 use App\Models\MenuMapping;
 use App\Models\OrderDetail;
+use App\Models\OrderPayment;
 use App\Models\OrderReport;
 use App\Models\RecycleBin;
 
@@ -71,6 +72,12 @@ class DashboardController extends Controller
                     $month = date('m');
                     $datas = Package::getPackageStats($month);
                 }
+                echo json_encode($datas);
+            }elseif($request->type == "chart_orderreport"){
+                $datas = Order::orderReport();
+                echo json_encode($datas);
+            }elseif($request->type == "chart_incomereport"){
+                $datas = OrderPayment::incomeReport();
                 echo json_encode($datas);
             }
         }else{

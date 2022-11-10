@@ -21,8 +21,8 @@ Dashboard
 <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-datetimepicker/css/datetimepicker.css') }}" />
 <!-- Sweet Alert css -->
 <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
-{{-- <!--Morris Chart CSS -->
-<link rel="stylesheet" href="{{ asset('dashboard/additionalplugins/morris/morris.css') }}"/> --}}
+{{-- Switchery --}}
+<link href="{{ asset('dashboard/additionalplugins/switchery/switchery.min.css') }}" rel="stylesheet" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <style>
@@ -65,79 +65,110 @@ Dashboard
 @section('content')
 <!-- page start-->
 <div class="content-panel">
-    <div class="text-right" style="margin: 0 10px 10px 0;">
-        <label style="margin-right: 10px;">Show : </label>
-        <select id="sort" onchange="filter(this.value)">
-            <option value="all">All</option>
-            <option value="thismonth">This Month</option>
-        </select>
+    <h4 style="text-align: center;"><strong>Statistics</strong></h4>
+    <div class="text-right" style="margin:-35px 20px 20px 0;">
+        <input type="checkbox" checked id="switch1" data-plugin="switchery"/>
     </div>
-    <div class="row mb-5">
-        <div class="col-lg-4">
-            <div class="content-panel-gray" id="graph_grade" style="margin-left: 10px">
-                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-grade">Statistic of Student Grade</h5>
-                <div class="widget-chart" style="text-align: center;">
-                    <div id="grade" class="text-center"></div>
+    <div id="stats-container">
+        <div class="text-right" style="margin: 0 10px 10px 0;">
+            <label style="margin-right: 10px;">Show : </label>
+            <select id="sort" onchange="filter(this.value)">
+                <option value="all">All</option>
+                <option value="thismonth">This Month</option>
+            </select>
+        </div>
+        <div class="row mb-5">
+            <div class="col-lg-4">
+                <div class="content-panel-gray" id="graph_grade" style="margin-left: 10px">
+                    <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-grade">Statistic of Student Grade</h5>
+                    <div class="widget-chart" style="text-align: center;">
+                        <div id="grade" class="text-center"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="content-panel-gray" id="graph_mostsubject">
+                    <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-mostsubject">Most Subject has Ordered</h5>
+                    <div class="widget-chart" style="text-align: center;">
+                        <div id="mostsubject" class="text-center"></div>
+                        {{-- <ul class="list-inline chart-detail-list mb-0">
+                            @foreach ($best_teacher as $sh)
+                                <li class="list-inline-item">
+                                    <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
+                                </li>
+                            @endforeach
+                        </ul> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="content-panel-gray" id="graph_bestteacher">
+                    <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-bestteacher">10 Best Teacher on</h5>
+                    <div class="widget-chart" style="text-align: center;">
+                        <div id="bestTeacher" class="text-center"></div>
+                        {{-- <ul class="list-inline chart-detail-list mb-0">
+                            @foreach ($best_teacher as $sh)
+                                <li class="list-inline-item">
+                                    <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
+                                </li>
+                            @endforeach
+                        </ul> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="content-panel-gray" id="graph_ordertype">
+                    <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-ordertype">Type of Order</h5>
+                    <div class="widget-chart" style="text-align: center;">
+                        <div id="ordertype" class="text-center"></div>
+                        {{-- <ul class="list-inline chart-detail-list mb-0">
+                            @foreach ($best_teacher as $sh)
+                                <li class="list-inline-item">
+                                    <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
+                                </li>
+                            @endforeach
+                        </ul> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="content-panel-gray" id="graph_package" style="margin-right: 10px">
+                    <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-package">Package</h5>
+                    <div class="widget-chart" style="text-align: center;">
+                        <div id="package" class="text-center"></div>
+                        {{-- <ul class="list-inline chart-detail-list mb-0">
+                            @foreach ($best_teacher as $sh)
+                                <li class="list-inline-item">
+                                    <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
+                                </li>
+                            @endforeach
+                        </ul> --}}
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-2">
-            <div class="content-panel-gray" id="graph_mostsubject">
-                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-mostsubject">Most Subject has Ordered</h5>
+    </div>
+</div>
+<br>
+<div class="content-panel">
+    <h4 style="text-align: center;"><strong>Report</strong></h4>
+    <div class="text-right" style="margin:-35px 20px 20px 0;">
+        <input type="checkbox" checked id="switch2" data-plugin="switchery"/>
+    </div>
+    <div class="row mb-5" id="report-container">
+        <div class="col-lg-6">
+            <div class="content-panel-gray" id="graph_orderreport" style="margin-left: 10px">
+                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-grade">Order Report</h5>
                 <div class="widget-chart" style="text-align: center;">
-                    <div id="mostsubject" class="text-center"></div>
-                    {{-- <ul class="list-inline chart-detail-list mb-0">
-                        @foreach ($best_teacher as $sh)
-                            <li class="list-inline-item">
-                                <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
-                            </li>
-                        @endforeach
-                    </ul> --}}
+                    <div id="orderreport" class="text-center"></div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-2">
-            <div class="content-panel-gray" id="graph_bestteacher">
-                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-bestteacher">10 Best Teacher on</h5>
+        <div class="col-lg-6">
+            <div class="content-panel-gray" id="graph_incomereport" style="margin-right: 10px">
+                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-grade">Income Report</h5>
                 <div class="widget-chart" style="text-align: center;">
-                    <div id="bestTeacher" class="text-center"></div>
-                    {{-- <ul class="list-inline chart-detail-list mb-0">
-                        @foreach ($best_teacher as $sh)
-                            <li class="list-inline-item">
-                                <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
-                            </li>
-                        @endforeach
-                    </ul> --}}
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-2">
-            <div class="content-panel-gray" id="graph_ordertype">
-                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-ordertype">Type of Order</h5>
-                <div class="widget-chart" style="text-align: center;">
-                    <div id="ordertype" class="text-center"></div>
-                    {{-- <ul class="list-inline chart-detail-list mb-0">
-                        @foreach ($best_teacher as $sh)
-                            <li class="list-inline-item">
-                                <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
-                            </li>
-                        @endforeach
-                    </ul> --}}
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-2">
-            <div class="content-panel-gray" id="graph_package" style="margin-right: 10px">
-                <h5 class="header-title" style="text-align:center; margin: 2px 0 2px 0;" id="title-package">Package</h5>
-                <div class="widget-chart" style="text-align: center;">
-                    <div id="package" class="text-center"></div>
-                    {{-- <ul class="list-inline chart-detail-list mb-0">
-                        @foreach ($best_teacher as $sh)
-                            <li class="list-inline-item">
-                                <h5 style="color: {{ $sh['color'] }};"><i class="fa fa-circle m-r-5"></i>{{ $sh['teacher_name'] }}</h5>
-                            </li>
-                        @endforeach
-                    </ul> --}}
+                    <div id="incomereport" class="text-center"></div>
                 </div>
             </div>
         </div>
@@ -229,14 +260,12 @@ Dashboard
 <script src="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('dashboard/additionalpages/jquery.sweet-alert.init.js') }}"></script>
 
+<!-- Charts -->
 <script src="{{ asset('dashboard/lib/raphael/raphael.min.js') }}"></script>
 <script src="{{ asset('dashboard/lib/morris/morris.min.js') }}"></script>
-<!--Morris Chart-->
-{{-- <script src="{{ asset('dashboard/additionalplugins/morris/morris.min.js') }}"></script>
-<script src="{{ asset('dashboard/additionalplugins/raphael/raphael-min.js') }}"></script>
 
-<!-- Sparkline -->
-<script src="{{ asset('dashboard/additionalplugins/jquery-sparkline/jquery.sparkline.min.js') }}"></script> --}}
+<!-- Switchery -->
+<script src="{{ asset('dashboard/additionalplugins/switchery/switchery.min.js') }}"></script>
 @endsection
 
 @section('script-js')
@@ -244,6 +273,9 @@ Dashboard
     $(document).ready(function() {
 
         filter("all");
+        getOrderReport();
+        getIncomeReport();
+        setSwitch();
 
         $('#table-ongoing-order').DataTable({
             "processing" : true,
@@ -353,6 +385,23 @@ Dashboard
                 '<span><img src="' + optimage + '" width="60px" /> ' + opt.text.toUpperCase() + '</span>'
                 );
                 return $opt;
+            }
+        };
+
+        // Switchery 1
+        switch1.onchange = function() {
+            if(switch1.checked == true){
+                document.getElementById("stats-container").style.display = 'block';
+            }else{
+                document.getElementById("stats-container").style.display = 'none';
+            }
+        };
+
+        switch2.onchange = function() {
+            if(switch2.checked == true){
+                document.getElementById("report-container").style.display = 'block';
+            }else{
+                document.getElementById("report-container").style.display = 'none';
             }
         };
     });
@@ -767,6 +816,100 @@ Dashboard
         });
     }
 
+    function getOrderReport(){
+        // Refresh Chart
+        $('#orderreport').html("");
+
+        $.ajax({
+            url : "{{ route('home.index') }}",
+            type : "get",
+            dataType : "json",
+            data: {
+                type:"chart_orderreport",
+            },
+        }).done(function (data) {
+            $("#orderreport").css("height","180");
+            $("#graph_orderreport").css("height", "210px");
+            // if(value == "all"){
+            //     $("#title-orderreport").html("Order Report");
+            // }else{
+            //     $("#title-orderreport").html("Grade Statistic in "+data[0].month_name);
+            // }
+
+            var colors = [];
+
+            data.forEach(function(key){
+                color = key.color;
+                colors.push(color);
+            });
+
+            Morris.Line({
+                element: 'orderreport',
+                data: data,
+                xkey: 'report_period',
+                ykeys: ['report_count'],
+                labels: ['Total Order'],
+                lineColors:['#008374'],
+                xLabelAngle: 60,
+                hideHover: true,
+                hoverCallback: function(index, options, content, row) {
+                    return '<div style="background:rgba(255,255,255,1); border-radius:4px; margin: 0 30% 0 30%">'+content+'</div>';
+                },
+                resize: true,
+
+            });
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        })
+    }
+
+    function getIncomeReport(){
+        // Refresh Chart
+        $('#incomereport').html("");
+
+        $.ajax({
+            url : "{{ route('home.index') }}",
+            type : "get",
+            dataType : "json",
+            data: {
+                type:"chart_incomereport",
+            },
+        }).done(function (data) {
+            $("#incomereport").css("height","180");
+            $("#graph_incomereport").css("height", "210px");
+            // if(value == "all"){
+            //     $("#title-orderreport").html("Order Report");
+            // }else{
+            //     $("#title-orderreport").html("Grade Statistic in "+data[0].month_name);
+            // }
+
+            var colors = [];
+
+            data.forEach(function(key){
+                color = key.color;
+                colors.push(color);
+            });
+
+            Morris.Line({
+                element: 'incomereport',
+                data: data,
+                xkey: 'report_period',
+                ykeys: ['report_count'],
+                labels: ['Total Income'],
+                lineColors:['#f96f59'],
+                xLabelAngle: 60,
+                hideHover: true,
+                hoverCallback: function(index, options, content, row) {
+                    return '<div style="background:rgba(255,255,255,1); border-radius:4px; margin: 0 30% 0 30%">'+content+'</div>';
+                },
+                resize: true,
+
+            });
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        })
+    }
+
     function filter(value=null){
         // Get Chart
         getGraphBestTeacher(value);
@@ -774,6 +917,13 @@ Dashboard
         getGradeStatistic(value);
         getGraphOrderType(value);
         getGraphPackage(value);
+    }
+
+    function setSwitch(){
+        var switch1 = document.querySelector('#switch1');
+        var switch2 = document.querySelector('#switch2');
+        new Switchery(switch1, {size: 'small',color: '#008374'});
+        new Switchery(switch2, {size: 'small',color: '#008374'});
     }
 </script>
 @endsection

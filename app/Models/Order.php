@@ -484,4 +484,27 @@ class Order extends Model
 
         return $result;
     }
+
+    public static function orderReport(){
+        $data = collect();
+        $year  = date('Y');
+        $i=0;
+
+        for($month=1; $month<=12; $month++){
+            $temp = collect();
+            // $month_name = date('M');
+            $month_name = date('Y-m', strtotime($year."-".$month."-01"));
+            $count_order = Order::whereIn('order_status', [1,2])->whereMonth('created_at', $month)->whereYear('created_at', $year)->count();
+
+            $temp->put('report_period', $month_name);
+            $temp->put('report_count', $count_order);
+            $data->push($temp);
+            if($i < 9){
+                $i++;
+            }else{
+                $i=0;
+            }
+        }
+        return $data;
+    }
 }
