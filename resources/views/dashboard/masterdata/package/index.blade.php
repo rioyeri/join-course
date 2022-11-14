@@ -80,6 +80,7 @@
                     <th>No</th>
                     <th>Package Name</th>
                     <th>Description</th>
+                    <th>Number of meet</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -122,6 +123,7 @@
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "name", name : "name"},
                     {data : "description", name : "description", orderable : false},
+                    {data : "number_meet", name : "number_meet"},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},

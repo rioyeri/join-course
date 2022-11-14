@@ -6,13 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
-
 use App\Models\RoleMapping;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\MenuMapping;
 use App\Models\RecycleBin;
 use App\Models\Log;
+use App\Models\Student;
+use App\Models\Teacher;
 
 class RoleMappingController extends Controller
 {
@@ -82,9 +83,20 @@ class RoleMappingController extends Controller
         }else{
             try {
                 $data = RoleMapping::where('id',$id)->first();
+                if($data->role_id == 4){
+                    if(Student::where('user_id', $data->user->id)->count() != 0){
+                        Student::where('user_id', $data->user->id)->delete();
+                    }
+                }elseif($data->role_id == 5){
+                    if(Teacher::where('user_id', $data->user->id)->count() != 0){
+                        Teacher::where('user_id', $data->user->id)->delete();
+                    }
+                }
+
                 $data->role_id = $request->role_id;
                 $data->creator = session('user_id');
                 $data->save();
+
                 Log::setLog('USRMU','Update Role Mapping : '.$request->name);
                 return redirect()->route('rolemapping.index')->with('status','Successfully saved');
             } catch (\Exception $e) {
@@ -96,6 +108,15 @@ class RoleMappingController extends Controller
     public function destroy($id){
         try{
             $data = RoleMapping::where('id',$id)->first();
+            if($data->role_id == 4){
+                if(Student::where('user_id', $data->user->id)->count() != 0){
+                    Student::where('user_id', $data->user->id)->delete();
+                }
+            }elseif($data->role_id == 5){
+                if(Teacher::where('user_id', $data->user->id)->count() != 0){
+                    Teacher::where('user_id', $data->user->id)->delete();
+                }
+            }
             $log_id = Log::setLog('USRMD','Delete Role Mapping : '.$data->username);
             RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
             $data->delete();

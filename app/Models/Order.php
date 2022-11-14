@@ -54,6 +54,16 @@ class Order extends Model
             $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type');
         }
 
+        if($request->type == "confirm"){
+            $order->where('order_status', 1);
+        }elseif($request->type == "decline"){
+            $order->where('order_status', -1);
+        }elseif($request->type == "finish"){
+            $order->where('order_status', 2);
+        }else{
+            $order->where('order_status', 0);
+        }
+
         $totalRecords = $order->count();
 
         if($searchValue != ''){
@@ -78,8 +88,13 @@ class Order extends Model
         foreach($order as $key){
             $detail = collect();
 
+            $schedules = '';
+            $order_detail = OrderDetail::where('order_id', $key->id)->get();
+            foreach($order_detail as $det){
+                $schedules .= '<li>'.date('D, d-m-Y H:i:s', strtotime($det->schedule_time)).'</li>';
+            }
+            
             $options = '';
-
             if (array_search("ORORU",$page)){
                 if((session('role_id') == 4 || session('role_id') == 5) && ($key->order_status == 1 || $key->order_status == 2)){
                     $options .= '<a class="btn btn-primary btn-round m-5"><i class="fa fa-pencil"></i> Edit</a> ';
@@ -87,14 +102,11 @@ class Order extends Model
                     $options .= '<a class="btn btn-primary btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
                 }
             }
-
             if (array_search("ORORD",$page)){
                 $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
             }
-
             $options .= '<input type="hidden" id="route'.$key->id.'" value="'.route('getInvoice',['order_id' => $key->id]).'">';
             $options .= '<a href="javascript:;" class="btn btn-info btn-round m-5" onclick="printPdf('.$key->id.')"><i class="fa fa-file-pdf-o"></i> Invoice</a>';
-
             $status = '';
 
             $student_name = $key->student_name;
@@ -109,12 +121,18 @@ class Order extends Model
                 }else{
                     $status .= '<a class="btn btn-warning btn-round m-5" onclick="confirm_order('.$key->id.')"><i class="fa fa-power-off"></i> Not Confirmed</a>';
                 }
-                if($key->order_status == 1 || $key->order_status == 2){
+
+                if($key->student_phone != ""){
                     $phone_format = User::getFormatWANumber($key->student_phone);
                     $phone_redirect = "https://api.whatsapp.com/send?phone=".$phone_format."&text=Hai%20".$key->student_name.",%20Kami%20dari%20admin%20Flash%20Academia%20memberikan%20informasi%20bahwa%20";
                     $phone_redirect .= Order::getTextInvoice($key->id);
-                    $phone = ' <a href="'.$phone_redirect.'" target="_blank"><i class="fa fa-whatsapp"></i></a>';
+                    $phone = ' <a href="'.$phone_redirect.'" target="_blank"><i class="fa fa-whatsapp" style="color: #008374"></i></a>';
                     $student_name .= $phone;
+                }else{
+                    $copy_text = "Hai ".$key->student_name.", Kami dari admin Flash Academia memberikan informasi bahwa ";
+                    $copy_text .= Order::getTextInvoice($key->id, "text");
+                    $text = ' <a href="javascript:;" id="copytextbtn'.$key->order_id.'" data-toggle="popover" onclick="copyText(\''.$key->order_id.'\',\''.$copy_text.'\')"><i class="fa fa-copy" style="color:purple"></i></a>';
+                    $student_name .= $text;
                 }
             }else{
                 if($key->order_status == -1){
@@ -139,7 +157,6 @@ class Order extends Model
 
             $bill_paid = OrderPayment::where('order_id', $key->id)->where('payment_confirmation', 1)->sum('payment_amount');
 
-            
             $detail->put('no', $i++);
             $detail->put('order_id', '#'.$key->order_id);
             $detail->put('student_name', $student_name);
@@ -150,6 +167,7 @@ class Order extends Model
             $detail->put('order_type', $key->order_type);
             $detail->put('status', $status);
             $detail->put('course_start', $key->course_start);
+            $detail->put('schedules', $schedules);
             $detail->put('order_bill', $key->order_bill);
             $detail->put('bill_paid', $bill_paid);
             $detail->put('payment_status', $payment_status);
@@ -321,7 +339,7 @@ class Order extends Model
         $columnSortOrder = $request['order'][0]['dir']; // asc or desc
         $searchValue = $request['search']['value']; // Search value
 
-        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type')->whereNotIn('order_status', [-1,1,2]);
+        $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type','us.phone as student_phone')->whereNotIn('order_status', [-1,1,2]);
 
         if(session('role_id') == 4){
             $order->where('us.id', session('user_id'));
@@ -353,6 +371,23 @@ class Order extends Model
         foreach($order as $key){
             $detail = collect();
 
+            $schedules = '';
+            $order_detail = OrderDetail::where('order_id', $key->id)->get();
+            foreach($order_detail as $det){
+                $schedules .= '<li>'.date('D, d-m-Y H:i:s', strtotime($det->schedule_time)).'</li>';
+            }
+
+            $student_name = $key->student_name;
+
+            $payment_status = '';
+            if($key->payment_status == 1){
+                $payment_status .= '<a class="btn btn-success m-5"><i class="fa fa-check"></i> Paid Off</a> ';
+            }elseif($key->payment_status == 2){
+                $payment_status .= '<a class="btn btn-warning m-5"><i class="fa fa-times"></i> Overpaid</a> ';
+            }else{
+                $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
+            }
+
             $status = '';
             if(session('role_id') != 4 && session('role_id') != 5){
                 if($key->order_status == -1){
@@ -364,6 +399,19 @@ class Order extends Model
                 }else{
                     $status .= '<a class="btn btn-warning btn-round m-5" onclick="confirm_order('.$key->id.')"><i class="fa fa-power-off"></i> Not Confirmed</a>';
                 }
+
+                if($key->student_phone != ""){
+                    $phone_format = User::getFormatWANumber($key->student_phone);
+                    $phone_redirect = "https://api.whatsapp.com/send?phone=".$phone_format."&text=Hai%20".$key->student_name.",%20Kami%20dari%20admin%20Flash%20Academia%20memberikan%20informasi%20bahwa%20";
+                    $phone_redirect .= Order::getTextInvoice($key->id);
+                    $phone = ' <a href="'.$phone_redirect.'" target="_blank"><i class="fa fa-whatsapp"></i></a>';
+                    $student_name .= $phone;
+                }else{
+                    $copy_text = "Hai ".$key->student_name.", Kami dari admin Flash Academia memberikan informasi bahwa ";
+                    $copy_text .= Order::getTextInvoice($key->id, "text");
+                    $text = ' <a href="javascript:;" id="copytextbtn'.$key->order_id.'" data-toggle="popover" onclick="copyText(\''.$key->order_id.'\',\''.$copy_text.'\')"><i class="fa fa-copy" style="color:purple"></i></a>';
+                    $student_name .= $text;
+                }
             }else{
                 if($key->order_status == -1){
                     $status .= '<a class="btn btn-danger m-5"><i class="fa fa-power-off"></i> Declined</a> ';
@@ -374,17 +422,18 @@ class Order extends Model
                 }else{
                     $status .= '<a class="btn btn-warning m-5"><i class="fa fa-power-off"></i> Not Confirmed</a>';
                 }
-    
             }
 
             $detail->put('no', $i++);
             $detail->put('order_id', '#'.$key->order_id);
-            $detail->put('student_name', $key->student_name);
+            $detail->put('student_name', $student_name);
             $detail->put('grade_id', $key->get_grade->name);
             $detail->put('course_name', $key->course_name);
             $detail->put('teacher_name', $key->teacher_name);
             $detail->put('package_name', $key->package_name);
+            $detail->put('schedules', $schedules);
             $detail->put('order_type', $key->order_type);
+            $detail->put('payment_status', $payment_status);
             $detail->put('order_status', $status);
             $data->push($detail);
         }
@@ -399,21 +448,33 @@ class Order extends Model
         return $response;
     }
 
-    public static function getTextInvoice($id){
+    public static function getTextInvoice($id, $type=null){
         // $tes = "https://api.whatsapp.com/send?phone=6285155431131&text=terdapat%20invoice%20order%20yang%20perlu%20anda%20bayarkan%20sebelum%20memulai%20kursus%20yang%20anda%20inginkan.%20Berikut%20detail%20invoicenya%20%3A%0A%0A*Nomor%20Invoice*%20%3A%0A*Jumlah%20yang%20harus%20dibayar*%20%3A%0A*Layanan*%20%3A%0A%0ALakukan%20transfer%20pembayaran%20dan%20jangan%20lupa%20screenshot%20bukti%20transfernya%20untuk%20diupload%20melalui%20link%20berikut%20%3A%0Ahttps%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbWe62bJKR5k%26t%3D732s%0A%0AJika%20memiliki%20pertanyaan%2C%20silahkan%20hubungi%20kami%20melalui%20nomor%20Whatsapp%20ini.%0A%0ATerimakasih%20%3A)%0AFlash%20Academia";
         $order = Order::where('id', $id)->first();
         $amount = OrderPayment::getRemainingPayment($id);
         $link = route('paymentOrderPage', ['order_id'=>$order->order_id, 'token'=>$order->order_token]);
 
-        $text = "terdapat%20invoice%20order%20yang%20perlu%20anda%20bayarkan%20sebelum%20memulai%20kursus%20yang%20anda%20inginkan.%20Berikut%20detail%20invoicenya%20%3A%0A%0A";
-        $text .= "%0A*Nomor%20Invoice*%20%3A%20".$order->order_id;
-        $text .= "%0A*Jumlah%20yang%20harus%20dibayar*%20%3A%20Rp%20".number_format($amount,2,",",".");
-        $text .= "%0A*Layanan*%20%3A%20".$order->get_package->name;
-        $text .= "%0ALakukan%20transfer%20pembayaran%20dan%20jangan%20lupa%20screenshot%20bukti%20transfernya%20untuk%20diupload%20melalui%20link%20berikut%20:%20%0A";
-        $text .= "%0A".$link."%0A";
-        $text .= "%0AJika%20memiliki%20pertanyaan,%20silahkan%20hubungi%20kami%20melalui%20nomor%20Whatsapp%20ini.";
-        $text .= "%0ATerimakasih :)";
-        $text .= "%0AFlash Academia";
+        if($type != null){
+            $text = "terdapat invoice order yang perlu anda bayarkan sebelum memulai kursus yang anda inginkan. Berikut detail invoicenya : ";
+            $text .= "*Nomor Invoice* : ".$order->order_id.". ";
+            $text .= "*Jumlah yang harus dibayar* : Rp ".number_format($amount,2,",",".").". ";
+            $text .= "*Layanan* : ".$order->get_package->name.". ";
+            $text .= "Lakukan transfer pembayaran dan jangan lupa screenshot bukti transfernya untuk diupload melalui link berikut : ";
+            $text .= $link.". ";
+            $text .= "Jika memiliki pertanyaan, silahkan hubungi kami melalui nomor Whatsapp ini. ";
+            $text .= "Terimakasih :). ";
+            $text .= "Flash Academia";
+        }else{
+            $text = "terdapat%20invoice%20order%20yang%20perlu%20anda%20bayarkan%20sebelum%20memulai%20kursus%20yang%20anda%20inginkan.%20Berikut%20detail%20invoicenya%20%3A%0A%0A";
+            $text .= "%0A*Nomor%20Invoice*%20%3A%20".$order->order_id;
+            $text .= "%0A*Jumlah%20yang%20harus%20dibayar*%20%3A%20Rp%20".number_format($amount,2,",",".");
+            $text .= "%0A*Layanan*%20%3A%20".$order->get_package->name;
+            $text .= "%0ALakukan%20transfer%20pembayaran%20dan%20jangan%20lupa%20screenshot%20bukti%20transfernya%20untuk%20diupload%20melalui%20link%20berikut%20:%20%0A";
+            $text .= "%0A".$link."%0A";
+            $text .= "%0AJika%20memiliki%20pertanyaan,%20silahkan%20hubungi%20kami%20melalui%20nomor%20Whatsapp%20ini.";
+            $text .= "%0ATerimakasih :)";
+            $text .= "%0AFlash Academia";
+        }
 
         return $text;
     }
@@ -506,5 +567,106 @@ class Order extends Model
             }
         }
         return $data;
+    }
+
+    public static function dataIncomingPayment(Request $request){
+        $draw = $request->draw;
+        $row = $request->start;
+        $rowperpage = $request->length; // Rows display per page
+        $columnIndex = $request['order'][0]['column']; // Column index
+        $columnName = $request['columns'][$columnIndex]['data']; // Column name
+        $columnSortOrder = $request['order'][0]['dir']; // asc or desc
+        $searchValue = $request['search']['value']; // Search value
+
+        $page = MenuMapping::getMap(session('role_id'),"ORPY");
+        if(session('role_id') == 4 || session('role_id') == 5){
+            $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->join('student as s', 'o.student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at')->where('us.id', session('user_id'));
+        }else{
+            $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at');
+        }
+
+        $orderpayment->where('payment_confirmation', 0);
+
+        $totalRecords = $orderpayment->count();
+
+        if($searchValue != ''){
+            $orderpayment->where(function ($query) use ($searchValue) {
+                $query->orWhere('o.order_id', 'LIKE', '%'.$searchValue.'%')->orWhere('pa.account_type', 'LIKE', '%'.$searchValue.'%')->orWhere('payment_amount', 'LIKE', '%'.$searchValue.'%')->orWhere('order_payment.created_at', 'LIKE', '%'.$searchValue.'%')->orWhere('u.name', 'LIKE', '%'.$searchValue.'%');
+            });
+        }
+
+        $totalRecordwithFilter = $orderpayment->count();
+
+        if($columnName == "no"){
+            $orderpayment->orderBy('id', $columnSortOrder);
+        }elseif($columnName == "payment_time"){
+            $orderpayment->orderBy('created_at', $columnSortOrder);
+        }else{
+            $orderpayment->orderBy($columnName, $columnSortOrder);
+        }
+
+        $orderpayment = $orderpayment->offset($row)->limit($rowperpage)->get();
+
+        $data = collect();
+        $i = $row+1;
+
+        foreach($orderpayment as $key){
+            $detail = collect();
+
+            $payment_account = PaymentAccount::where('id', $key->payment_method)->first();
+            $payment_method = $payment_account->account_type." ".$payment_account->account_number;
+
+            $student_id = Order::where('id', $key->order_fk)->first()->student_id;
+            $student_name = Student::where('id', $student_id)->first()->student->name;
+
+            if (array_search("ORPYS",$page)){
+                if($key->payment_confirmation == 1){
+                    $payment_confirmation = '<a class="btn btn-success btn-round m-5" onclick="change_status('.$key->id.',1)"><i class="fa fa-dollar"></i> Payment Confirmed</a> ';
+                }elseif($key->payment_confirmation == -1){
+                    $payment_confirmation = '<a class="btn btn-danger btn-round m-5" onclick="change_status('.$key->id.',-1)"><i class="fa fa-dollar"></i> Payment Decline</a> ';
+                }else{
+                    $payment_confirmation = '<a class="btn btn-warning btn-round m-5" onclick="change_status('.$key->id.',0)"><i class="fa fa-dollar"></i> Not Confirmed Yet</a> ';
+                }
+            }else{
+                if($key->payment_confirmation == 1){
+                    $payment_confirmation = '<a class="btn btn-success m-5"><i class="fa fa-dollar"></i> Payment Confirmed</a> ';
+                }elseif($key->payment_confirmation == -1){
+                    $payment_confirmation = '<a class="btn btn-danger m-5"><i class="fa fa-dollar"></i> Payment Decline</a> ';
+                }else{
+                    $payment_confirmation = '<a class="btn btn-warning m-5"><i class="fa fa-dollar"></i> Not Confirmed Yet</a> ';
+                }
+            }
+
+            $options = '';
+            if (array_search("ORPYU",$page)){
+                $options .= '<a class="btn btn-primary btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
+            }
+            if (array_search("ORPYD",$page)){
+                $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
+            }
+
+            $detail->put('no', $i++);
+            $detail->put('invoice_id', '#'.$key->invoice_id);
+            $detail->put('order_id', '#'.$key->order_id);
+            $detail->put('student_name', $student_name);
+            $detail->put('order_bill', $key->order_bill);
+            $detail->put('payment_amount', $key->payment_amount);
+            $detail->put('payment_method', $payment_method);
+            $detail->put('payment_evidence', $key->payment_evidence);
+            $detail->put('payment_time', $key->created_at->format('Y-m-d H:i'));
+            $detail->put('payment_confirmation', $payment_confirmation);
+            $detail->put('creator_name', $key->creator_name);
+            $detail->put('options', $options);
+            $data->push($detail);
+        }
+
+        $response = array(
+            'draw' => intval($draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecordwithFilter,
+            'data' => $data,
+        );
+
+        return $response;
     }
 }

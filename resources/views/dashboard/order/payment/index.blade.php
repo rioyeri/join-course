@@ -73,10 +73,10 @@
     <!-- page start-->
     <div class="content-panel">
         @if(array_search("ORPYC", $submoduls))
-            <button class="btn btn-theme btn-round m-20" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
+            <button class="btn btn-theme btn-round m-15" data-toggle="modal" data-target="#myModal" onclick="create_data()"><i class="glyphicon glyphicon-plus"></i> Add</button>
         @endif
         <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -88,23 +88,93 @@
                 </div>
             </div>
         </div>
-        <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-payment">
-                <thead>
-                    <th>No</th>
-                    <th>Invoice ID</th>
-                    <th>Order ID</th>
-                    <th>Order Bill</th>
-                    <th>Payment Amount</th>
-                    <th>Destination Account</th>
-                    <th>Payment Evidence</th>
-                    <th>Payment Time</th>
-                    <th>Payment Status</th>
-                    <th>Options</th>
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
+
+        <div class="panel-heading">
+            <ul class="nav nav-tabs nav-justified">
+                <li class="active">
+                    <a data-toggle="tab" href="#notconfirm"><span style="background: #f0ad4e; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white"">Payment Not Yet Confirmed</span></a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#confirm"><span style="background: #5cb85c; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white"">Payment Completed</span></a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#decline"><span style="background: #d9534f; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white"">Payment Declined</span></a>
+                </li>
+            </ul>
+        </div>
+        <!-- /panel-heading -->
+        <div class="panel-body">
+            <div class="tab-content">
+                <div id="notconfirm" class="tab-pane active">
+                    <div class="row">
+                        {{-- <div class="adv-table"> --}}
+                            <table width="100%" class="table table-bordered datatable dt-responsive wrap" id="table-payment-notconfirm">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Invoice ID</th>
+                                    <th>Order ID</th>
+                                    <th>Student Name</th>
+                                    <th>Order Bill</th>
+                                    <th>Payment Amount</th>
+                                    <th>Destination Account</th>
+                                    <th>Payment Evidence</th>
+                                    <th>Payment Time</th>
+                                    <th>Payment Status</th>
+                                    <th>Options</th>
+                                </thead>
+                                <tbody id="table-body">
+                                </tbody>
+                            </table>
+                        {{-- </div> --}}
+                    </div>
+                </div>
+                <div id="confirm" class="tab-pane">
+                    <div class="row">
+                        {{-- <div class="adv-table"> --}}
+                            <table width="100%" class="table table-bordered datatable wrap" id="table-payment-confirm">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Invoice ID</th>
+                                    <th>Order ID</th>
+                                    <th>Student Name</th>
+                                    <th>Order Bill</th>
+                                    <th>Payment Amount</th>
+                                    <th>Destination Account</th>
+                                    <th>Payment Evidence</th>
+                                    <th>Payment Time</th>
+                                    <th>Payment Status</th>
+                                    <th>Options</th>
+                                </thead>
+                                <tbody id="table-body2">
+                                </tbody>
+                            </table>
+                        {{-- </div> --}}
+                    </div>
+                </div>
+                <div id="decline" class="tab-pane">
+                    <div class="row">
+                        {{-- <div class="adv-table"> --}}
+                            <table width="100%" class="table table-bordered datatable wrap" id="table-payment-decline">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Invoice ID</th>
+                                    <th>Order ID</th>
+                                    <th>Student Name</th>
+                                    <th>Order Bill</th>
+                                    <th>Payment Amount</th>
+                                    <th>Destination Account</th>
+                                    <th>Payment Evidence</th>
+                                    <th>Payment Time</th>
+                                    <th>Payment Status</th>
+                                    <th>Options</th>
+                                </thead>
+                                <tbody id="table-body3">
+                                </tbody>
+                            </table>
+                        {{-- </div> --}}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -136,7 +206,8 @@
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table-payment').DataTable({
+        $('#table-payment-notconfirm').DataTable({
+            "responsive": true,
             "processing" : true,
             "serverSide" : true,
             "order": [[ 8, "asc" ]],
@@ -149,6 +220,7 @@
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "invoice_id", name : "invoice_id"},
                 {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
                 {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_method", name : "payment_method"},
@@ -168,7 +240,111 @@
                         }
                         return $image;
                     },
-                    targets: [6],
+                    targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+            drawCallback: function(){
+                $('.image-popup').magnificPopup({
+                    type: 'image',
+                });
+            }
+        });
+
+        $('#table-payment-confirm').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 8, "asc" ]],
+            "ajax" : {
+                "url" : "{{ route('orderpayment.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "confirm",
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "invoice_id", name : "invoice_id"},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_method", name : "payment_method"},
+                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
+                {data : "payment_time", name : "payment_time"},
+                {data : "payment_confirmation", name : "payment_confirmation"},
+                {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == null){
+                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
+                        }else{
+                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
+                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
+                        }
+                        return $image;
+                    },
+                    targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+            drawCallback: function(){
+                $('.image-popup').magnificPopup({
+                    type: 'image',
+                });
+            }
+        });
+
+        $('#table-payment-decline').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 8, "asc" ]],
+            "ajax" : {
+                "url" : "{{ route('orderpayment.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "decline",
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "invoice_id", name : "invoice_id"},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_method", name : "payment_method"},
+                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
+                {data : "payment_time", name : "payment_time"},
+                {data : "payment_confirmation", name : "payment_confirmation"},
+                {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == null){
+                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
+                        }else{
+                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
+                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
+                        }
+                        return $image;
+                    },
+                    targets: [7],
                 },
                 {
                     render: function (data, type, full, meta) {

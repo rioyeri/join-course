@@ -21,7 +21,7 @@
     <h4 class="mb"><i class="fa fa-angle-right"></i> Upload Payment Evidence for {{ $data->order_id }}</h4>
     <input type="hidden" id="route" value="{{ route('getInvoice',['order_id' => $data->id]) }}">
     <a href="javascript:;" class="btn btn-info btn-round m-5" onclick="printPdf()"><i class="fa fa-file-pdf-o"></i> Download Invoice</a>
-    <form class="form-horizontal style-form" method="post" action="{{ route('orderpayment.store') }}" enctype="multipart/form-data">
+    <form class="form-horizontal style-form" method="post" action="{{ route('paymentStore') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="order_id" id="order_id" value="{{ $data->id }}">
         <input type="hidden" name="order_token" id="order_token" value="{{ $data->order_token }}">

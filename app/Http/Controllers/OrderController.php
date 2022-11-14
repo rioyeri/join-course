@@ -56,8 +56,9 @@ class OrderController extends Controller
         $grades = Grade::all();
         $packages = Package::where('status', 1)->get();
         $schedules = TeacherSchedule::all();
+        $days = Day::all();
         // $users = User::getUserListByRole('!=', 4);
-        return response()->json(view('dashboard.order.order.form',compact('students','teachers','courses','grades','packages','schedules'))->render());
+        return response()->json(view('dashboard.order.order.form',compact('students','teachers','courses','grades','packages','schedules','days'))->render());
     }
 
     /**
@@ -101,19 +102,30 @@ class OrderController extends Controller
                 $data->order_id = Order::generateOrderID($data->id);
                 $data->save();
 
-                if(isset($request->teacher_schedules)){
-                    foreach($request->teacher_schedules as $key){
-                        $schedule = TeacherSchedule::where('id', $key)->first();
-                        $date = Day::getStartOfWeekDate($request->course_start, $schedule->day_id);
-                        $schedule_time = date_format(date_create($date->format('Y-m-d')." ".$schedule->time_start), "Y-m-d H:i:s");
+                // if(isset($request->teacher_schedules)){
+                //     foreach($request->teacher_schedules as $key){
+                //         $schedule = TeacherSchedule::where('id', $key)->first();
+                //         $date = Day::getStartOfWeekDate($request->course_start, $schedule->day_id);
+                //         $schedule_time = date_format(date_create($date->format('Y-m-d')." ".$schedule->time_start), "Y-m-d H:i:s");
     
-                        $detail = new OrderDetail(array(
-                            'order_id' => $data->id,
-                            'schedule_time' => $schedule_time,
-                            'creator' => session('user_id'),
-                        ));
-                        $detail->save();
-                    }
+                //         $detail = new OrderDetail(array(
+                //             'order_id' => $data->id,
+                //             'schedule_time' => $schedule_time,
+                //             'creator' => session('user_id'),
+                //         ));
+                //         $detail->save();
+                //     }
+                // }
+
+                foreach($request->schedule_datetime as $key){
+                    $schedule_time = date_format(date_create($key), "Y-m-d H:i:s");
+
+                    $detail = new OrderDetail(array(
+                        'order_id' => $data->id,
+                        'schedule_time' => $schedule_time,
+                        'creator' => session('user_id'),
+                    ));
+                    $detail->save();
                 }
  
                 if($request->session()->has('user_data') && $request->session()->has('order')){
@@ -149,6 +161,7 @@ class OrderController extends Controller
     public function edit($id)
     {
         $data = Order::where('id', $id)->first();
+        $details = OrderDetail::where('order_id', $id)->get();
         if(session('role_id') == 4){
             $students = Student::where('user_id', session('user_id'))->get();
         }else{
@@ -159,7 +172,7 @@ class OrderController extends Controller
         $grades = Grade::all();
         $packages = Package::where('status', 1)->get();
         // $users = User::getUserListByRole('!=', 4);
-        return response()->json(view('dashboard.order.order.form',compact('data','students','teachers','courses','grades','packages'))->render());
+        return response()->json(view('dashboard.order.order.form',compact('data','students','teachers','courses','grades','packages','details'))->render());
     }
 
     /**
@@ -171,6 +184,9 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // echo "<pre>";
+        // print_r($request->all());
+        // die;
         $validator = Validator::make($request->all(), [
             "student_id" => "required|integer",
             "grade_id" => "required|integer",
@@ -196,6 +212,24 @@ class OrderController extends Controller
                 $data->course_start = $request->course_start;
                 $data->order_token = $request->_token;
                 $data->save();
+
+                for($i=0; $i<count($request->schedule_datetime); $i++){
+                    $schedule_time = date_format(date_create($request->schedule_datetime[$i]), "Y-m-d H:i:s");
+
+                    if(OrderDetail::where('id', $request->detail_id[$i])->count() != 0){
+                        $detail = OrderDetail::where('id', $request->detail_id[$i])->first();
+                        $detail->schedule_time = $schedule_time;
+                        $detail->creator = session('user_id');
+                        $detail->save();
+                    }else{
+                        $detail = new OrderDetail(array(
+                            'order_id' => $data->id,
+                            'schedule_time' => $schedule_time,
+                            'creator' => session('user_id'),
+                        ));
+                        $detail->save();
+                    }
+                }
 
                 Log::setLog('ORORU','Update Order : '.$data->id);
                 return redirect()->route('order.index')->with('status','Successfully saved');

@@ -59,6 +59,14 @@ Dashboard
         border-radius: 3px;
         font-weight: bold;
     }
+
+    img.output{
+        object-fit:cover;
+        display:block;
+        width:100px;
+        height:100px;
+        display: flex;
+    }
 </style>
 @endsection
 
@@ -213,10 +221,36 @@ Dashboard
                 <th>Grade</th>
                 <th>Teacher</th>
                 <th>Package</th>
+                <th>Schedule</th>
                 <th>Type</th>
+                <th>Payment Status</th>
                 <th>Order Status</th>
             </thead>
             <tbody id="table-body-notyet-confirm-order">
+            </tbody>
+        </table>
+    </div>
+</div>
+<br>
+<div class="content-panel">
+    <div class="mb">
+        <h4><strong>Incoming Payment</strong></h4>
+    </div>
+    <div class="adv-table">
+        <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-incoming-payment" width="100%">
+            <thead>
+                <th>No</th>
+                <th>Invoice ID</th>
+                <th>Order ID</th>
+                <th>Student Name</th>
+                <th>Order Bill</th>
+                <th>Payment Amount</th>
+                <th>Destination Account</th>
+                <th>Payment Evidence</th>
+                <th>Payment Time</th>
+                <th>Payment Status</th>
+            </thead>
+            <tbody id="table-body-incoming-payment">
             </tbody>
         </table>
     </div>
@@ -278,6 +312,7 @@ Dashboard
         setSwitch();
 
         $('#table-ongoing-order').DataTable({
+            "responsive": true,
             "processing" : true,
             "serverSide" : true,
             "order": [[ 0, "desc" ]],
@@ -323,6 +358,7 @@ Dashboard
         });
 
         $('#table-notyet-confirm-order').DataTable({
+            "responsive": true,
             "processing" : true,
             "serverSide" : true,
             "order": [[ 0, "desc" ]],
@@ -342,7 +378,9 @@ Dashboard
                 {data : "grade_id", name : "grade_id"},
                 {data : "teacher_name", name : "teacher_name"},
                 {data : "package_name", name : "package_name"},
+                {data : "schedules", name : "schedules"},
                 {data : "order_type", name : "order_type"},
+                {data : "payment_status", name : "payment_status", orderable : false, searchable : false},
                 {data : "order_status", name : "order_status", orderable : false, searchable : false,}
             ],
             "columnDefs" : [
@@ -360,10 +398,60 @@ Dashboard
                             return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
                         }
                     },
-                    targets: [7],
+                    targets: [8],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
+        });
+
+        $('#table-incoming-payment').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 8, "asc" ]],
+            "ajax" : {
+                "url" : "{{ route('orderpayment.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "invoice_id", name : "invoice_id"},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_method", name : "payment_method"},
+                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
+                {data : "payment_time", name : "payment_time"},
+                {data : "payment_confirmation", name : "payment_confirmation"},
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == null){
+                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
+                        }else{
+                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
+                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
+                        }
+                        return $image;
+                    },
+                    targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+            drawCallback: function(){
+                $('.image-popup').magnificPopup({
+                    type: 'image',
+                });
+            }
         });
 
         // Select2
@@ -574,6 +662,74 @@ Dashboard
                     'error'
                 )
             });
+        })
+    }
+
+    function change_status(id, status){
+        var token = $("meta[name='csrf-token']").attr("content");
+        if(status == 1){
+            var btn_text = "Cancel Confirm Payment";
+            var btn_class = "btn btn-warning";
+            var new_status = 0;
+        }else if(status == -1){
+            var btn_text = "Confirm Payment";
+            var btn_class = "btn btn-success";
+            var new_status = 1;
+        }else{
+            var btn_text = "Confirm Payment";
+            var btn_class = "btn btn-success";
+            var new_status = 1; 
+        }
+        swal({
+            title: 'Confirm this Order?',
+            text: "Confirmed Order will be forward to Student!",
+            type: 'warning',
+            showCancelButton: true,
+            showCloseButton: true,
+            confirmButtonText: btn_text,
+            cancelButtonText: 'Decline Payment',
+            confirmButtonClass: btn_class,
+            cancelButtonClass: 'btn btn-danger m-l-10',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                url : "/orderpayment/"+id+"/changestatus",
+                type : "post",
+                dataType: 'json',
+                data: {
+                    "_token":token,
+                    "status":new_status,
+                }
+            }).done(function (data) {
+                location.reload();
+            }).fail(function (msg) {
+                swal(
+                    'Failed',
+                    'Failed to confirm',
+                    'error'
+                )
+            });
+        }, function (dismiss) {
+            console.log(dismiss);
+            if(dismiss == 'cancel'){
+                $.ajax({
+                    url : "/orderpayment/"+id+"/changestatus",
+                    type : "post",
+                    dataType: 'json',
+                    data: {
+                        "_token":token,
+                        "status":-1,
+                    }
+                }).done(function (data) {
+                    location.reload();
+                }).fail(function (msg) {
+                    swal(
+                        'Failed',
+                        'Failed to confirm',
+                        'error'
+                    )
+                });
+            }            
         })
     }
 
@@ -924,6 +1080,31 @@ Dashboard
         var switch2 = document.querySelector('#switch2');
         new Switchery(switch1, {size: 'small',color: '#008374'});
         new Switchery(switch2, {size: 'small',color: '#008374'});
+    }
+
+    function copyText(order_id,text) {
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(text);
+
+        $('#copytextbtn'+order_id).popover({content: "Text copied to clipboard",animation: true});
+
+        // Set the date we're counting down to (dalam kasus ini ditampilkan selama 5 detik)
+        var hide = new Date(new Date().getTime() + 5000).getTime();
+
+        var x = setInterval(function() {
+            // code goes here
+
+            // Get today's date and time
+            var now = new Date().getTime();
+            
+            var distance = hide - now;
+
+            if(distance < 0){
+                clearInterval(x);
+                $('[data-toggle="popover"]').popover("hide");
+            }
+        }, 1000)
+        /* Alert the copied text */
     }
 </script>
 @endsection

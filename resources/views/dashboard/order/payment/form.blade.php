@@ -122,16 +122,6 @@
         }
     };
 
-    // Date Picker
-    jQuery('.datepicker').datepicker({
-        todayHighlight: true,
-        autoclose: true
-    });
-
-    function moveToBox(){
-        $('#course_start').data("datepicker").show();
-    }
-
     function getOrderBill(id){
         $.ajax({
             url : "{{route('getOrderBill')}}",

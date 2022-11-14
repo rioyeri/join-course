@@ -63,6 +63,7 @@ Route::post('/neworder', 'OrderController@neworder')->name('neworder');
 
 // Payment Order Controller
 Route::get('/payment/{order_id}/{token}', 'OrderPaymentController@paymentOrderPage')->name('paymentOrderPage');
+Route::post('/paymentstore', 'OrderPaymentController@paymentStore')->name('paymentStore');
 
 // 
 Route::get('/getDatas','HelperController@getDatas')->name('getDatas');

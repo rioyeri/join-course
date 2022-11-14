@@ -14,6 +14,9 @@
     <link href="{{ asset('dashboard/additionalplugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
     <!-- Sweet Alert css -->
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Time Picker -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-timepicker/compiled/timepicker.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-datetimepicker/css/datetimepicker.css') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
@@ -76,27 +79,132 @@
                 </div>
             </div>
         </div>
-        <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order" width="100%">
-                <thead>
-                    <th>No</th>
-                    <th>Order ID</th>
-                    <th>Student</th>
-                    <th>Grade</th>
-                    <th>Course</th>
-                    <th>Teacher</th>
-                    <th>Package</th>
-                    <th>Type</th>
-                    <th>Course Start</th>
-                    <th>Total Bill</th>
-                    <th>Bill Paid</th>
-                    <th>Payment Status</th>
-                    <th>Status</th>
-                    <th>Options</th>
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
+
+        <div class="panel-heading">
+            <ul class="nav nav-tabs nav-justified">
+                <li class="active">
+                    <a data-toggle="tab" href="#notconfirm"><span style="background: #f0ad4e; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white"">Not Yet Confirmed</span></a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#confirm"><span style="background: #5cb85c; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white"">Ongoing</span></a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#finish"><span style="background: #5bc0de; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white"">Finished</span></a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#decline"><span style="background: #d9534f; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white"">Declined</span></a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- /panel-heading -->
+        <div class="panel-body">
+            <div class="tab-content">
+                <div id="notconfirm" class="tab-pane active">
+                    <div class="row">
+                        <div class="adv-table">
+                            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-notconfirm" width="100%">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Order ID</th>
+                                    <th>Student</th>
+                                    <th>Grade</th>
+                                    <th>Course</th>
+                                    <th>Teacher</th>
+                                    <th>Package</th>
+                                    <th>Type</th>
+                                    <th>Schedules</th>
+                                    <th>Total Bill</th>
+                                    <th>Bill Paid</th>
+                                    <th>Payment Status</th>
+                                    <th>Status</th>
+                                    <th>Options</th>
+                                </thead>
+                                <tbody id="table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="confirm" class="tab-pane">
+                    <div class="row">
+                        <div class="adv-table">
+                            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-confirm" width="100%">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Order ID</th>
+                                    <th>Student</th>
+                                    <th>Grade</th>
+                                    <th>Course</th>
+                                    <th>Teacher</th>
+                                    <th>Package</th>
+                                    <th>Type</th>
+                                    <th>Schedules</th>
+                                    <th>Total Bill</th>
+                                    <th>Bill Paid</th>
+                                    <th>Payment Status</th>
+                                    <th>Status</th>
+                                    <th>Options</th>
+                                </thead>
+                                <tbody id="table-body2">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="finish" class="tab-pane">
+                    <div class="row">
+                        <div class="adv-table">
+                            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-finish" width="100%">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Order ID</th>
+                                    <th>Student</th>
+                                    <th>Grade</th>
+                                    <th>Course</th>
+                                    <th>Teacher</th>
+                                    <th>Package</th>
+                                    <th>Type</th>
+                                    <th>Schedules</th>
+                                    <th>Total Bill</th>
+                                    <th>Bill Paid</th>
+                                    <th>Payment Status</th>
+                                    <th>Status</th>
+                                    <th>Options</th>
+                                </thead>
+                                <tbody id="table-body3">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="decline" class="tab-pane">
+                    <div class="row">
+                        <div class="adv-table">
+                            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-decline" width="100%">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Order ID</th>
+                                    <th>Student</th>
+                                    <th>Grade</th>
+                                    <th>Course</th>
+                                    <th>Teacher</th>
+                                    <th>Package</th>
+                                    <th>Type</th>
+                                    <th>Schedules</th>
+                                    <th>Total Bill</th>
+                                    <th>Bill Paid</th>
+                                    <th>Payment Status</th>
+                                    <th>Status</th>
+                                    <th>Options</th>
+                                </thead>
+                                <tbody id="table-body4">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -119,12 +227,18 @@
     <!-- Sweet Alert Js  -->
     <script src="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('dashboard/additionalpages/jquery.sweet-alert.init.js') }}"></script>
+
+    <!-- Time Picker -->
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-daterangepicker/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-timepicker/js/bootstrap-timepicker.js') }}"></script>
 @endsection
 
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table-order').DataTable({
+        $('#table-order-notconfirm').DataTable({
+            "responsive": true,
             "processing" : true,
             "serverSide" : true,
             "order": [[ 0, "desc" ]],
@@ -142,7 +256,163 @@
                 {data : "teacher_name", name : "teacher_name"},
                 {data : "package_name", name : "package_name"},
                 {data : "order_type", name : "order_type"},
-                {data : "course_start", name : "course_start"},
+                {data : "schedules", name : "schedules", orderable : false},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_status", name : "payment_status", orderable : false},
+                {data : "status", name : "status", orderable : false},
+                {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                },
+                {
+                    "className": "text-center",
+                    targets: [10,11,12],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 'offline'){
+                            return '<span style="background: #f96f59; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Offline</span>';
+                        }else{
+                            return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
+                        }
+                    },
+                    targets: [7],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+        });
+
+        $('#table-order-confirm').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 0, "desc" ]],
+            "ajax" : {
+                "url" : "{{ route('order.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "confirm",
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "grade_id", name : "grade_id"},
+                {data : "course_name", name : "course_name"},
+                {data : "teacher_name", name : "teacher_name"},
+                {data : "package_name", name : "package_name"},
+                {data : "order_type", name : "order_type"},
+                {data : "schedules", name : "schedules"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_status", name : "payment_status", orderable : false},
+                {data : "status", name : "status", orderable : false},
+                {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                },
+                {
+                    "className": "text-center",
+                    targets: [10,11,12],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 'offline'){
+                            return '<span style="background: #f96f59; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Offline</span>';
+                        }else{
+                            return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
+                        }
+                    },
+                    targets: [7],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+        });
+
+        $('#table-order-decline').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 0, "desc" ]],
+            "ajax" : {
+                "url" : "{{ route('order.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "decline",
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "grade_id", name : "grade_id"},
+                {data : "course_name", name : "course_name"},
+                {data : "teacher_name", name : "teacher_name"},
+                {data : "package_name", name : "package_name"},
+                {data : "order_type", name : "order_type"},
+                {data : "schedules", name : "schedules"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_status", name : "payment_status", orderable : false},
+                {data : "status", name : "status", orderable : false},
+                {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                },
+                {
+                    "className": "text-center",
+                    targets: [10,11,12],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 'offline'){
+                            return '<span style="background: #f96f59; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Offline</span>';
+                        }else{
+                            return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
+                        }
+                    },
+                    targets: [7],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+        });
+
+        $('#table-order-finish').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 0, "desc" ]],
+            "ajax" : {
+                "url" : "{{ route('order.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "finish",
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "grade_id", name : "grade_id"},
+                {data : "course_name", name : "course_name"},
+                {data : "teacher_name", name : "teacher_name"},
+                {data : "package_name", name : "package_name"},
+                {data : "order_type", name : "order_type"},
+                {data : "schedules", name : "schedules"},
                 {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_status", name : "payment_status", orderable : false},
@@ -461,6 +731,7 @@
         var package_id = $('#package_id').val();
 
         if(teacher_id != null && course_id != null && package_id != null){
+            generateSchedule();
             $.ajax({
                 url: "{{ route('getTeacherFee') }}",
                 type: 'GET',
@@ -489,6 +760,66 @@
         printWindow.focus();
         setTimeout(function(){ printWindow.close(); }, 3000);
         printWindow.print();
+    }
+
+    function copyText(order_id,text) {
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(text);
+
+        $('#copytextbtn'+order_id).popover({content: "Text copied to clipboard",animation: true});
+
+        // Set the date we're counting down to (dalam kasus ini ditampilkan selama 5 detik)
+        var hide = new Date(new Date().getTime() + 5000).getTime();
+
+        var x = setInterval(function() {
+            // code goes here
+
+            // Get today's date and time
+            var now = new Date().getTime();
+            
+            var distance = hide - now;
+
+            if(distance < 0){
+                clearInterval(x);
+                $('[data-toggle="popover"]').popover("hide");
+            }
+        }, 1000)
+        /* Alert the copied text */
+    }
+
+    function generateSchedule(){
+        var jenisdata = "generateSchedule";
+        var course_start = $('#course_start').val();
+        var teacher_schedules = $("select[name='teacher_schedules[]']").map(function(){return $(this).val()}).get();
+        var teacher_id = $('#teacher_id').val();
+        var package_id = $('#package_id').val();
+
+        if(course_start != null && teacher_schedules.length != 0 && teacher_id != null && package_id != null){
+            $.ajax({
+                url : "{{route('getData')}}",
+                type : "get",
+                dataType: 'json',
+                data:{
+                    params: course_start,
+                    jenisdata: jenisdata,
+                    teacher_id: teacher_id,
+                    package_id: package_id,
+                    teacher_schedules: teacher_schedules,
+                },
+            }).done(function (data) {
+                $('#table-body-detail').empty();
+                console.log(data);
+                for(i=0; i<data.length; i++){
+                    count = i+1;
+                    console.log(data[i].schedule_time);
+                    var format_schedule = moment(data[i].schedule_time, "YYYY-MM-DD HH:mm:ss").format('ddd, DD-MM-YYYY, HH:mm:ss');
+                    var append = '<tr style="width:100%" id="trow'+count+'" class="trow"><td style="width:10%">'+count+'</td><td style="width:70%">'+format_schedule+'</td><input type="hidden" name="schedule_datetime[]" id="schedule_datetime'+count+'" value="'+data[i].schedule_time+'"><td class="text-center" style="width:20%"><a href="javascript:;" type="button" class="btn btn-primary btn-sm" onclick="edit_row('+count+')">Edit</a> <a href="javascript:;" type="button" class="btn btn-danger btn-sm" onclick="delete_row('+count+')" >Delete</a></td></tr>';
+                    $('#table-body-detail').append(append);
+                }
+            }).fail(function (msg) {
+                alert('Gagal menampilkan data, silahkan refresh halaman.');
+            });
+        }
     }
 </script>
 @if(session('order'))

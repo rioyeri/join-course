@@ -98,7 +98,9 @@ Dashboard
                 <th>Grade</th>
                 <th>Teacher</th>
                 <th>Package</th>
+                <th>Schedules</th>
                 <th>Type</th>
+                <th>Payment Status</th>
                 <th>Order Status</th>
             </thead>
             <tbody id="table-body-notyet-confirm-order">
@@ -212,7 +214,9 @@ Dashboard
                 {data : "grade_id", name : "grade_id"},
                 {data : "teacher_name", name : "teacher_name"},
                 {data : "package_name", name : "package_name"},
+                {data : "schedules", name : "schedules", orderable : false},
                 {data : "order_type", name : "order_type"},
+                {data : "payment_status", name : "payment_status", orderable : false, searchable : false},
                 {data : "order_status", name : "order_status", orderable : false, searchable : false,}
             ],
             "columnDefs" : [
@@ -230,7 +234,7 @@ Dashboard
                             return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
                         }
                     },
-                    targets: [6],
+                    targets: [7],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},

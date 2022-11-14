@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\ContentProfile;
 use App\Models\ContentHome;
 use App\Models\City;
+use App\Models\Day;
 
 class HelperController extends Controller
 {
@@ -53,7 +54,7 @@ class HelperController extends Controller
                 $append = '<option value="#" disabled selected>Pick Available Package</option>';
         
                 foreach($list as $key){
-                    $append.='<option value="'.$key->package_id.'">'.$key->get_package->name.'</option>';
+                    $append.='<option value="'.$key->package_id.'" data-meet="'.$key->get_package->number_meet.'">'.$key->get_package->name.'</option>';
                 }
         
                 $data = array(
@@ -76,7 +77,17 @@ class HelperController extends Controller
                     'append' => $append,
                 );
             }
+        }elseif($request->jenisdata == "generateSchedule"){
+            // echo "<pre>";
+            // print_r($request->all());
+            // die;
+            if($request->params != NULL){
+                $data = Teacher::getGeneratingTeacherSchedules($request->teacher_id, $request->package_id, $request->params, $request->teacher_schedules);
+            }
         }
+        // echo "<pre>";
+        // print_r($data);
+        // die;
 
         return response()->json($data);
     }
@@ -113,7 +124,7 @@ class HelperController extends Controller
                 $append = '<option value="#" disabled selected>Paket</option>';
         
                 foreach($list as $key){
-                    $append.='<option value="'.$key->package_id.'">'.$key->get_package->name.'</option>';
+                    $append.='<option value="'.$key->package_id.'" data-meet="'.$key->get_package->number_meet.'">'.$key->get_package->name.'</option>';
                 }
 
                 $data = array(

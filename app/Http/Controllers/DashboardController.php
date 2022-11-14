@@ -79,6 +79,9 @@ class DashboardController extends Controller
             }elseif($request->type == "chart_incomereport"){
                 $datas = OrderPayment::incomeReport();
                 echo json_encode($datas);
+            }elseif($request->type == "incoming-payment"){
+                $datas = Order::dataIncomingPayment($request);
+                echo json_encode($datas);
             }
         }else{
             if(session('role_id') == 5){

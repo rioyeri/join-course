@@ -35,15 +35,19 @@ class OrderPayment extends Model
                 session()->forget('order_id');
                 session()->forget('order_token');    
             }
+            // $order_status = 1;
         }elseif($payment > $order->order_bill){
             $result = 2;
             $token = $order->order_token;
+            // $order_status = 0;
         }else{
             $result = 0;
             $token = $new_token;
+            // $order_status = 0;
         }
         $order->payment_status = $result;
         $order->order_token = $token;
+        // $order->order_status = $order_status;
         $order->save();
     }
 
@@ -69,6 +73,14 @@ class OrderPayment extends Model
             $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->join('student as s', 'o.student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at')->where('us.id', session('user_id'));
         }else{
             $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at');
+        }
+
+        if($request->type == "confirm"){
+            $orderpayment->where('payment_confirmation', 1);
+        }elseif($request->type == "decline"){
+            $orderpayment->where('payment_confirmation', -1);
+        }else{
+            $orderpayment->where('payment_confirmation', 0);
         }
 
         $totalRecords = $orderpayment->count();
@@ -100,6 +112,8 @@ class OrderPayment extends Model
             $payment_account = PaymentAccount::where('id', $key->payment_method)->first();
             $payment_method = $payment_account->account_type." ".$payment_account->account_number;
 
+            $student_id = Order::where('id', $key->order_fk)->first()->student_id;
+            $student_name = Student::where('id', $student_id)->first()->student->name;
 
             if (array_search("ORPYS",$page)){
                 if($key->payment_confirmation == 1){
@@ -130,6 +144,7 @@ class OrderPayment extends Model
             $detail->put('no', $i++);
             $detail->put('invoice_id', '#'.$key->invoice_id);
             $detail->put('order_id', '#'.$key->order_id);
+            $detail->put('student_name', $student_name);
             $detail->put('order_bill', $key->order_bill);
             $detail->put('payment_amount', $key->payment_amount);
             $detail->put('payment_method', $payment_method);

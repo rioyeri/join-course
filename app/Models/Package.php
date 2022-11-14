@@ -11,7 +11,7 @@ class Package extends Model
     use SoftDeletes;
     protected $table ='package';
     protected $fillable = [
-        'name','description','status','creator'
+        'name','description','status','creator','number_meet'
     ];
 
     public static function dataIndex(Request $request){
@@ -24,7 +24,7 @@ class Package extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"MDPC");
-        $package = Package::select('id','name','description','status');
+        $package = Package::select('id','name','description','status','number_meet');
 
         $totalRecords = $package->count();
 
@@ -71,6 +71,7 @@ class Package extends Model
             $detail->put('no', $i++);
             $detail->put('name', $key->name);
             $detail->put('description', $key->description);
+            $detail->put('number_meet', $key->number_meet);
             $detail->put('options', $options);
             $data->push($detail);
         }

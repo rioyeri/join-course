@@ -198,6 +198,46 @@ class Teacher extends Model
         return $schedules;
     }
 
+    public static function getGeneratingTeacherSchedules($teacher_id, $package_id, $course_start, $teacher_schedules=null){
+        $schedules_list = TeacherSchedule::where('teacher_id', $teacher_id)->get();
+        $package_meet = Package::where('id', $package_id)->first()->number_meet;
+        $result = collect();
+        $count = 0;
+        $sorted_day = Day::sortDays($schedules_list, $course_start);
+
+        if($teacher_schedules != null){
+            $schedules = TeacherSchedule::whereIn('id', $teacher_schedules)->where('teacher_id', $teacher_id)->orderByRaw('FIELD(day_id,'.$sorted_day.')')->get();
+        }else{
+            $schedules = TeacherSchedule::where('teacher_id', $teacher_id)->orderByRaw('FIELD(day_id,'.$sorted_day.')')->get();
+        }
+
+        for($i=0; $i < $package_meet; $i++){
+            // $start_date = date('Y-m-d',strtotime('+'.$i." weeks"));
+            $start_date = date_create($course_start);
+            date_modify($start_date, '+'.$i.' week');
+
+            for($j=0; $j<count($schedules); $j++){
+                if($count < $package_meet){
+                    $date = Day::getStartOfWeekDate($start_date, $schedules[$j]->day_id);
+                    $schedule_time = date_format(date_create($date->format('Y-m-d')." ".$schedules[$j]->time_start), "Y-m-d H:i:s");
+                    $row = collect();
+                    $row->put('schedule_time', $schedule_time);
+                    $result->push($row);
+                    $count++;
+                }
+            }
+        }
+
+        // Sorting by date
+        $sorted = $result->sortBy('schedule_time');
+        $result = collect();
+        foreach ($sorted as $key){
+            $result->push($key);
+        }
+
+        return $result;
+    }
+
     public static function setData($user_id, $teacher_subjects){
         $data = new Teacher(array(
             "user_id" => $user_id,

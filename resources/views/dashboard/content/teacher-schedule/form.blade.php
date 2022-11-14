@@ -151,7 +151,6 @@
         var end = $('#end').val();
         var schedule_id = $('#schedule_id').val();
         var schedule_no = $('#row_number').val();
-        console.log(day, start, end, schedule_id, schedule_no);
 
         daySelect = document.getElementById("day");
         var day_name = daySelect.options[daySelect.selectedIndex].text;
@@ -165,7 +164,9 @@
         });
 
         if(day != null && start != "" && end != ""){
-            if(schedule_id == undefined){
+            console.log(day, start, end, schedule_id, schedule_no);
+
+            if(schedule_id == 0){
                 var i = $('#table-schedule-detail tbody tr.trow').length + 1;
                 var append = '<tr style="width:100%" id="trow'+i+'" class="trow">'
                 append += '<td>'+i+'</td>';

@@ -41,9 +41,9 @@ class OrderPaymentController extends Controller
     {
         if(session('role_id') == 4){
             $student = Student::where('user_id', session('user_id'))->first();
-            $orders = Order::where('student_id', $student->id)->get();
+            $orders = Order::where('student_id', $student->id)->where('payment_status', '!=', 1)->get();
         }else{
-            $orders = Order::all();
+            $orders = Order::where('payment_status', '!=', 1)->get();
         }
         $accounts = PaymentAccount::all();
         return response()->json(view('dashboard.order.payment.form', compact('orders','accounts'))->render());
@@ -284,6 +284,63 @@ class OrderPaymentController extends Controller
             }else{
                 $order_id = $order_id;
                 return view('dashboard.order.payment.payment-not-found',compact('order_id'));
+            }
+        }
+    }
+
+    public function paymentStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required',
+            'payment_amount' => 'required',
+            'payment_method' => 'required',
+            'payment_evidence' => 'required',
+        ]);
+        // IF Validation fail
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        // Validation success
+        }else{
+            try{
+                $order = Order::where('id', $request->order_id)->first();
+                
+                if($request->order_token == $order->order_token){
+                    $user_id = $order->get_student->user_id;
+                }else{
+                    $user_id = session('user_id');
+                }
+                $data = new OrderPayment(array(
+                    "order_id" => $request->order_id,
+                    "payment_amount" => $request->payment_amount,
+                    "payment_method" => $request->payment_method,
+                    "payment_confirmation" => 0,
+                    "creator" => $user_id,
+                ));
+                $data->save();
+
+                $invoice_id = OrderPayment::generateInvoiceID($data->id);
+                // Upload Evidence
+                if($request->payment_evidence <> NULL|| $request->payment_evidence <> ''){
+                    $path = 'dashboard/assets/payment/';
+                    $new_path = $path.$order->order_id;
+                    if(!file_exists($new_path)){
+                        mkdir($new_path);
+                    }
+                    $payment_evidence = $invoice_id.'.'.$request->payment_evidence->getClientOriginalExtension();
+                    $request->payment_evidence->move(public_path($new_path),$payment_evidence);
+                }
+
+                $data->payment_evidence = $payment_evidence;
+                $data->invoice_id = $invoice_id;
+                $data->save();
+
+                // Check Paid Off;
+                OrderPayment::checkPaid($order->id, $request->_token);
+
+                Log::setLog('ORPYC','Create Order Payment : '.$invoice_id.' for '.$order->order_id);
+                return redirect()->route('paymentOrderPage', ['order_id' => $order->order_id, 'order_token' => $order->order_token])->with('status','Payment submitted, waiting for confirmation by Admin');
+            }catch(\Exception $e){
+                return redirect()->back()->withErrors($e->getMessage());
             }
         }
     }
