@@ -126,7 +126,7 @@
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
-                    {data : "name", name : "name"},
+                    {data : "package_name", name : "package_name"},
                     {data : "icon", name : "icon", orderable : false, searchable : false},
                     {data : "price", name : "price", orderable : false},
                     {data : "time_signature", name : "time_signature"},
@@ -152,6 +152,40 @@
                 return $opt;
             }
         };
+
+        $("table").sortable({
+            items: 'tr:not(:first)',
+            helper: 'clone',
+            update: function (e, ui) {
+                var token = $("meta[name='csrf-token']").attr("content");
+                var rows = $('#table-promo tbody tr').length;
+                var package_name = $("#table-body tr").map(function(){return $(this).find('td:eq(1)').text()}).get();
+
+                console.log(rows, package_name);
+
+                $.ajax({
+                    url : "{{route('contentpromo.update',['id'=>1])}}",
+                    type : "put",
+                    dataType: 'json',
+                    data: {
+                        "rows":rows,
+                        "package_name":package_name,
+                        "_token":token,
+                    },
+                }).done(function (data) {
+                    reorderNumber();
+                    if(data == true){
+                        swal(
+                            'Saved!',
+                            'Promo has been successfully reorder',
+                            'success'
+                        )
+                    }
+                }).fail(function (msg) {
+                    alert('Failed to reorder, please refresh the page.');
+                });
+            }
+        });
     });
 
     function create_data(){
@@ -223,6 +257,14 @@
                     'error'
                 )
             }
+        })
+    }
+
+    function reorderNumber(){
+        var i = 1;
+        $("#table-body tr").each(function(){
+            no = i++;
+            $(this).find('td:eq(0)').html(no+' <i class="fa fa-sort"></i>');
         })
     }
 </script>

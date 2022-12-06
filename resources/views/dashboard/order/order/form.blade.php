@@ -149,7 +149,7 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Teacher</label>
         <div class="col-sm-9">
-            <select class="form-control" parsley-trigger="change" name="teacher_id" id="teacher_id" onchange="get_package(this.value)">
+            <select class="form-control" parsley-trigger="change" name="teacher_id" id="teacher_id" onchange="get_schedule(this.value)">
                 <option value="#" selected disabled>-- Select --</option>
                 @isset($data->teacher_id)
                     @foreach ($teachers as $teacher)
@@ -176,11 +176,15 @@
                             <option value="{{ $package->id }}" data-meet="{{ $package->number_meet }}">{{ $package->name }}</option>
                         @endif
                     @endforeach
+                @else
+                    @foreach ($packages as $package)
+                        <option value="{{$package->id}}" data-meet="{{ $package->number_meet }}">{{$package->name}}</option>
+                    @endforeach
                 @endisset
             </select>
         </div>
     </div>
-    <div id="line_schedule" @if(isset($data->schedule_id))style="display:block;"@endif>
+    <div id="line_schedule" @if(!isset($data->schedule_id)) style="display:none;" @endif>
         <div class="form-group">
             <label class="col-sm-3 col-sm-3 control-label">Schedule</label>
             <div class="col-sm-9">
@@ -298,6 +302,12 @@
 </script>
 @endif
 <script>
+    // $(document).ready(function() {
+    //     var teacher_id = $('#teacher_id').val();
+    //     if(teacher_id != ""){
+    //         get_schedule(teacher_id);
+    //     }
+    // });
     // Date Picker
     $('.datepicker').datepicker({
         todayHighlight: true,

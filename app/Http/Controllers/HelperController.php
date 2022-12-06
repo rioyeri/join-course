@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Helpers\ApiFormatter;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use App\Models\Order;
 use App\Models\OrderPayment;
@@ -15,11 +18,18 @@ use App\Models\ContentProfile;
 use App\Models\ContentHome;
 use App\Models\City;
 use App\Models\Day;
+use App\Models\OrderReview;
+use App\Models\Package;
 
 class HelperController extends Controller
 {
     public function getTeacherFee(Request $request){
-        $fee = TeacherPrice::where('teacher_id', $request->teacher_id)->where('package_id', $request->package_id)->first()->price;
+        if(isset($request->teacher_id)){
+            $fee = TeacherPrice::where('teacher_id', $request->teacher_id)->where('package_id', $request->package_id)->first()->price;
+        }else{
+            $package = Package::where('id', $request->package_id)->first();
+            $fee = $package->price - ($package->price/100*$package->discount_rate);
+        }
         return response()->json($fee);
     }
 
@@ -85,9 +95,6 @@ class HelperController extends Controller
                 $data = Teacher::getGeneratingTeacherSchedules($request->teacher_id, $request->package_id, $request->params, $request->teacher_schedules);
             }
         }
-        // echo "<pre>";
-        // print_r($data);
-        // die;
 
         return response()->json($data);
     }
@@ -206,6 +213,7 @@ class HelperController extends Controller
         if($teacher->location() != ""){
             $title .= "(".$teacher->location().")";
         }
+
         $result = array(
             "title" => $title,
             // "title" => $teacher->title,
@@ -275,5 +283,79 @@ class HelperController extends Controller
         $company_profile = ContentProfile::all();
         $keyword = "";
         return view('landingpage.content.searchresult', compact('company_profile', 'keyword', 'results'));
+    }
+
+    public function getAllTeacher(){
+        $data = Teacher::getTeacherList();
+        // $data = Teacher::all();
+
+        if($data){
+            return ApiFormatter::createApi(200, 'Success', $data);
+        }else{
+            return ApiFormatter::createApi(400, 'Failed');
+        }
+    }
+
+    public function apigetDatas(Request $request){
+        $data = NULL;
+
+        if($request->jenisdata == "get_teacher"){
+            if($request->params != NULL){
+                $course = Course::where('id', $request->params)->first();
+                $list = TeacherCourse::where('course_id', $request->params)->get();
+                $append = '<option value="#" disabled selected>Guru '.$course->name.'</option>';
+
+                foreach($list as $key){
+                    $location = "";
+                    if($key->teacher->address_city != "" && $key->teacher->address_province != ""){
+                        $location .= $key->teacher->address_city.", ".$key->teacher->address_province;
+                    }
+                    if($location != ""){
+                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.' ('.$location.')</option>';
+                    }else{
+                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
+                    }
+                }
+
+                $data = array(
+                    'append' => $append,
+                );
+            }
+        }elseif($request->jenisdata == "get_package"){
+            if($request->params != NULL){
+                $list = TeacherPrice::where('teacher_id', $request->params)->get();
+                $append = '<option value="#" disabled selected>Paket</option>';
+        
+                foreach($list as $key){
+                    $append.='<option value="'.$key->package_id.'" data-meet="'.$key->get_package->number_meet.'">'.$key->get_package->name.'</option>';
+                }
+
+                $data = array(
+                    'append' => $append,
+                );
+            }
+        }elseif($request->jenisdata == "get_schedule"){
+            if($request->params != NULL){
+                $list = TeacherSchedule::where('teacher_id', $request->params)->get();
+                $append = '';
+        
+                foreach($list as $key){
+                    $time_start = date('H:i', strtotime($key->time_start));
+                    $time_end = date('H:i', strtotime($key->time_end));
+
+                    $append.='<option value="'.$key->id.'">'.$key->get_day->nama_hari.', '.$time_start.' - '.$time_end.'</option>';
+                }
+        
+                $data = array(
+                    'append' => $append,
+                );
+            }
+        }
+
+        if($data != NULL){
+            return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
+        }else{
+            return ApiFormatter::createApi(Response::HTTP_BAD_REQUEST, 'Failed');
+        }
     }
 }

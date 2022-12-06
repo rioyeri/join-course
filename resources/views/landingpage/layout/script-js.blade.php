@@ -164,7 +164,8 @@
     function get_teacher(params) {
         var jenisdata = "get_teacher";
         $.ajax({
-            url : "{{route('getDatas')}}",
+            // url : "{{route('getDatas')}}",
+            url: "http://127.0.0.1:8000/api/getDatas",
             type : "get",
             dataType: 'json',
             data:{
@@ -172,29 +173,30 @@
                 jenisdata: jenisdata,
             },
         }).done(function (data) {
-            $('#teacher_id').html(data.append);
+            console.log(data);
+            $('#teacher_id').html(data.data.append);
         }).fail(function (msg) {
             alert('Gagal menampilkan data, silahkan refresh halaman.');
         });
     }
 
-    function get_package(params){
-        var jenisdata = "get_package";
-        get_schedule(params);
-        $.ajax({
-            url : "{{route('getDatas')}}",
-            type : "get",
-            dataType: 'json',
-            data:{
-                params: params,
-                jenisdata: jenisdata,
-            },
-        }).done(function (data) {
-            $('#package_id').html(data.append);
-        }).fail(function (msg) {
-            alert('Gagal menampilkan data, silahkan refresh halaman.');
-        });
-    }
+    // function get_package(params){
+    //     var jenisdata = "get_package";
+    //     get_schedule(params);
+    //     $.ajax({
+    //         url : "{{route('getDatas')}}",
+    //         type : "get",
+    //         dataType: 'json',
+    //         data:{
+    //             params: params,
+    //             jenisdata: jenisdata,
+    //         },
+    //     }).done(function (data) {
+    //         $('#package_id').html(data.append);
+    //     }).fail(function (msg) {
+    //         alert('Gagal menampilkan data, silahkan refresh halaman.');
+    //     });
+    // }
 
     function get_schedule(params) {
         var jenisdata = "get_schedule";

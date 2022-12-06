@@ -48,6 +48,9 @@ class PackageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'price' => 'required',
+            'discount_rate' => 'required',
+            'number_meet' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -55,9 +58,13 @@ class PackageController extends Controller
         // Validation success
         }else{
             try{
+                $discount_rate = floatval(str_replace(',', '.', str_replace('.', '', $request->discount_rate)));
                 $data = new Package(array(
                     "name" => $request->name,
                     "description" => $request->description,
+                    "price" => $request->price,
+                    "discount_rate" => $discount_rate,
+                    "number_meet" => $request->number_meet,
                     "creator" => session('user_id'),
                 ));
                 $data->save();
@@ -103,6 +110,9 @@ class PackageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'price' => 'required',
+            'discount_rate' => 'required',
+            'number_meet' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -110,9 +120,14 @@ class PackageController extends Controller
         // Validation success
         }else{
             try{
+                $discount_rate = floatval(str_replace(',', '.', str_replace('.', '', $request->discount_rate)));
+
                 Package::where('id', $id)->update(array(
                     "name" => $request->name,
                     "description" => $request->description,
+                    "price" => $request->price,
+                    "discount_rate" => $discount_rate,
+                    "number_meet" => $request->number_meet,
                     "creator" => session('user_id'),
                 ));
                 Log::setLog('MDPCU','Update Package : '.$request->name);

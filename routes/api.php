@@ -16,3 +16,7 @@ use Illuminate\Http\Request;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+Route::get('allteacher', 'HelperController@getAllTeacher')->name('getAllTeacher');
+
+Route::get('getDatas', 'HelperController@apigetDatas')->name('apigetDatas');

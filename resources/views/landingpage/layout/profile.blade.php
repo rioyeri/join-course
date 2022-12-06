@@ -22,9 +22,10 @@
                     @if($teacher->location != "")
                         <p><i class="bi bi-pin-map"></i> {{ $teacher->location }}</p>
                     @endif
-                    {{-- <div class="stars" style="color:#FFD700; margin-bottom:20px">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    </div> --}}
+                    <div class="stars" style="margin:5px;">
+                        {{-- <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i> --}}
+                        <i class="bi bi-star-fill" style="color:#FFD700; margin-bottom:20px"></i> <strong>{{ $teacher->rate }}</strong> ({{ $teacher->review_count }} ulasan)
+                    </div>
                     <p>
                         <i class="bi bi-quote quote-icon-left"></i>
                         {{ $teacher->description }}

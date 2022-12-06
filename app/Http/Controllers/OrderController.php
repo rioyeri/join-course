@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 use App\Models\Order;
 use App\Models\Teacher;
 use App\Models\Student;
@@ -17,8 +20,11 @@ use App\Models\OrderPayment;
 use App\Models\TeacherSchedule;
 use App\Models\Day;
 use App\Models\OrderDetail;
+use App\Helpers\File;
 use DateTime;
 use PDF;
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class OrderController extends Controller
 {
@@ -374,5 +380,113 @@ class OrderController extends Controller
         }else{
             return view('dashboard.order.order.invoice',compact('data'));
         }
+    }
+
+    public function exportOrder(Request $request){
+        ini_set('max_execution_time', 3000);
+
+        if($request->type == 0){
+            $nametype = "Data_Order_Not_Confirmed";
+            $start = $request->notconfirm_start_date;
+            $end = $request->notconfirm_end_date;
+        }elseif($request->type == 1){
+            $nametype = "Data_Order_Confirmed";
+            $start = $request->confirm_start_date;
+            $end = $request->confirm_end_date;
+        }elseif($request->type == 2){
+            $nametype = "Data_Order_Finished";
+            $start = $request->finish_start_date;
+            $end = $request->finish_end_date;
+        }elseif($request->type == -1){
+            $nametype = "Data_Order_Declined";
+            $start = $request->decline_start_date;
+            $end = $request->decline_end_date;
+        }else{
+            $nametype = "Data_Order";
+        }
+
+        $date = date('YmdHis');
+        $filename = $nametype."_".$date.".xlsx";
+
+        $orders = Order::where('order_status', $request->type);
+
+        if($start != "" && $end != ""){
+            $orders->whereBetween(DB::raw('DATE(order.created_at)'), [$start,$end]);
+        }elseif($start != "" && $end == ""){
+            $orders->whereDate('order.created_at', '>=', $start);
+        }elseif($start == "" && $end != ""){
+            $orders->whereDate('order.created_at', '<=', $end);
+        }
+
+        $orders = $orders->get();
+
+        $array = array();
+        $i = 1;
+
+        foreach($orders as $key){
+            // ORDER STATUS
+            $status = "";
+            if($key->order_status == -1){
+                $status .= 'Declined';
+            }elseif($key->order_status == 1){
+                $status .= 'Ongoing';
+            }elseif($key->order_status == 2){
+                $status .= 'Finish';
+            }else{
+                $status .= 'Not Yet Confirmed';
+            }
+
+            // SCHEDULES
+            $schedules = '';
+            $order_detail = OrderDetail::where('order_id', $key->id)->get();
+            foreach($order_detail as $det){
+                $schedules .= date('D, d-m-Y H:i:s', strtotime($det->schedule_time)).", \n";
+            }
+
+            // BILL PAID
+            $bill_paid = OrderPayment::where('order_id', $key->id)->where('payment_confirmation', 1)->sum('payment_amount');
+
+            // PAYMENT STATUS
+            $payment_status = '';
+            if($key->payment_status == 1){
+                $payment_status .= 'Paid Off';
+            }elseif($key->payment_status == 2){
+                $payment_status .= 'Overpaid';
+            }else{
+                $payment_status .= 'Not Yet Paid Off';
+            }
+
+            $row = array(
+                "#" => $i++,
+                "Order ID" => $key->order_id,
+                "Student" => $key->get_student->student->name,
+                "Grade" => $key->get_grade->name,
+                "Course" => $key->get_course->name,
+                "Teacher" => $key->get_teacher->teacher->name,
+                "Package" => $key->get_package->name,
+                "Type" => $key->order_type,
+                "Creator" => $key->creator()->first()->name,
+                "Status" => $status,
+                "Course Start" => $key->course_start,
+                "Schedules" => $schedules,
+                "Order Bill" => $key->order_bill,
+                "Bill Paid" => $bill_paid,
+                "Payment Status" => $payment_status,
+                "Created At" => $key->created_at->format('Y-m-d H:i:s'),
+                "Updated At" => $key->updated_at->format('Y-m-d H:i:s'),
+            );
+            array_push($array, $row);
+        }
+        $spreadsheet = File::getNewStandartSpreadSheet($array);
+
+        // new file
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+
+        // read file
+        // $writer = IOFactory::createWriter($spreadsheet, "Xlsx");
+        // $writer->save($filename);
+
+        File::download($filename);
     }
 }

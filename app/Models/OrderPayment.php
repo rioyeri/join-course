@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class OrderPayment extends Model
@@ -18,6 +19,10 @@ class OrderPayment extends Model
 
     public function creator(){
         return $this->belongsTo('App\Models\User','creator','id');
+    }
+
+    public function get_paymentmethod(){
+        return $this->belongsTo('App\Models\PaymentAccount', 'payment_method', 'id');
     }
 
     public static function generateInvoiceID($id){
@@ -60,6 +65,9 @@ class OrderPayment extends Model
     }
 
     public static function dataIndex(Request $request){
+        // echo "<pre>";
+        // print_r($request->all());
+        // die;
         $draw = $request->draw;
         $row = $request->start;
         $rowperpage = $request->length; // Rows display per page
@@ -68,11 +76,22 @@ class OrderPayment extends Model
         $columnSortOrder = $request['order'][0]['dir']; // asc or desc
         $searchValue = $request['search']['value']; // Search value
 
+        $start = $request->start_date;
+        $end = $request->end_date;
+
         $page = MenuMapping::getMap(session('role_id'),"ORPY");
         if(session('role_id') == 4 || session('role_id') == 5){
             $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->join('student as s', 'o.student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at')->where('us.id', session('user_id'));
         }else{
             $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at');
+        }
+
+        if($start != "" && $end != ""){
+            $orderpayment->whereBetween(DB::raw('DATE(order_payment.created_at)'), [$start,$end]);
+        }elseif($start != "" && $end == ""){
+            $orderpayment->whereDate('order_payment.created_at', '>=', $start);
+        }elseif($start == "" && $end != ""){
+            $orderpayment->whereDate('order_payment.created_at', '<=', $end);
         }
 
         if($request->type == "confirm"){
@@ -129,7 +148,7 @@ class OrderPayment extends Model
                 }elseif($key->payment_confirmation == -1){
                     $payment_confirmation = '<a class="btn btn-danger m-5"><i class="fa fa-dollar"></i> Payment Decline</a> ';
                 }else{
-                    $payment_confirmation = '<a class="btn btn-warning m-5"><i class="fa fa-dollar"></i> Not Confirmed Yet</a> ';
+                    $payment_confirmation = '<a class="btn btn-warning m-5"><i class="fa fa-dollar"></i> Not Yet Confirmed</a> ';
                 }
             }
 

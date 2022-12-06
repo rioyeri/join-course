@@ -84,15 +84,24 @@ class Teacher extends Model
             $detail = collect();
             $profile_button = '';
             $courses_button = '';
-            $prices_button = '';
+            // $prices_button = '';
+            $schedules_button = '';
  
             if (array_search("MDTCV",$page)){
-                if(TeacherPrice::where('teacher_id', $key->id)->count() != 0){
-                    $count_price = TeacherPrice::where('teacher_id', $key->id)->count();
-                    $color_price = "#000";
+                // if(TeacherPrice::where('teacher_id', $key->id)->count() != 0){
+                //     $count_price = TeacherPrice::where('teacher_id', $key->id)->count();
+                //     $color_price = "#000";
+                // }else{
+                //     $count_price = "Empty";
+                //     $color_price = "#FF0000";
+                // }
+
+                if(TeacherSchedule::where('teacher_id', $key->id)->count() != 0){
+                    $count_schedule = TeacherSchedule::where('teacher_id', $key->id)->count();
+                    $color_schedule = "#000";
                 }else{
-                    $count_price = "Empty";
-                    $color_price = "#FF0000";
+                    $count_schedule = "Empty";
+                    $color_schedule = "#FF0000";
                 }
 
                 if(TeacherCourse::where('teacher_id', $key->id)->count() != 0){
@@ -104,7 +113,8 @@ class Teacher extends Model
                 }
                 $profile_button .= '<a class="btn btn-info m-5" onclick="view_profile('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i> View Profile</a> ';
                 $courses_button .= '<a class="btn btn-info m-5" onclick="view_subject('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-list-ul"></i> View Subjects <span style="color:'.$color_course.'">('.$count_course.')</span></a> ';
-                $prices_button .= '<a class="btn btn-info m-5" onclick="view_price('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-usd"></i> View Packages <span style="color:'.$color_price.'">('.$count_price.')</span></a> ';
+                // $prices_button .= '<a class="btn btn-info m-5" onclick="view_price('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-usd"></i> View Packages <span style="color:'.$color_price.'">('.$count_price.')</span></a> ';
+                $schedules_button .= '<a class="btn btn-info m-5" onclick="view_schedules('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-list-ul"></i> View Schedules <span style="color:'.$color_schedule.'">('.$count_schedule.')</span></a>';
             }
 
             $options = '';
@@ -125,7 +135,8 @@ class Teacher extends Model
             $detail->put('title', $key->title);
             $detail->put('teacher_profile', $profile_button);
             $detail->put('courses', $courses_button);
-            $detail->put('prices',$prices_button);
+            // $detail->put('prices',$prices_button);
+            $detail->put('schedules', $schedules_button);
             $detail->put('options', $options);
             $data->push($detail);
         }
@@ -177,11 +188,17 @@ class Teacher extends Model
         if($teacher->teacher->address_province){
             $location .= $teacher->teacher->address_province;
         }
+
+        $rating = OrderReview::getRating($id);
+        $review_count = OrderReview::getReviewCount($id);
+
         $result->put('name', $teacher->teacher->name);
         $result->put('title', $teacher->title);
         $result->put('description', $teacher->description);
         $result->put('location', $location);
         $result->put('image', $image);
+        $result->put('rate', $rating);
+        $result->put('review_count', $review_count);
 
         return json_decode(json_encode($result), FALSE);
         // return $result;

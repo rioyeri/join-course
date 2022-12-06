@@ -148,7 +148,7 @@ class TeacherScheduleController extends Controller
                 }
 
                 Log::setLog('CTTSU','Update Teacher Schedule : '.$teacher->teacher->name);
-                return redirect()->route('teacherschedule.index')->with('status','Successfully saved');
+                return redirect()->route('teacher.index')->with('status','Successfully saved');
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
             }

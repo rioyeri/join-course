@@ -108,6 +108,34 @@
                 <div id="notconfirm" class="tab-pane active">
                     <div class="row">
                         {{-- <div class="adv-table"> --}}
+                            <form class="form-horizontal" role="form" action="{{ route('exportPayment') }}" enctype="multipart/form-data" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="0">
+                                <div class="col-sm-12" style="margin-bottom: 10px;">
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="notconfirm_start_date" id="notconfirm_start_date" value="" placeholder="Start Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('notconfirm_start_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="notconfirm_end_date" id="notconfirm_end_date" value="" placeholder="End Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('notconfirm_end_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a class="btn btn-theme" onclick="getDatas('not-confirm')"><i class="fa fa-filter"></i> Filter</a>
+                                        <a class="btn" onclick="resetParamProcess('not-confirm')"><i class="fa fa-rotate-left"></i> Clear</a>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-success btn-round m-b-5">
+                                            <i class="fa fa-file-text-o"></i> Export to Excel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
                             <table width="100%" class="table table-bordered datatable dt-responsive wrap" id="table-payment-notconfirm">
                                 <thead>
                                     <th>No</th>
@@ -131,6 +159,33 @@
                 <div id="confirm" class="tab-pane">
                     <div class="row">
                         {{-- <div class="adv-table"> --}}
+                            <form class="form-horizontal" role="form" action="{{ route('exportPayment') }}" enctype="multipart/form-data" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="1">
+                                <div class="col-sm-12" style="margin-bottom: 10px;">
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="confirm_start_date" id="confirm_start_date" value="" placeholder="Start Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('confirm_start_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="confirm_end_date" id="confirm_end_date" value="" placeholder="End Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('confirm_end_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a class="btn btn-theme" onclick="getDatas('confirm')"><i class="fa fa-filter"></i> Filter</a>
+                                        <a class="btn" onclick="resetParamProcess('confirm')"><i class="fa fa-rotate-left"></i> Clear</a>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-success btn-round m-b-5">
+                                            <i class="fa fa-file-text-o"></i> Export to Excel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             <table width="100%" class="table table-bordered datatable wrap" id="table-payment-confirm">
                                 <thead>
                                     <th>No</th>
@@ -154,6 +209,33 @@
                 <div id="decline" class="tab-pane">
                     <div class="row">
                         {{-- <div class="adv-table"> --}}
+                            <form class="form-horizontal" role="form" action="{{ route('exportPayment') }}" enctype="multipart/form-data" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="-1">
+                                <div class="col-sm-12" style="margin-bottom: 10px;">
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="decline_start_date" id="decline_start_date" value="" placeholder="Start Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('decline_start_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="decline_end_date" id="decline_end_date" value="" placeholder="End Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('decline_end_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a class="btn btn-theme" onclick="getDatas('decline')"><i class="fa fa-filter"></i> Filter</a>
+                                        <a class="btn" onclick="resetParamProcess('decline')"><i class="fa fa-rotate-left"></i> Clear</a>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-success btn-round m-b-5">
+                                            <i class="fa fa-file-text-o"></i> Export to Excel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             <table width="100%" class="table table-bordered datatable wrap" id="table-payment-decline">
                                 <thead>
                                     <th>No</th>
@@ -206,159 +288,11 @@
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table-payment-notconfirm').DataTable({
-            "responsive": true,
-            "processing" : true,
-            "serverSide" : true,
-            "order": [[ 8, "asc" ]],
-            "ajax" : {
-                "url" : "{{ route('orderpayment.index') }}",
-                "type" : "get",
-                "data" : {
-                    "_token" : $("meta[name='csrf-token']").attr("content"),
-                }
-            },"columns" : [{data : "no", name : "no", searchable : false},
-                {data : "invoice_id", name : "invoice_id"},
-                {data : "order_id", name : "order_id"},
-                {data : "student_name", name : "student_name"},
-                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "payment_method", name : "payment_method"},
-                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
-                {data : "payment_time", name : "payment_time"},
-                {data : "payment_confirmation", name : "payment_confirmation"},
-                {data : "options", name : "options", orderable : false, searchable : false,}
-            ],
-            "columnDefs" : [
-                {
-                    render: function (data, type, full, meta) {
-                        if(data == null){
-                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
-                        }else{
-                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
-                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
-                        }
-                        return $image;
-                    },
-                    targets: [7],
-                },
-                {
-                    render: function (data, type, full, meta) {
-                        return '<strong>'+data+'</strong>';
-                    },
-                    targets: [1],
-                }
-            ],
-            oLanguage : {sProcessing: "<div id='loader'></div>"},
-            drawCallback: function(){
-                $('.image-popup').magnificPopup({
-                    type: 'image',
-                });
-            }
-        });
-
-        $('#table-payment-confirm').DataTable({
-            "responsive": true,
-            "processing" : true,
-            "serverSide" : true,
-            "order": [[ 8, "asc" ]],
-            "ajax" : {
-                "url" : "{{ route('orderpayment.index') }}",
-                "type" : "get",
-                "data" : {
-                    "_token" : $("meta[name='csrf-token']").attr("content"),
-                    "type" : "confirm",
-                }
-            },"columns" : [{data : "no", name : "no", searchable : false},
-                {data : "invoice_id", name : "invoice_id"},
-                {data : "order_id", name : "order_id"},
-                {data : "student_name", name : "student_name"},
-                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "payment_method", name : "payment_method"},
-                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
-                {data : "payment_time", name : "payment_time"},
-                {data : "payment_confirmation", name : "payment_confirmation"},
-                {data : "options", name : "options", orderable : false, searchable : false,}
-            ],
-            "columnDefs" : [
-                {
-                    render: function (data, type, full, meta) {
-                        if(data == null){
-                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
-                        }else{
-                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
-                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
-                        }
-                        return $image;
-                    },
-                    targets: [7],
-                },
-                {
-                    render: function (data, type, full, meta) {
-                        return '<strong>'+data+'</strong>';
-                    },
-                    targets: [1],
-                }
-            ],
-            oLanguage : {sProcessing: "<div id='loader'></div>"},
-            drawCallback: function(){
-                $('.image-popup').magnificPopup({
-                    type: 'image',
-                });
-            }
-        });
-
-        $('#table-payment-decline').DataTable({
-            "responsive": true,
-            "processing" : true,
-            "serverSide" : true,
-            "order": [[ 8, "asc" ]],
-            "ajax" : {
-                "url" : "{{ route('orderpayment.index') }}",
-                "type" : "get",
-                "data" : {
-                    "_token" : $("meta[name='csrf-token']").attr("content"),
-                    "type" : "decline",
-                }
-            },"columns" : [{data : "no", name : "no", searchable : false},
-                {data : "invoice_id", name : "invoice_id"},
-                {data : "order_id", name : "order_id"},
-                {data : "student_name", name : "student_name"},
-                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "payment_method", name : "payment_method"},
-                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
-                {data : "payment_time", name : "payment_time"},
-                {data : "payment_confirmation", name : "payment_confirmation"},
-                {data : "options", name : "options", orderable : false, searchable : false,}
-            ],
-            "columnDefs" : [
-                {
-                    render: function (data, type, full, meta) {
-                        if(data == null){
-                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
-                        }else{
-                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
-                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
-                        }
-                        return $image;
-                    },
-                    targets: [7],
-                },
-                {
-                    render: function (data, type, full, meta) {
-                        return '<strong>'+data+'</strong>';
-                    },
-                    targets: [1],
-                }
-            ],
-            oLanguage : {sProcessing: "<div id='loader'></div>"},
-            drawCallback: function(){
-                $('.image-popup').magnificPopup({
-                    type: 'image',
-                });
-            }
+        getDatas();
+        
+        $('.datepicker').datepicker({
+            todayHighlight: true,
+            autoclose: true,
         });
 
         // Select2
@@ -383,6 +317,215 @@
             }
         };
     });
+    
+    function getPaymentNotConfirm(start=null, end=null){
+        $('#table-payment-notconfirm').DataTable().clear().destroy();
+        $('#table-payment-notconfirm').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 8, "asc" ]],
+            "ajax" : {
+                "url" : "{{ route('orderpayment.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "start_date" : start,
+                    "end_date" : end,
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "invoice_id", name : "invoice_id"},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_method", name : "payment_method"},
+                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
+                {data : "payment_time", name : "payment_time"},
+                {data : "payment_confirmation", name : "payment_confirmation"},
+                {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == null){
+                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
+                        }else{
+                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
+                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
+                        }
+                        return $image;
+                    },
+                    targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+            drawCallback: function(){
+                $('.image-popup').magnificPopup({
+                    type: 'image',
+                });
+            }
+        });
+    }
+
+    function getPaymentConfirm(start=null, end=null){
+        $('#table-payment-confirm').DataTable().clear().destroy();
+        $('#table-payment-confirm').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 8, "asc" ]],
+            "ajax" : {
+                "url" : "{{ route('orderpayment.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "confirm",
+                    "start_date" : start,
+                    "end_date" : end,
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "invoice_id", name : "invoice_id"},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_method", name : "payment_method"},
+                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
+                {data : "payment_time", name : "payment_time"},
+                {data : "payment_confirmation", name : "payment_confirmation"},
+                {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == null){
+                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
+                        }else{
+                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
+                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
+                        }
+                        return $image;
+                    },
+                    targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+            drawCallback: function(){
+                $('.image-popup').magnificPopup({
+                    type: 'image',
+                });
+            }
+        });
+    }
+
+    function getPaymentDecline(start=null, end=null){
+        $('#table-payment-decline').DataTable().clear().destroy();
+        $('#table-payment-decline').DataTable({
+            "responsive": true,
+            "processing" : true,
+            "serverSide" : true,
+            "order": [[ 8, "asc" ]],
+            "ajax" : {
+                "url" : "{{ route('orderpayment.index') }}",
+                "type" : "get",
+                "data" : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "decline",
+                    "start_date" : start,
+                    "end_date" : end,
+                }
+            },"columns" : [{data : "no", name : "no", searchable : false},
+                {data : "invoice_id", name : "invoice_id"},
+                {data : "order_id", name : "order_id"},
+                {data : "student_name", name : "student_name"},
+                {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_amount", name : "payment_amount", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "payment_method", name : "payment_method"},
+                {data : "payment_evidence", name : "payment_evidence", orderable : false, searchable: false},
+                {data : "payment_time", name : "payment_time"},
+                {data : "payment_confirmation", name : "payment_confirmation"},
+                {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == null){
+                            var $image = '<img class="output text-center" src="dashboard/assets/noimage.jpg">';
+                        }else{
+                            var path = 'dashboard/assets/payment/'+full.order_id.substr(1)+'/'+data;
+                            var $image = '<a href="'+path+'" class="image-popup"><img class="output text-center" src="'+path+'"></a>';
+                        }
+                        return $image;
+                    },
+                    targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<strong>'+data+'</strong>';
+                    },
+                    targets: [1],
+                }
+            ],
+            oLanguage : {sProcessing: "<div id='loader'></div>"},
+            drawCallback: function(){
+                $('.image-popup').magnificPopup({
+                    type: 'image',
+                });
+            }
+        });
+    }
+
+    function getDatas(type=null){
+        if(type == "not-confirm"){
+            start_date = $('#notconfirm_start_date').val();
+            end_date = $('#notconfirm_end_date').val();
+            getPaymentNotConfirm(start_date, end_date);
+        }else if(type == "confirm"){
+            start_date = $('#confirm_start_date').val();
+            end_date = $('#confirm_end_date').val();
+            getPaymentConfirm(start_date, end_date);
+        }else if(type == "decline"){
+            start_date = $('#decline_start_date').val();
+            end_date = $('#decline_end_date').val();
+            getPaymentDecline(start_date, end_date);
+        }else{
+            getPaymentNotConfirm();
+            getPaymentConfirm();
+            getPaymentDecline();
+        }
+    }
+
+    function resetParamProcess(type=null){
+        if(type == "not-confirm"){
+            $('#notconfirm_start_date').val("");
+            $('#notconfirm_end_date').val("");
+        }else if(type == "confirm"){
+            $('#confirm_start_date').val("");
+            $('#confirm_end_date').val("");
+        }else if(type == "decline"){
+            $('#decline_start_date').val("");
+            $('#decline_end_date').val("");
+        }
+
+        getDatas(type);
+    }
+
+    function moveToBox(id){
+        $('#'+id).data("datepicker").show();
+    }
 
     function create_data(){
         $.ajax({
@@ -492,6 +635,7 @@
                     "status":new_status,
                 }
             }).done(function (data) {
+                console.log(data);
                 location.reload();
             }).fail(function (msg) {
                 swal(

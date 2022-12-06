@@ -103,6 +103,33 @@
                 <div id="notconfirm" class="tab-pane active">
                     <div class="row">
                         <div class="adv-table">
+                            <form class="form-horizontal" role="form" action="{{ route('exportOrder') }}" enctype="multipart/form-data" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="0">
+                                <div class="col-sm-12" style="margin-bottom: 10px;">
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="notconfirm_start_date" id="notconfirm_start_date" value="" placeholder="Start Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('notconfirm_start_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="notconfirm_end_date" id="notconfirm_end_date" value="" placeholder="End Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('notconfirm_end_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a class="btn btn-theme btn-round" onclick="getDatas('not-confirm')"><i class="fa fa-filter"></i> Filter</a>
+                                        <a class="btn" onclick="resetParamProcess('not-confirm')"><i class="fa fa-rotate-left"></i> Clear</a>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-success btn-round m-b-5">
+                                            <i class="fa fa-file-text-o"></i> Export to Excel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>            
                             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-notconfirm" width="100%">
                                 <thead>
                                     <th>No</th>
@@ -129,6 +156,33 @@
                 <div id="confirm" class="tab-pane">
                     <div class="row">
                         <div class="adv-table">
+                            <form class="form-horizontal" role="form" action="{{ route('exportOrder') }}" enctype="multipart/form-data" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="1">
+                                <div class="col-sm-12" style="margin-bottom: 10px;">
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="confirm_start_date" id="confirm_start_date" value="" placeholder="Start Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('confirm_start_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="confirm_end_date" id="confirm_end_date" value="" placeholder="End Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('confirm_end_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a class="btn btn-theme btn-round" onclick="getDatas('confirm')"><i class="fa fa-filter"></i> Filter</a>
+                                        <a class="btn" onclick="resetParamProcess('confirm')"><i class="fa fa-rotate-left"></i> Clear</a>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-success btn-round m-b-5">
+                                            <i class="fa fa-file-text-o"></i> Export to Excel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-confirm" width="100%">
                                 <thead>
                                     <th>No</th>
@@ -155,6 +209,33 @@
                 <div id="finish" class="tab-pane">
                     <div class="row">
                         <div class="adv-table">
+                            <form class="form-horizontal" role="form" action="{{ route('exportOrder') }}" enctype="multipart/form-data" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="2">
+                                <div class="col-sm-12" style="margin-bottom: 10px;">
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="finish_start_date" id="finish_start_date" value="" placeholder="Start Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('finish_start_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="finish_end_date" id="finish_end_date" value="" placeholder="End Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('finish_end_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a class="btn btn-theme btn-round" onclick="getDatas('finish')"><i class="fa fa-filter"></i> Filter</a>
+                                        <a class="btn" onclick="resetParamProcess('finish')"><i class="fa fa-rotate-left"></i> Clear</a>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-success btn-round m-b-5">
+                                            <i class="fa fa-file-text-o"></i> Export to Excel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-finish" width="100%">
                                 <thead>
                                     <th>No</th>
@@ -181,6 +262,33 @@
                 <div id="decline" class="tab-pane">
                     <div class="row">
                         <div class="adv-table">
+                            <form class="form-horizontal" role="form" action="{{ route('exportOrder') }}" enctype="multipart/form-data" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="-1">
+                                <div class="col-sm-12" style="margin-bottom: 10px;">
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="decline_start_date" id="decline_start_date" value="" placeholder="Start Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('decline_start_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" data-date-format='yyyy-mm-dd' class="form-control datepicker" name="decline_end_date" id="decline_end_date" value="" placeholder="End Date">
+                                        <span id="span_date" class="input-group-btn add-on" onclick="moveToBox('decline_end_date')" style="padding-right: 39px; padding-top: 3px;">
+                                            <button class="btn btn-theme" type="button"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a class="btn btn-theme btn-round" onclick="getDatas('decline')"><i class="fa fa-filter"></i> Filter</a>
+                                        <a class="btn" onclick="resetParamProcess('decline')"><i class="fa fa-rotate-left"></i> Clear</a>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-success btn-round m-b-5">
+                                            <i class="fa fa-file-text-o"></i> Export to Excel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-decline" width="100%">
                                 <thead>
                                     <th>No</th>
@@ -237,6 +345,16 @@
 @section('script-js')
 <script type="text/javascript">
     $(document).ready(function() {
+        getDatas();
+        // Date Picker
+        $('.datepicker').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+        });
+    });
+
+    function getOrderNotConfirm(start=null, end=null){
+        $('#table-order-notconfirm').DataTable().clear().destroy();
         $('#table-order-notconfirm').DataTable({
             "responsive": true,
             "processing" : true,
@@ -247,6 +365,8 @@
                 "type" : "get",
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "start_date" : start,
+                    "end_date" : end,
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "order_id", name : "order_id"},
@@ -283,11 +403,44 @@
                         }
                     },
                     targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 1){
+                            return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Paid Off</span>';
+                        }else if(data == 2){
+                            return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Overpaid</span>';
+                        }else{
+                            return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Yet Paid Off</span>';
+                        }
+                    },
+                    targets: [11],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(isNaN(data)){
+                            return data;                            
+                        }else{
+                            if(data == -1){
+                                return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Declined</span>';
+                            }else if(data == 1){
+                                return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Ongoing</span>';
+                            }else if(data == 2){
+                                return '<span style="background: #000000; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Finish</span>';
+                            }else{
+                                return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Confirmed</span>';
+                            }
+                        }
+                    },
+                    targets: [12],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
         });
+    }
 
+    function getOrderOngoing(start=null, end=null){
+        $('#table-order-confirm').DataTable().clear().destroy();
         $('#table-order-confirm').DataTable({
             "responsive": true,
             "processing" : true,
@@ -299,6 +452,8 @@
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                     "type" : "confirm",
+                    "start_date" : start,
+                    "end_date" : end,
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "order_id", name : "order_id"},
@@ -335,11 +490,44 @@
                         }
                     },
                     targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 1){
+                            return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Paid Off</span>';
+                        }else if(data == 2){
+                            return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Overpaid</span>';
+                        }else{
+                            return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Yet Paid Off</span>';
+                        }
+                    },
+                    targets: [11],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(isNaN(data)){
+                            return data;                            
+                        }else{
+                            if(data == -1){
+                                return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Declined</span>';
+                            }else if(data == 1){
+                                return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Ongoing</span>';
+                            }else if(data == 2){
+                                return '<span style="background: #000000; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Finish</span>';
+                            }else{
+                                return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Confirmed</span>';
+                            }
+                        }
+                    },
+                    targets: [12],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
         });
+    }
 
+    function getOrderDecline(start=null, end=null){
+        $('#table-order-decline').DataTable().clear().destroy();
         $('#table-order-decline').DataTable({
             "responsive": true,
             "processing" : true,
@@ -351,6 +539,8 @@
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                     "type" : "decline",
+                    "start_date" : start,
+                    "end_date" : end,
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "order_id", name : "order_id"},
@@ -387,11 +577,44 @@
                         }
                     },
                     targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 1){
+                            return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Paid Off</span>';
+                        }else if(data == 2){
+                            return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Overpaid</span>';
+                        }else{
+                            return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Yet Paid Off</span>';
+                        }
+                    },
+                    targets: [11],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(isNaN(data)){
+                            return data;                            
+                        }else{
+                            if(data == -1){
+                                return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Declined</span>';
+                            }else if(data == 1){
+                                return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Ongoing</span>';
+                            }else if(data == 2){
+                                return '<span style="background: #000000; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Finish</span>';
+                            }else{
+                                return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Confirmed</span>';
+                            }
+                        }
+                    },
+                    targets: [12],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
         });
+    }
 
+    function getOrderFinish(start=null, end=null){
+        $('#table-order-finish').DataTable().clear().destroy();
         $('#table-order-finish').DataTable({
             "responsive": true,
             "processing" : true,
@@ -403,6 +626,8 @@
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                     "type" : "finish",
+                    "start_date" : start,
+                    "end_date" : end,
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "order_id", name : "order_id"},
@@ -439,11 +664,88 @@
                         }
                     },
                     targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 1){
+                            return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Paid Off</span>';
+                        }else if(data == 2){
+                            return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Overpaid</span>';
+                        }else{
+                            return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Yet Paid Off</span>';
+                        }
+                    },
+                    targets: [11],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(isNaN(data)){
+                            return data;                            
+                        }else{
+                            if(data == -1){
+                                return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Declined</span>';
+                            }else if(data == 1){
+                                return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Ongoing</span>';
+                            }else if(data == 2){
+                                return '<span style="background: #000000; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Finish</span>';
+                            }else{
+                                return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Confirmed</span>';
+                            }
+                        }
+                    },
+                    targets: [12],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
         });
-    });
+    }
+
+    function getDatas(type=null){
+        if(type == "not-confirm"){
+            start_date = $('#notconfirm_start_date').val();
+            end_date = $('#notconfirm_end_date').val();
+            getOrderNotConfirm(start_date, end_date);
+        }else if(type == "confirm"){
+            start_date = $('#confirm_start_date').val();
+            end_date = $('#confirm_end_date').val();
+            getOrderOngoing(start_date, end_date);
+        }else if(type == "decline"){
+            start_date = $('#decline_start_date').val();
+            end_date = $('#decline_end_date').val();
+            getOrderDecline(start_date, end_date);
+        }else if(type == "finish"){
+            start_date = $('#finish_start_date').val();
+            end_date = $('#finish_end_date').val();
+            getOrderFinish(start_date, end_date);
+        }else{
+            getOrderNotConfirm();
+            getOrderOngoing();
+            getOrderDecline();
+            getOrderFinish();
+        }
+    }
+
+    function resetParamProcess(type=null){
+        if(type == "not-confirm"){
+            $('#notconfirm_start_date').val("");
+            $('#notconfirm_end_date').val("");
+        }else if(type == "confirm"){
+            $('#confirm_start_date').val("");
+            $('#confirm_end_date').val("");
+        }else if(type == "decline"){
+            $('#decline_start_date').val("");
+            $('#decline_end_date').val("");
+        }else if(type == "finish"){
+            $('#finish_start_date').val("");
+            $('#finish_end_date').val("");
+        }
+
+        getDatas(type);
+    }
+
+    function moveToBox(id){
+        $('#'+id).data("datepicker").show();
+    }
 
     function create_data(){
         console.log("create")
@@ -666,6 +968,7 @@
 
     function get_teacher(params) {
         var jenisdata = "get_teacher";
+        get_schedule(params);
         $.ajax({
             url : "{{route('getData')}}",
             type : "get",
@@ -681,23 +984,23 @@
         });
     }
 
-    function get_package(params){
-        var jenisdata = "get_package";
-        get_schedule(params);
-        $.ajax({
-            url : "{{route('getData')}}",
-            type : "get",
-            dataType: 'json',
-            data:{
-                params: params,
-                jenisdata: jenisdata,
-            },
-        }).done(function (data) {
-            $('#package_id').html(data.append);
-        }).fail(function (msg) {
-            alert('Gagal menampilkan data, silahkan refresh halaman.');
-        });
-    }
+    // function get_package(params){
+    //     var jenisdata = "get_package";
+    //     get_schedule(params);
+    //     $.ajax({
+    //         url : "{{route('getData')}}",
+    //         type : "get",
+    //         dataType: 'json',
+    //         data:{
+    //             params: params,
+    //             jenisdata: jenisdata,
+    //         },
+    //     }).done(function (data) {
+    //         $('#package_id').html(data.append);
+    //     }).fail(function (msg) {
+    //         alert('Gagal menampilkan data, silahkan refresh halaman.');
+    //     });
+    // }
 
     function get_schedule(params) {
         var jenisdata = "get_schedule";
@@ -727,7 +1030,7 @@
     }
 
     function get_bill(){
-        var teacher_id = $('#teacher_id').val();
+        // var teacher_id = $('#teacher_id').val();
         var package_id = $('#package_id').val();
 
         if(teacher_id != null && course_id != null && package_id != null){
@@ -736,7 +1039,7 @@
                 url: "{{ route('getTeacherFee') }}",
                 type: 'GET',
                 data: {
-                    "teacher_id": teacher_id,
+                    // "teacher_id": teacher_id,
                     "package_id": package_id,
                 },
             }).done(function (data) {
@@ -766,7 +1069,7 @@
         /* Copy the text inside the text field */
         navigator.clipboard.writeText(text);
 
-        $('#copytextbtn'+order_id).popover({content: "Text copied to clipboard",animation: true});
+        $('#copytextbtn'+order_id).popover({content: "Whatsapp Text copied to clipboard",animation: true});
 
         // Set the date we're counting down to (dalam kasus ini ditampilkan selama 5 detik)
         var hide = new Date(new Date().getTime() + 5000).getTime();

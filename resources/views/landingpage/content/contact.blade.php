@@ -143,7 +143,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 form-group mt-3 mt-md-0">
-                            <select class="form-control" parsley-trigger="change" name="teacher_id" id="teacher_id" onchange="get_package(this.value)">
+                            <select class="form-control" parsley-trigger="change" name="teacher_id" id="teacher_id" onchange="get_schedule(this.value)">
                                 <option value="#" disabled selected>Guru</option>
                                 @foreach ($teachers as $teacher)
                                     <option value="{{$teacher->id}}" data-text="{{ $teacher->isItInstantOrder() }}">{{$teacher->teacher->name}}</option>

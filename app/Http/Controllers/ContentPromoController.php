@@ -41,7 +41,9 @@ class ContentPromoController extends Controller
     public function create()
     {
         $icons = BootstrapIcon::all();
-        return response()->json(view('dashboard.content.content-promo.form', compact('icons'))->render());
+        $promo_package_id = ContentPromo::select('package_id')->get();
+        $packages = Package::whereNotIn('id', $promo_package_id)->get();
+        return response()->json(view('dashboard.content.content-promo.form', compact('icons','packages'))->render());
     }
 
     /**
@@ -87,7 +89,7 @@ class ContentPromoController extends Controller
         }else{
             // Core
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
+                'package_id' => 'required',
                 'icon' => 'required',
                 'price' => 'required',
             ]);
@@ -98,7 +100,7 @@ class ContentPromoController extends Controller
             }else{
                 try{
                     $data = new ContentPromo(array(
-                        "name" => $request->name,
+                        "package_id" => $request->package_id,
                         'icon' => $request->icon,
                         'price' => $request->price,
                         'time_signature' => $request->time_signature,
@@ -118,7 +120,7 @@ class ContentPromoController extends Controller
                         ));
                         $detail->save();
                     }
-                    Log::setLog('CTPRC','Create Promo : '.$request->name);
+                    Log::setLog('CTPRC','Create Promo : '.$data->get_package->name);
                     return redirect()->route('contentpromo.index')->with('status','Successfully saved');
                 }catch(\Exception $e){
                     return redirect()->back()->withErrors($e->getMessage());
@@ -149,7 +151,8 @@ class ContentPromoController extends Controller
         $data = ContentPromo::where('id', $id)->first();
         $icons = BootstrapIcon::all();
         $details = ContentPromoDetail::where('promo_id', $id)->get();
-        return response()->json(view('dashboard.content.content-promo.form',compact('data','icons','details'))->render());
+        $packages = Package::all();
+        return response()->json(view('dashboard.content.content-promo.form',compact('data','icons','details','packages'))->render());
     }
 
     /**
@@ -163,22 +166,32 @@ class ContentPromoController extends Controller
     {
         if($request->ajax()){
             try{
-                $data = ContentPromoDetail::where('id', $id)->first();
-                $data->text = $request->feature;
-                $data->status = $request->status;
-                $data->creator = session('user_id');
-                $data->save();
-
-                Log::setLog('CTPRU','Update Detail Promo : '.$request->feature);
-
-                return response()->json($data);
+                if(isset($request->package_name)){
+                    for($i=0;$i<$request->rows; $i++){
+                        $package = Package::where('name', 'LIKE', $request->package_name[$i])->first();
+                        $promo = ContentPromo::where('package_id', $package->id)->first();
+                        $promo->position = $i+1;
+                        $promo->save();
+                    }
+                    return "true";
+                }else{
+                    $data = ContentPromoDetail::where('id', $id)->first();
+                    $data->text = $request->feature;
+                    $data->status = $request->status;
+                    $data->creator = session('user_id');
+                    $data->save();
+    
+                    Log::setLog('CTPRU','Update Detail Promo : '.$request->feature);
+    
+                    return response()->json($data);
+                }
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
             }
         }else{
             // Core
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
+                'package_id' => 'required',
                 'icon' => 'required',
                 'price' => 'required',
             ]);
@@ -189,7 +202,7 @@ class ContentPromoController extends Controller
             }else{
                 try{
                     $data = ContentPromo::where('id', $id)->first();
-                    $data->name = $request->name;
+                    $data->package_id = $request->package_id;
                     $data->icon = $request->icon;
                     $data->price = $request->price;
                     $data->time_signature = $request->time_signature;
@@ -198,7 +211,7 @@ class ContentPromoController extends Controller
                     $data->creator = session('user_id');
                     $data->save();
 
-                    Log::setLog('CTPRU','Update Promo : '.$request->name);
+                    Log::setLog('CTPRU','Update Promo : '.$data->get_package->name);
                     return redirect()->route('contentpromo.index')->with('status','Successfully saved');
                 }catch(\Exception $e){
                     return redirect()->back()->withErrors($e->getMessage());
@@ -225,7 +238,7 @@ class ContentPromoController extends Controller
         }else{
             // Detail Promo
             $data = ContentPromo::where('id', $id)->first();
-            $log_id = Log::setLog('CTPRD','Delete Promo : '.$data->name);
+            $log_id = Log::setLog('CTPRD','Delete Promo : '.$data->get_package->name);
             RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data));
             $data->delete();
             return "true";

@@ -107,6 +107,8 @@ Route::middleware(['checkUser'])->group(function () {
         'home' => 'DashboardController',
         // Teacher Schedule
         'teacherschedule' => 'TeacherScheduleController',
+        // Order Review
+        'orderreview' => 'OrderReviewController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');
@@ -141,6 +143,7 @@ Route::middleware(['checkUser'])->group(function () {
     // Order Helper
     Route::post('/order/{id}/changestatus', 'OrderController@changeStatus')->name('changeStatusOrder');
     Route::get('/order/{id}/invoice', 'OrderController@getInvoice')->name('getInvoice');
+    Route::post('/order/exportOrder', 'OrderController@exportOrder')->name('exportOrder');
 
     // Content Management Helper
     Route::post('/contentmanagement/{id}/changestatus', 'ContentManagementController@changeStatus')->name('changeStatusContent');
@@ -150,4 +153,5 @@ Route::middleware(['checkUser'])->group(function () {
 
     // Order Payment Helper
     Route::post('/orderpayment/{id}/changestatus', 'OrderPaymentController@changeStatus')->name('changeStatusOrderPayment');
+    Route::post('/orderpayment/exportPayment', 'OrderPaymentController@exportPayment')->name('exportPayment');
 });

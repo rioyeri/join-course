@@ -16,6 +16,7 @@ use App\Models\Log;
 use App\Models\RecycleBin;
 use App\Models\MenuMapping;
 use App\Models\Package;
+use App\Models\TeacherSchedule;
 
 class TeacherController extends Controller
 {
@@ -261,7 +262,8 @@ class TeacherController extends Controller
                 $teacher->save();
 
                 TeacherCourse::setData($id, $request->teacher_subjects);
-                TeacherPrice::setData($id, $request->package_id, $request->package_price);
+                // TeacherPrice::setData($id, $request->package_id, $request->package_price);
+                TeacherSchedule::setData($id, $request->day_id, $request->time_start, $request->time_end);
 
                 Log::setLog('MDTCU','Update Teacher Profile : '.$teacher->teacher->name);
                 return redirect()->route('viewProfile')->with('status','Successfully saved');

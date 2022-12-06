@@ -78,6 +78,7 @@ Dashboard
                 <th>Type</th>
                 <th>Schedule</th>
                 <th>Report</th>
+                <th>Rate/Review</th>
             </thead>
             <tbody id="table-body-ongoing-order">
             </tbody>
@@ -172,7 +173,8 @@ Dashboard
                 {data : "package_name", name : "package_name"},
                 {data : "order_type", name : "order_type"},
                 {data : "schedule", name : "schedule", orderable : false, searchable : false,},
-                {data : "report", name : "report", orderable : false, searchable : false,}
+                {data : "report", name : "report", orderable : false, searchable : false,},
+                {data : "review", name : "review", orderable : false, searchable : false,},
             ],
             "columnDefs" : [
                 {
@@ -189,6 +191,7 @@ Dashboard
                             return '<span style="background: #008374; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Online</span>';
                         }
                     },
+                    "className" : "text-center",
                     targets: [6],
                 }
             ],
@@ -235,6 +238,34 @@ Dashboard
                         }
                     },
                     targets: [7],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 1){
+                            return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Paid Off</span>';
+                        }else if(data == 2){
+                            return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Overpaid</span>';
+                        }else{
+                            return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Yet Paid Off</span>';
+                        }
+                    },
+                    "className": "text-center",
+                    targets: [8],
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if(data == 1){
+                            return '<span style="background: #5cb85c; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Ongoing</span>';
+                        }else if(data == 2){
+                            return '<span style="background: #000; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Finished</span>';
+                        }else if(data == -1){
+                            return '<span style="background: #d9534f; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Declined</span>';
+                        }else{
+                            return '<span style="background: #f0ad4e; color:white; border-radius: 3px; padding: 0 10px 0 10px;">Not Confirmed</span>';
+                        }
+                    },
+                    "className": "text-center",
+                    targets: [9],
                 }
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
@@ -283,6 +314,23 @@ Dashboard
             dataType: 'json',
             data: {
                 type:"report",
+            },
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function view_review(id){
+        $.ajax({
+            // url : "home/"+id+"/edit",
+            url: "{{ route('orderreview.create') }}",
+            type: "get",
+            dataType: 'json',
+            data: {
+                // type:"review",
+                id: id,
             },
         }).done(function (data) {
             $('#view-form').html(data);

@@ -81,6 +81,9 @@
                     <th>Package Name</th>
                     <th>Description</th>
                     <th>Number of meet</th>
+                    <th>Price</th>
+                    <th>Discount Rate</th>
+                    <th>Final Price</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -124,6 +127,9 @@
                     {data : "name", name : "name"},
                     {data : "description", name : "description", orderable : false},
                     {data : "number_meet", name : "number_meet"},
+                    {data : "price", name : "price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                    {data : "discount_rate", name : "discount_rate", render: $.fn.dataTable.render.number( '.', ',', 2, '', '%' )},
+                    {data : "final_price", name : "final_price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},

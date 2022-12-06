@@ -20,6 +20,10 @@ use App\Models\Package;
 use App\Models\Course;
 use App\Models\MenuMapping;
 use App\Models\Log;
+use App\Models\OrderReview;
+use App\Models\Order;
+use App\Models\Day;
+use App\Models\TeacherSchedule;
 
 class UserController extends Controller
 {
@@ -359,11 +363,16 @@ class UserController extends Controller
     public function viewProfile(){
         $page = "";
         $data = User::where('id', session('user_id'))->first();
+
+        // Profile Photo
+        $profilephoto = User::getPhoto($data->id);
+
         if(session('role_id') == 4){
             $grades = Grade::all();
-            return  view('dashboard.user.profile.index', compact('page','data','grades'));
+            return  view('dashboard.user.profile.index', compact('page','data','grades','profilephoto'));
         }elseif(session('role_id') == 5){
             $teacher = Teacher::where('user_id', session('user_id'))->first();
+
             // Subject Course
             $exist_course = array_values(array_column(DB::select("SELECT course_id FROM teacher_course WHERE teacher_id LIKE $teacher->id"), 'course_id'));
             $courses = Course::where('status',1)->get();
@@ -371,10 +380,25 @@ class UserController extends Controller
             // PRICING
             $exist_packages = TeacherPrice::where('teacher_id', $teacher->id)->get();
             $packages = Package::where('status',1)->get();
+
+            // SCHEDULE
+            $days = Day::all();
+            $details = TeacherSchedule::where('teacher_id', $teacher->id)->get();
+
+            // INCOME, RATING AND ORDERCOUNT
+            $income = Order::getTeacherIncome($teacher->id);
+            $rating = OrderReview::getRating($teacher->id);
+            $order_count = Order::where('teacher_id', $teacher->id)->where('order_status', 2)->count();
+
+            $stats = json_decode(json_encode(array(
+                "income" => $income,
+                "order_count" => $order_count,
+                "rate" => $rating,
+            )),FALSE);
     
-            return  view('dashboard.user.profile.index', compact('page','data','courses','exist_course','exist_packages','packages'));
+            return  view('dashboard.user.profile.index', compact('page','data','courses','exist_course','exist_packages','packages','stats','profilephoto','days','details'));
         }else{
-            return  view('dashboard.user.profile.index', compact('page','data'));
+            return  view('dashboard.user.profile.index', compact('page','data','profilephoto'));
         }
     }
 

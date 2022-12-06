@@ -9,8 +9,12 @@ class ContentPromo extends Model
 {
     protected $table ='content_promo';
     protected $fillable = [
-        'name','icon','price','time_signature','link_text','link','category','creator'
+        'package_id','icon','price','time_signature','link_text','link','category','creator','position'
     ];
+
+    public function get_package(){
+        return $this->belongsTo('App\Models\Package', 'package_id', 'id');
+    }
 
     public static function dataIndex(Request $request){
         $draw = $request->draw;
@@ -22,21 +26,21 @@ class ContentPromo extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"CTPR");
-        $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->select('content_promo.id','content_promo.name','icon','price','time_signature','link_text','link','category', 'content_promo.creator', 'u.name as creator_name');
+        $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->join('package as p', 'content_promo.package_id', 'p.id')->select('content_promo.id','content_promo.package_id','p.name as package_name','icon','content_promo.price','time_signature','link_text','link','category', 'content_promo.creator', 'u.name as creator_name');
 
         $totalRecords = $promos->count();
 
         if($searchValue != ''){
             $promos->where(function ($query) use ($searchValue) {
                 $promo_ids = ContentPromoDetail::select('promo_id')->where('text', 'LIKE', '%'.$searchValue.'%')->get();
-                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('price', 'LIKE', '%'.$searchValue.'%')->orWhere('time_signature', 'LIKE', '%'.$searchValue.'%')->orWhere('link_text', 'LIKE', '%'.$searchValue.'%')->orWhere('link', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $promo_ids);
+                $query->orWhere('p.name', 'LIKE', '%'.$searchValue.'%')->orWhere('price', 'LIKE', '%'.$searchValue.'%')->orWhere('time_signature', 'LIKE', '%'.$searchValue.'%')->orWhere('link_text', 'LIKE', '%'.$searchValue.'%')->orWhere('link', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $promo_ids);
             });
         }
 
         $totalRecordwithFilter = $promos->count();
 
         if($columnName == "no"){
-            $promos->orderBy('id', $columnSortOrder);
+            $promos->orderBy('position', $columnSortOrder);
         }else{
             $promos->orderBy($columnName, $columnSortOrder);
         }
@@ -62,8 +66,8 @@ class ContentPromo extends Model
                 $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
             }
 
-            $detail->put('no', $i++);
-            $detail->put('name', $key->name);
+            $detail->put('no', $i++.' <i class="fa fa-sort"></i>');
+            $detail->put('package_name', $key->package_name);
             $detail->put('icon', $key->icon);
             $detail->put('price', $key->price);
             $detail->put('time_signature', $key->time_signature);
@@ -85,7 +89,7 @@ class ContentPromo extends Model
 
     public static function getContent(){
         $result = collect();
-        $promos = ContentPromo::all();
+        $promos = ContentPromo::join('package as p', 'content_promo.package_id', 'p.id')->select('content_promo.id', 'content_promo.package_id', 'p.name as package_name', 'icon','content_promo.price','time_signature','link_text', 'link','category')->orderBy('position', 'asc')->get();
         
         $count_detail = $promos->count();
         if($count_detail == 3){
@@ -109,7 +113,7 @@ class ContentPromo extends Model
                 $row_detail->push($detail);
             }
 
-            $row->put('name', $promo->name);
+            $row->put('package_name', $promo->package_name);
             $row->put('icon', $promo->icon);
             $row->put('price', $promo->price);
             $row->put('time_signature', $promo->time_signature);

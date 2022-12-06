@@ -11,7 +11,7 @@
             @foreach ($promos as $promo)
             <div class="{{ $promo->column_size_detail }}">
                 <div class="pricing-item @if($promo->category == 1) featured @endif">
-                    <h3>{{ $promo->name }}</h3>
+                    <h3>{{ $promo->package_name }}</h3>
                     <div class="icon">
                         <i class="{{ $promo->icon }}"></i>
                     </div>

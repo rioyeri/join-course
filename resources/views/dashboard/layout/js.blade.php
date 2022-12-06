@@ -18,6 +18,11 @@
 <script src="{{ asset('dashboard/lib/numberformat.js') }}"></script>
 
 <!--script for this page-->
+<script>
+    $('.image-popup').magnificPopup({
+        type: 'image',
+    });
+</script>
 @if (session('status'))
     <script>
         var status = "{{session('status')}}";

@@ -94,4 +94,24 @@ class TeacherSchedule extends Model
 
         return $response;
     }
+
+    public static function setData($id, $day_ids, $time_starts, $time_ends){
+        $teacher = Teacher::where('id', $id)->first();
+
+        if(TeacherSchedule::where('teacher_id', $id)->count() != 0){
+            TeacherSchedule::where('teacher_id', $id)->delete();
+        }
+
+        for($i=0; $i < count($day_ids); $i++){
+            $data = new TeacherSchedule(array(
+                "teacher_id" => $id,
+                "day_id" => $day_ids[$i],
+                "time_start" => $time_starts[$i],
+                "time_end" => $time_ends[$i],
+                "creator" => session('user_id'),
+            ));
+            $data->save();
+        }
+        Log::setLog('CTTSU','Update Teacher Schedule : '.$teacher->teacher->name);
+    }
 }

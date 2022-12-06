@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+use App\Mail\PaymentInvoiceMail;
+use App\Mail\ResetPasswordMail;
 
 use App\Models\Order;
 use App\Models\OrderPayment;
@@ -12,6 +18,7 @@ use App\Models\Student;
 use App\Models\MenuMapping;
 use App\Models\Log;
 use App\Models\RecycleBin;
+use App\Helpers\File;
 
 class OrderPaymentController extends Controller
 {
@@ -262,6 +269,13 @@ class OrderPaymentController extends Controller
 
                 OrderPayment::checkPaid($payment->order_id, $request->_token);
 
+                if($request->status == 1){
+                    // $email = $payment->get_order->get_student->student->email;
+                    $email = "rioyeri@gmail.com";
+
+                    Mail::to($email)->send(new PaymentInvoiceMail($id));
+                }
+
                 Log::setLog('ORPYS', $text_log);
                 return "true";
             }catch(\Exception $e){
@@ -343,5 +357,92 @@ class OrderPaymentController extends Controller
                 return redirect()->back()->withErrors($e->getMessage());
             }
         }
+    }
+
+    public function exportPayment(Request $request){
+        ini_set('max_execution_time', 3000);
+
+        if($request->type == 0){
+            $nametype = "Data_Payment_Not_Confirmed";
+            $start = $request->notconfirm_start_date;
+            $end = $request->notconfirm_end_date;
+        }elseif($request->type == 1){
+            $nametype = "Data_Payment_Confirmed";
+            $start = $request->confirm_start_date;
+            $end = $request->confirm_end_date;
+        }elseif($request->type == -1){
+            $nametype = "Data_Payment_Declined";
+            $start = $request->decline_start_date;
+            $end = $request->decline_end_date;
+        }else{
+            $nametype = "Data_Payment";
+        }
+
+        $date = date('YmdHis');
+        $filename = $nametype."_".$date.".xlsx";
+
+        $payments = OrderPayment::where('payment_confirmation', $request->type);
+
+        if($start != "" && $end != ""){
+            $payments->whereBetween(DB::raw('DATE(order_payment.created_at)'), [$start,$end]);
+        }elseif($start != "" && $end == ""){
+            $payments->whereDate('order_payment.created_at', '>=', $start);
+        }elseif($start == "" && $end != ""){
+            $payments->whereDate('order_payment.created_at', '<=', $end);
+        }
+
+        $payments = $payments->get();
+
+        $array = array();
+        $i = 1;
+
+        foreach($payments as $key){
+            // ORDER
+            $order = Order::where('id', $key->order_id)->first();
+
+            // PAYMENT METHOD
+            $payment_account = PaymentAccount::where('id', $key->payment_method)->first();
+            $payment_method = $payment_account->account_type." ".$payment_account->account_number;
+
+            // PAYMENT STATUS
+            $payment_confirmation = "";
+            if($key->payment_confirmation == -1){
+                $payment_confirmation .= 'Payment Declined';
+            }elseif($key->payment_confirmation == 1){
+                $payment_confirmation .= 'Payment Confirmed';
+            }else{
+                $payment_confirmation .= 'Not Yet Confirmed';
+            }
+
+            // STUDENT
+            $student_name = Student::where('id', $order->student_id)->first()->student->name;
+
+            $row = array(
+                "#" => $i++,
+                "Inovice ID" => $key->invoice_id,
+                "Order ID" => $order->order_id,
+                "Student"=> $student_name,
+                "Order Bill" => $order->order_bill,
+                "Payment Amount" => $key->payment_amount,
+                "Payment Method" => $payment_method,
+                // "Payment Evidence" => $key->payment_evidence,
+                "Payment Confirmation" => $payment_confirmation,
+                "Creator" => $key->creator()->first()->name,
+                "Created At" => $key->created_at->format('Y-m-d H:i:s'),
+                "Updated At" => $key->updated_at->format('Y-m-d H:i:s'),
+            );
+            array_push($array, $row);
+        }
+        $spreadsheet = File::getNewStandartSpreadSheet($array);
+
+        // new file
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+
+        // read file
+        // $writer = IOFactory::createWriter($spreadsheet, "Xlsx");
+        // $writer->save($filename);
+
+        File::download($filename);
     }
 }

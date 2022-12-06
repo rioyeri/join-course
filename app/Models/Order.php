@@ -33,6 +33,10 @@ class Order extends Model
         return $this->belongsTo('App\Models\Student', 'student_id', 'id');
     }
 
+    public function creator(){
+        return $this->belongsTo('App\Models\User','creator', 'id');
+    }
+
     public static function generateOrderID($id){
         $order_id = "FA".date('Ymd')."-".$id;
         return $order_id;
@@ -47,11 +51,22 @@ class Order extends Model
         $columnSortOrder = $request['order'][0]['dir']; // asc or desc
         $searchValue = $request['search']['value']; // Search value
 
+        $start = $request->start_date;
+        $end = $request->end_date;
+
         $page = MenuMapping::getMap(session('role_id'),"OROR");
         if(session('role_id') == 4 || session('role_id') == 5){
             $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type')->where('us.id', session('user_id'));
         }else{
             $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type');
+        }
+
+        if($start != "" && $end != ""){
+            $order->whereBetween(DB::raw('DATE(order.created_at)'), [$start,$end]);
+        }elseif($start != "" && $end == ""){
+            $order->whereDate('order.created_at', '>=', $start);
+        }elseif($start == "" && $end != ""){
+            $order->whereDate('order.created_at', '<=', $end);
         }
 
         if($request->type == "confirm"){
@@ -126,34 +141,36 @@ class Order extends Model
                     $phone_format = User::getFormatWANumber($key->student_phone);
                     $phone_redirect = "https://api.whatsapp.com/send?phone=".$phone_format."&text=Hai%20".$key->student_name.",%20Kami%20dari%20admin%20Flash%20Academia%20memberikan%20informasi%20bahwa%20";
                     $phone_redirect .= Order::getTextInvoice($key->id);
-                    $phone = ' <a href="'.$phone_redirect.'" target="_blank"><i class="fa fa-whatsapp" style="color: #008374"></i></a>';
-                    $student_name .= $phone;
+                    $phone = ' <a href="'.$phone_redirect.'" target="_blank">'.$key->student_name.' <i class="fa fa-whatsapp" style="color: #008374; font-size:15px"></i></a>';
+                    $student_name = $phone;
                 }else{
                     $copy_text = "Hai ".$key->student_name.", Kami dari admin Flash Academia memberikan informasi bahwa ";
                     $copy_text .= Order::getTextInvoice($key->id, "text");
-                    $text = ' <a href="javascript:;" id="copytextbtn'.$key->order_id.'" data-toggle="popover" onclick="copyText(\''.$key->order_id.'\',\''.$copy_text.'\')"><i class="fa fa-copy" style="color:purple"></i></a>';
-                    $student_name .= $text;
+                    $text = ' <a href="javascript:;" id="copytextbtn'.$key->order_id.'" data-toggle="popover" onclick="copyText(\''.$key->order_id.'\',\''.$copy_text.'\')">'.$key->student_name.' <i class="fa fa-copy" style="color:purple; font-size: 15px;"></i></a>';
+                    $student_name = $text;
                 }
             }else{
-                if($key->order_status == -1){
-                    $status .= '<a class="btn btn-danger m-5"><i class="fa fa-power-off"></i> Declined</a> ';
-                }elseif($key->order_status == 1){
-                    $status .= '<a class="btn btn-success m-5"><i class="fa fa-power-off"></i> Ongoing</a> ';
-                }elseif($key->order_status == 2){
-                    $status .= '<a class="btn btn-default m-5"><i class="fa fa-power-off"></i> Finish</a> ';
-                }else{
-                    $status .= '<a class="btn btn-warning m-5"><i class="fa fa-power-off"></i> Not Confirmed</a>';
-                }
+                // if($key->order_status == -1){
+                //     $status .= '<a class="btn btn-danger m-5"><i class="fa fa-power-off"></i> Declined</a> ';
+                // }elseif($key->order_status == 1){
+                //     $status .= '<a class="btn btn-success m-5"><i class="fa fa-power-off"></i> Ongoing</a> ';
+                // }elseif($key->order_status == 2){
+                //     $status .= '<a class="btn btn-default m-5"><i class="fa fa-power-off"></i> Finish</a> ';
+                // }else{
+                //     $status .= '<a class="btn btn-warning m-5"><i class="fa fa-power-off"></i> Not Confirmed</a>';
+                // }
+                $status .= $key->order_status;
             }
+
+            // $payment_status = '';
+            // if($key->payment_status == 1){
+            //     $payment_status .= '<a class="btn btn-success m-5"><i class="fa fa-check"></i> Paid Off</a> ';
+            // }elseif($key->payment_status == 2){
+            //     $payment_status .= '<a class="btn btn-warning m-5"><i class="fa fa-times"></i> Overpaid</a> ';
+            // }else{
+            //     $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
+            // }
             
-            $payment_status = '';
-            if($key->payment_status == 1){
-                $payment_status .= '<a class="btn btn-success m-5"><i class="fa fa-check"></i> Paid Off</a> ';
-            }elseif($key->payment_status == 2){
-                $payment_status .= '<a class="btn btn-warning m-5"><i class="fa fa-times"></i> Overpaid</a> ';
-            }else{
-                $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
-            }
 
             $bill_paid = OrderPayment::where('order_id', $key->id)->where('payment_confirmation', 1)->sum('payment_amount');
 
@@ -170,7 +187,7 @@ class Order extends Model
             $detail->put('schedules', $schedules);
             $detail->put('order_bill', $key->order_bill);
             $detail->put('bill_paid', $bill_paid);
-            $detail->put('payment_status', $payment_status);
+            $detail->put('payment_status', $key->payment_status);
             $detail->put('options', $options);
             $data->push($detail);
         }
@@ -307,6 +324,16 @@ class Order extends Model
                 $report .= '<a href="" onclick="view_report('.$key->id.')" data-toggle="modal" data-target="#myModal" class="btn btn-sm btn-info"><i class="fa fa-file-text"></i> See Report</a>';
             }
 
+            $review = '<a onclick="view_review('.$key->id.')" data-toggle="modal" data-target="#myModal" class="btn btn-primary"><i class="fa fa-star" style="color:#FFA500"></i> Review</a>';
+            if(OrderDetail::where('order_id', $key->id)->orderBy('schedule_time','desc')->count() != 0){
+                $last_schedule = OrderDetail::where('order_id', $key->id)->orderBy('schedule_time','desc')->first()->schedule_time;
+                $now = date("Y-m-d H:i:s", strtotime('+1 hours'));
+
+                if(strtotime($last_schedule) <= $now){
+                    $review = '<a class="btn btn-primary"><i class="fa fa-star" style="color:yellow"></i> Review</a>';
+                }
+            }
+
             $detail->put('no', $i++);
             $detail->put('order_id', '#'.$key->order_id);
             $detail->put('student_name', $key->student_name);
@@ -317,6 +344,7 @@ class Order extends Model
             $detail->put('order_type', $key->order_type);
             $detail->put('schedule', $schedule);
             $detail->put('report', $report);
+            $detail->put('review', $review);
             $data->push($detail);
         }
 
@@ -379,14 +407,14 @@ class Order extends Model
 
             $student_name = $key->student_name;
 
-            $payment_status = '';
-            if($key->payment_status == 1){
-                $payment_status .= '<a class="btn btn-success m-5"><i class="fa fa-check"></i> Paid Off</a> ';
-            }elseif($key->payment_status == 2){
-                $payment_status .= '<a class="btn btn-warning m-5"><i class="fa fa-times"></i> Overpaid</a> ';
-            }else{
-                $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
-            }
+            // $payment_status = '';
+            // if($key->payment_status == 1){
+            //     $payment_status .= '<a class="btn btn-success m-5"><i class="fa fa-check"></i> Paid Off</a> ';
+            // }elseif($key->payment_status == 2){
+            //     $payment_status .= '<a class="btn btn-warning m-5"><i class="fa fa-times"></i> Overpaid</a> ';
+            // }else{
+            //     $payment_status .= '<a class="btn btn-danger m-5"><i class="fa fa-times"></i> Not Yet Paid Off</a>';
+            // }
 
             $status = '';
             if(session('role_id') != 4 && session('role_id') != 5){
@@ -413,15 +441,16 @@ class Order extends Model
                     $student_name .= $text;
                 }
             }else{
-                if($key->order_status == -1){
-                    $status .= '<a class="btn btn-danger m-5"><i class="fa fa-power-off"></i> Declined</a> ';
-                }elseif($key->order_status == 1){
-                    $status .= '<a class="btn btn-success m-5"><i class="fa fa-power-off"></i> Ongoing</a> ';
-                }elseif($key->order_status == 2){
-                    $status .= '<a class="btn btn-default m-5"><i class="fa fa-power-off"></i> Finish</a> ';
-                }else{
-                    $status .= '<a class="btn btn-warning m-5"><i class="fa fa-power-off"></i> Not Confirmed</a>';
-                }
+                // if($key->order_status == -1){
+                //     $status .= '<a class="btn btn-danger m-5"><i class="fa fa-power-off"></i> Declined</a> ';
+                // }elseif($key->order_status == 1){
+                //     $status .= '<a class="btn btn-success m-5"><i class="fa fa-power-off"></i> Ongoing</a> ';
+                // }elseif($key->order_status == 2){
+                //     $status .= '<a class="btn btn-default m-5"><i class="fa fa-power-off"></i> Finish</a> ';
+                // }else{
+                //     $status .= '<a class="btn btn-warning m-5"><i class="fa fa-power-off"></i> Not Confirmed</a>';
+                // }
+                $status .= $key->order_status;
             }
 
             $detail->put('no', $i++);
@@ -433,7 +462,7 @@ class Order extends Model
             $detail->put('package_name', $key->package_name);
             $detail->put('schedules', $schedules);
             $detail->put('order_type', $key->order_type);
-            $detail->put('payment_status', $payment_status);
+            $detail->put('payment_status', $key->payment_status);
             $detail->put('order_status', $status);
             $data->push($detail);
         }
@@ -668,5 +697,15 @@ class Order extends Model
         );
 
         return $response;
+    }
+
+    public static function getTeacherIncome($teacher_id){
+        $result = 0;
+        $orders = Order::where('teacher_id', $teacher_id)->where('order_status', 2)->get();
+        foreach($orders as $order){
+            $result += OrderPayment::where('order_id', $order->id)->where('payment_confirmation', 1)->sum('payment_amount');
+        }
+
+        return $result;
     }
 }

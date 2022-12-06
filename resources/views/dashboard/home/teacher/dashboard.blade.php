@@ -75,7 +75,6 @@ Dashboard
                 <th>Course</th>
                 <th>Grade</th>
                 <th>Package</th>
-                <th>Schedules</th>
                 <th>Type</th>
                 <th>Schedule</th>
                 <th>Report</th>

@@ -10,6 +10,10 @@
     <link href="{{ asset('dashboard/additionalplugins/datatables/select.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Select2 -->
     <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Time Picker -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-timepicker/compiled/timepicker.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-datetimepicker/css/datetimepicker.css') }}" />
+    
     <!-- Sweet Alert css -->
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -87,7 +91,8 @@
                     <th>Title</th>
                     <th>Teacher's Profile</th>
                     <th>Courses</th>
-                    <th>Prices</th>
+                    {{-- <th>Prices</th> --}}
+                    <th>Schedules</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -108,6 +113,11 @@
     
     <!-- Select2 -->
     <script src="{{ asset('dashboard/additionalplugins/select2/js/select2.min.js') }}" type="text/javascript"></script>
+
+    <!-- Time Picker -->
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-daterangepicker/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-timepicker/js/bootstrap-timepicker.js') }}"></script>
 
     <!-- Sweet Alert Js  -->
     <script src="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.js') }}"></script>
@@ -132,7 +142,8 @@
                     {data : "title", name : "title"},
                     {data : "teacher_profile", name : "teacher_profile", orderable : false, searchable: false},
                     {data : "courses", name : "courses", orderable : false},
-                    {data : "prices", name : "prices", orderable : false},
+                    // {data : "prices", name : "prices", orderable : false},
+                    {data : "schedules", name : "schedules"},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             "columnDefs" : [
@@ -297,6 +308,18 @@
     function view_price(id){
         $.ajax({
             url : "/teacher/"+id+"/price",
+            type : "get",
+            dataType: 'json',
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function view_schedules(id){
+        $.ajax({
+            url : "teacherschedule/"+id+"/edit",
             type : "get",
             dataType: 'json',
         }).done(function (data) {

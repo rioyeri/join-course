@@ -11,7 +11,21 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Promo Name</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="name" id="name" placeholder="Paket Hemat / Paket Lengkap" value="@isset($data->name){{ $data->name }}@endisset">
+            {{-- <input type="text" class="form-control" name="name" id="name" placeholder="Paket Hemat / Paket Lengkap" value="@isset($data->name){{ $data->name }}@endisset"> --}}
+            <select class="form-control select2" name="package_id" id="package_id">
+                <option value="#" selected disabled>-- Choose --</option>
+                @foreach ($packages as $package)
+                    @isset($data->package_id)
+                        @if($data->package_id == $package->id)
+                            <option value="{{ $package->id }}" selected>{{$package->name}}</option>
+                        @else
+                            <option value="{{ $package->id }}">{{$package->name}}</option>
+                        @endif
+                    @else
+                        <option value="{{ $package->id }}">{{$package->name}}</option>
+                    @endisset
+                @endforeach
+            </select>
         </div>
     </div>
     <div class="form-group">
@@ -61,8 +75,13 @@
         <label class="col-sm-3 col-sm-3 control-label">Category</label>
         <div class="col-sm-9">
             <select class="form-control select2" name="category" id="category">
-                <option value="0">Regular Offer</option>
-                <option value="1">Best Offer</option>
+                @isset($data->category)
+                    <option value="0" @if($data->category == 0) selected @endif>Regular Offer</option>
+                    <option value="1" @if($data->category == 1) selected @endif>Best Offer</option>
+                @else
+                    <option value="0">Regular Offer</option>
+                    <option value="1">Best Offer</option>
+                @endisset
             </select>
         </div>
     </div>

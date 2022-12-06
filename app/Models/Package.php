@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class Package extends Model
@@ -11,7 +12,7 @@ class Package extends Model
     use SoftDeletes;
     protected $table ='package';
     protected $fillable = [
-        'name','description','status','creator','number_meet'
+        'name','description','status','creator','number_meet','price','discount_rate'
     ];
 
     public static function dataIndex(Request $request){
@@ -24,13 +25,17 @@ class Package extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"MDPC");
-        $package = Package::select('id','name','description','status','number_meet');
+        $package = Package::select('id','name','description','status','number_meet','price','discount_rate');
 
         $totalRecords = $package->count();
 
         if($searchValue != ''){
             $package->where(function ($query) use ($searchValue) {
-                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%');
+                $data_package = [];
+                if(is_numeric($searchValue)){
+                    $data_package = Package::select('id')->where(DB::raw('price - (price/100*discount_rate)'), 'LIKE', '%'.$searchValue.'%')->get();
+                }
+                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhere('number_meet', 'LIKE', '%'.$searchValue.'%')->orWhere('price', 'LIKE', '%'.$searchValue.'%')->orWhere('discount_rate', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $data_package);
             });
         }
 
@@ -38,6 +43,8 @@ class Package extends Model
 
         if($columnName == "no"){
             $package->orderBy('id', $columnSortOrder);
+        }elseif($columnName == "final_price"){
+            $package->orderBy(DB::raw('(price - (price/100*discount_rate))'), $columnSortOrder);
         }else{
             $package->orderBy($columnName, $columnSortOrder);
         }
@@ -72,6 +79,9 @@ class Package extends Model
             $detail->put('name', $key->name);
             $detail->put('description', $key->description);
             $detail->put('number_meet', $key->number_meet);
+            $detail->put('price', $key->price);
+            $detail->put('discount_rate', $key->discount_rate);
+            $detail->put('final_price', $key->price - ($key->price/100*$key->discount_rate));
             $detail->put('options', $options);
             $data->push($detail);
         }

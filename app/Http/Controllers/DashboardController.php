@@ -16,6 +16,7 @@ use App\Models\OrderDetail;
 use App\Models\OrderPayment;
 use App\Models\OrderReport;
 use App\Models\RecycleBin;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -211,7 +212,12 @@ class DashboardController extends Controller
                 $page = "DSSC";
                 $submoduls = MenuMapping::getMap(session('role_id'),$page);
                 $exist_schedules = OrderDetail::where('order_id', $id)->get();
-                return response()->json(view('dashboard.home.form',compact('data','exist_schedules','page','submoduls'))->render());    
+                
+                $order = Order::where('id', $id)->first();
+                $package_number_meet = $order->get_package->number_meet;
+                $order_type = $order->order_type;
+
+                return response()->json(view('dashboard.home.form',compact('data','exist_schedules','page','submoduls','package_number_meet','order_type'))->render());    
             }
         }
     }
