@@ -38,15 +38,15 @@ class Student extends Model
 
         if($searchValue != ''){
             $student->where(function ($query) use ($searchValue) {
-                $user_id = array();
-                $users = User::all();
-                foreach($users as $user){
-                    if(User::getAge($user->birthdate) == $searchValue){
-                        array_push($user_id, $user->id);
-                    }
-                }
-                
-                $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('student_grade', 'LIKE', '%'.$searchValue.'%')->orWhere('school_name', 'LIKE', '%'.$searchValue.'%')->orWhereIn('user_id', $user_id);
+                // $user_id = array();
+                // $users = User::all();
+                // foreach($users as $user){
+                //     if(User::getAge($user->birthdate) == $searchValue){
+                //         array_push($user_id, $user->id);
+                //     }
+                // }
+                // $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('student_grade', 'LIKE', '%'.$searchValue.'%')->orWhere('school_name', 'LIKE', '%'.$searchValue.'%')->orWhereIn('user_id', $user_id);
+                $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('student_grade', 'LIKE', '%'.$searchValue.'%')->orWhere('school_name', 'LIKE', '%'.$searchValue.'%');
             });
         }
 
@@ -78,7 +78,11 @@ class Student extends Model
                 $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
             }
 
-            $age = User::getAge($key->birthdate)." years old";
+            if($key->birthdate == null){
+                $age = "<i>Unknown Birthdate</i>";
+            }else{
+                $age = User::getAge($key->birthdate)." years old";
+            }
 
             $detail->put('no', $i++);
             $detail->put('student_name', $key->student_name);

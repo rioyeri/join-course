@@ -11,6 +11,9 @@ use App\Models\Teacher;
 use App\Models\User;
 use App\Models\Log;
 
+use Symfony\Component\HttpFoundation\Response;
+use App\Helpers\ApiFormatter;
+
 class OrderReviewController extends Controller
 {
     /**
@@ -36,6 +39,11 @@ class OrderReviewController extends Controller
             $row = collect();
             $row->put('name', $data_teacher->teacher->name);
             $row->put('photo', User::getPhoto($data_teacher->user_id));
+            if(OrderReview::where('order_id', $data->id)->count() != 0){
+                $review = OrderReview::where('order_id',$data->id)->orderBy('id', 'desc')->first();
+                $row->put('rating', $review->rating);
+                $row->put('review', $review->review);
+            }
             $teacher = json_decode(json_encode($row), FALSE);
             return response()->json(view('dashboard.home.review', compact('data','teacher'))->render());
         }
@@ -76,8 +84,8 @@ class OrderReviewController extends Controller
                 }
                 if($data->save()){
                     Log::setLog('ORRVC','Create Order Review : '.$order->order_id.' teacher : '.$order->get_teacher->teacher->name);
-                    // $order->order_status = 2;
-                    // $order->save();
+                    $order->order_status = 2;
+                    $order->save();
                     return redirect()->route('home.index')->with('status','Successfully saved');
                 }else{
                     return redirect()->back()->with('failed','Failed!');
@@ -94,9 +102,10 @@ class OrderReviewController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        $data = OrderReview::ReviewWithoutName($request, $id);
+        return $data;
     }
 
     /**
@@ -107,7 +116,9 @@ class OrderReviewController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Teacher::where('id', $id)->first();
+        $details = OrderReview::where('teacher_id', $id)->get();
+        return response()->json(view('dashboard.masterdata.teacher.review.form',compact('data','details'))->render());
     }
 
     /**

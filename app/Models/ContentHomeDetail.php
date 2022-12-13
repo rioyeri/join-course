@@ -9,7 +9,7 @@ class ContentHomeDetail extends Model
 {
     protected $table ='content_home_detail';
     protected $fillable = [
-        'content_id','title','description','image','link','link_text','creator'
+        'content_id','title','subtitle','description','image','link','link_text','creator'
     ];
 
     public static function dataIndex(Request $request){

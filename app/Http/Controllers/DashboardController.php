@@ -16,7 +16,6 @@ use App\Models\OrderDetail;
 use App\Models\OrderPayment;
 use App\Models\OrderReport;
 use App\Models\RecycleBin;
-use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -138,6 +137,7 @@ class DashboardController extends Controller
                     $data = new OrderReport(array(
                         'order_id' => $request->order_id,
                         'title' => $request->title,
+                        'link' => $request->link,
                         'creator' => session('user_id'),
                     ));
                     $data->save();
@@ -163,9 +163,10 @@ class DashboardController extends Controller
                     <td style="width:5%">'.$count.'</td>
                     <td style="width:25%">'.$data->created_at->format('Y-m-d H:i:s').'</td>
                     <td style="width:20%">'.$data->title.'</td>
-                    <td style="width:30%"><a href="'.asset('dashboard/assets/order/'.$order->order_id.'/'.$data->file).'" target="_blank"><i class="fa fa-file-text-o"></i> '.$data->file.'</a></td>';
+                    <td style="width:20%"><a href="'.asset('dashboard/assets/order/'.$order->order_id.'/'.$data->file).'" target="_blank"><i class="fa fa-file-text-o"></i> '.$data->file.'</a></td>
+                    <td style="width:20%"><a href="'.$data->link.'" target="_blank">'.$data->link.'</a></td>';
                     if(array_search("DSRPD", $submoduls)){
-                        $append .= '<td style="width:20%" class="text-center"><a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-md waves-danger m-b-5" onclick="deleteItem('.$data->id.','.$count.')">Delete</a></td>';
+                        $append .= '<td style="width:10%" class="text-center"><a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-md waves-danger m-b-5" onclick="deleteItem('.$data->id.','.$count.')">Delete</a></td>';
                     }
                     $append .= '</tr>';
 
@@ -190,7 +191,15 @@ class DashboardController extends Controller
      */
     public function show(Request $request, $id)
     {
-        // 
+        if($request->ajax()){
+            $modal_type = $request->modal_type;
+            $teacher = Teacher::where('id', $id)->first();
+            if($modal_type == "review"){
+                return response()->json(view('dashboard.home.teacher.review', compact('teacher'))->render());
+            }elseif($modal_type == "order"){
+                return response()->json(view('dashboard.home.teacher.history-order', compact('teacher'))->render());
+            }
+        }
     }
 
     /**

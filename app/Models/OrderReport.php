@@ -8,7 +8,7 @@ class OrderReport extends Model
 {
     protected $table ='order_report';
     protected $fillable = [
-        'order_id','title','file','creator'
+        'order_id','title','file','link','creator'
     ];
 
     public function get_order(){

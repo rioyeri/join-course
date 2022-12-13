@@ -21,9 +21,9 @@
     </div>
     @else
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Choose User</label>
+        <label class="col-sm-3 col-sm-3 control-label">Choose User <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <select class="form-control select2" parsley-trigger="change" name="user_id" id="user_id">
+            <select class="form-control select2" parsley-trigger="change" name="user_id" id="user_id" required>
                 <option value="#" selected disabled>-- Choose --</option>
                 @foreach ($users as $user)
                     <option value="{{$user->id}}">{{$user->name}}</option>
@@ -33,15 +33,15 @@
     </div>
     @endisset
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Your Title</label>
+        <label class="col-sm-3 col-sm-3 control-label">Your Title <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="title" id="title" placeholder="Misal: Guru Matematika, Pelatih Renang" @isset($data->title) value="{{ $data->title }}" @endisset @isset($data)disabled @endisset>
+            <input type="text" class="form-control" name="title" id="title" placeholder="Misal: Guru Matematika, Pelatih Renang" @isset($data->title) value="{{ $data->title }}" @endisset @isset($data)disabled @endisset required>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Description</label>
+        <label class="col-sm-3 col-sm-3 control-label">Description <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <textarea class="form-control" name="description" id="description" rows="3" placeholder="Misal: Saya telah berpengalaman dalam mengajar bidang ini selama 5 tahun" @isset($data->description) @endisset @isset($data)disabled @endisset>@isset($data->description){{ $data->description }}@endisset</textarea>
+            <textarea class="form-control" name="description" id="description" rows="3" placeholder="Misal: Saya telah berpengalaman dalam mengajar bidang ini selama 5 tahun" @isset($data->description) @endisset @isset($data)disabled @endisset required>@isset($data->description){{ $data->description }}@endisset</textarea>
         </div>
     </div>
     @isset($data)
@@ -65,12 +65,12 @@
         if(btn == 'none'){
             document.getElementById('title').removeAttribute('disabled');
             document.getElementById('description').removeAttribute('disabled');
-            document.getElementById('location').removeAttribute('disabled');
+            // document.getElementById('location').removeAttribute('disabled');
             document.getElementById('button-update').style.display = 'block';
         }else{
             document.getElementById('title').setAttribute('disabled',true);
             document.getElementById('description').setAttribute('disabled',true);
-            document.getElementById('location').setAttribute('disabled',true);
+            // document.getElementById('location').setAttribute('disabled',true);
             document.getElementById('button-update').style.display = 'none';
         }
         change_button();

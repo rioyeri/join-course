@@ -16,7 +16,9 @@ use App\Models\Log;
 use App\Models\RecycleBin;
 use App\Models\MenuMapping;
 use App\Models\Package;
+use App\Models\RoleMapping;
 use App\Models\TeacherSchedule;
+use App\Models\Student;
 
 class TeacherController extends Controller
 {
@@ -45,7 +47,7 @@ class TeacherController extends Controller
     public function create()
     {
         $courses = Course::where('status',1)->get();
-        $users = User::getUserListByRole('!=', 4);
+        $users = User::getUserListByRole('!=', 5);
         return response()->json(view('dashboard.masterdata.teacher.form',compact('courses','users'))->render());
     }
 
@@ -74,6 +76,14 @@ class TeacherController extends Controller
                     'description' => $request->description,
                 ));
                 $teacher->save();
+
+                $user = User::where('id', $request->user_id)->first();
+                RoleMapping::setData($user->username, 5);
+
+                if(Student::where('user_id', $request->user_id)->count() != 0){
+                    Student::where('user_id', $request->user_id)->delete();
+                }
+
                 Log::setLog('MDTCC','Create Teacher : '.$request->user_id);
                 return redirect()->route('teacher.index')->with('status','Successfully saved');
             }catch(\Exception $e){

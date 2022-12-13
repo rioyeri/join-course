@@ -123,11 +123,13 @@
                                         <a class="btn btn-theme btn-round" onclick="getDatas('not-confirm')"><i class="fa fa-filter"></i> Filter</a>
                                         <a class="btn" onclick="resetParamProcess('not-confirm')"><i class="fa fa-rotate-left"></i> Clear</a>
                                     </div>
+                                    @if(array_search("ORORX", $submoduls))
                                     <div class="col-6 text-right">
-                                        <button class="btn btn-success btn-round m-b-5">
+                                        <button class="btn btn-success btn-round m-b-5 btn-sm">
                                             <i class="fa fa-file-text-o"></i> Export to Excel
                                         </button>
                                     </div>
+                                    @endif
                                 </div>
                             </form>            
                             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-notconfirm" width="100%">
@@ -176,11 +178,13 @@
                                         <a class="btn btn-theme btn-round" onclick="getDatas('confirm')"><i class="fa fa-filter"></i> Filter</a>
                                         <a class="btn" onclick="resetParamProcess('confirm')"><i class="fa fa-rotate-left"></i> Clear</a>
                                     </div>
+                                    @if(array_search("ORORX", $submoduls))
                                     <div class="col-6 text-right">
-                                        <button class="btn btn-success btn-round m-b-5">
+                                        <button class="btn btn-success btn-round m-b-5 btn-sm">
                                             <i class="fa fa-file-text-o"></i> Export to Excel
                                         </button>
                                     </div>
+                                    @endif
                                 </div>
                             </form>
                             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-confirm" width="100%">
@@ -229,11 +233,13 @@
                                         <a class="btn btn-theme btn-round" onclick="getDatas('finish')"><i class="fa fa-filter"></i> Filter</a>
                                         <a class="btn" onclick="resetParamProcess('finish')"><i class="fa fa-rotate-left"></i> Clear</a>
                                     </div>
+                                    @if(array_search("ORORX", $submoduls))
                                     <div class="col-6 text-right">
-                                        <button class="btn btn-success btn-round m-b-5">
+                                        <button class="btn btn-success btn-round m-b-5 btn-sm">
                                             <i class="fa fa-file-text-o"></i> Export to Excel
                                         </button>
                                     </div>
+                                    @endif
                                 </div>
                             </form>
                             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-finish" width="100%">
@@ -282,11 +288,13 @@
                                         <a class="btn btn-theme btn-round" onclick="getDatas('decline')"><i class="fa fa-filter"></i> Filter</a>
                                         <a class="btn" onclick="resetParamProcess('decline')"><i class="fa fa-rotate-left"></i> Clear</a>
                                     </div>
+                                    @if(array_search("ORORX", $submoduls))
                                     <div class="col-6 text-right">
-                                        <button class="btn btn-success btn-round m-b-5">
+                                        <button class="btn btn-success btn-round m-b-5 btn-sm">
                                             <i class="fa fa-file-text-o"></i> Export to Excel
                                         </button>
                                     </div>
+                                    @endif
                                 </div>
                             </form>
                             <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-order-decline" width="100%">
@@ -1123,6 +1131,38 @@
                 alert('Gagal menampilkan data, silahkan refresh halaman.');
             });
         }
+    }
+
+    function view_report(id){
+        $.ajax({
+            url : "home/"+id+"/edit",
+            type : "get",
+            dataType: 'json',
+            data: {
+                type:"report",
+            },
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function view_review(id){
+        $.ajax({
+            // url : "home/"+id+"/edit",
+            url: "{{ route('orderreview.create') }}",
+            type: "get",
+            dataType: 'json',
+            data: {
+                // type:"review",
+                id: id,
+            },
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
     }
 </script>
 @if(session('order'))

@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 use App\Models\BootstrapIcon;
 use App\Models\ContentHome;
 use App\Models\ContentHomeDetail;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Log;
 use App\Models\MenuMapping;
+use App\Models\OrderReview;
 use App\Models\RecycleBin;
 use App\Models\Teacher;
 use App\Models\User;
 
+use App\Helpers\ApiFormatter;
+use Symfony\Component\HttpFoundation\Response;
 class ContentManagementController extends Controller
 {
     /**
@@ -52,57 +56,113 @@ class ContentManagementController extends Controller
     {
         if ($request->ajax()) {
             try{
-                $data = ContentHomeDetail::where('id', $request->detail_id)->first();
-                
-                if($request->content_id == 2){
-                    $image = $request->image;
+                if(isset($request->detail_id)){
+                    $data = ContentHomeDetail::where('id', $request->detail_id)->first();
+
+                    if($request->content_id == 2){
+                        $image = $request->image;
+                    }else{
+                        // Upload Foto
+                        if($request->image != null || $request->image != '' && $request->content_id != 3){
+                            if($request->content_id == 4){
+                                $path = "landingpage/assets/img/testimonials/";
+                            }elseif($request->content_id == 8){
+                                $path = "landingpage/assets/img/";
+                            }
+                            if (file_exists(public_path($path).$data->image) && $data->image != null && isset($path)) {
+                                unlink(public_path($path).$data->image);
+                            }
+    
+                            $filename = str_replace( array( '\'', '"', ',' , ';', '<', '>',' ','!','?','.','/'), '', $data->title);
+    
+                            $image = $filename.'.'.$request->image->getClientOriginalExtension();
+                            $request->image->move(public_path($path), $image);
+                        }else{
+                            $user_id = $request->reviewer_user_id;
+
+                            if($user_id != ""){
+                                // COPY PROFILE PHOTO USER KE TESTIMONIAL
+                                if(User::where('id', $user_id)->first()->profilephoto != ""){
+                                    $filename = User::where('id', $user_id)->first()->profilephoto;
+                                }else{
+                                    $username = User::where('id', $user_id)->first()->username;
+                                    $filename = strtolower(substr($username, 0,1)).".jpg";
+                                }
+                                $source = public_path(User::getPhoto($user_id));
+                                $destination = public_path("landingpage/assets/img/testimonials/".$filename);
+                                $image = $filename;
+                                copy($source, $destination);
+                            }else{
+                                $image = $data->image;
+                            }
+                        }
+                    }
+    
+                    if($request->content_id == 3){
+                        $user = User::where('name', 'LIKE', '%'.$request->title.'%')->first();
+                        $teacher = Teacher::where('user_id', $user->id)->first();
+                        $title = $request->title;
+                        $subtitle = $teacher->title;
+                        $description = $teacher->description;
+                        $link = $teacher->id; // $link used to save teacher_id on table content home
+                        $link_text = $request->link_text;
+                        $image = $user->profilephoto;
+                    }else{
+                        $title = $request->title;
+                        $subtitle = $request->subtitle;
+                        $description = $request->description;
+                        $link = $request->link;
+                        $link_text = $request->link_text;
+                    }
+                    
+        
+                    $data->title = $title;
+                    $data->subtitle = $subtitle;
+                    $data->description = $description;
+                    $data->link = $link;
+                    $data->link_text = $link_text;
+                    $data->image = $image;
+                    $data->save();
                 }else{
                     // Upload Foto
-                    if($request->image != null || $request->image != '' && $request->content_id != 3){
-                        if($request->content_id == 4){
-                            $path = "landingpage/assets/img/testimonials/";
-                        }elseif($request->content_id == 8){
-                            $path = "landingpage/assets/img/";
-                        }
-                        if (file_exists(public_path($path).$data->image) && $data->image != null && isset($path)) {
-                            unlink(public_path($path).$data->image);
-                        }
+                    if($request->image != null || $request->image != ''){
+                        $path = "landingpage/assets/img/testimonials/";
 
-                        $filename = str_replace( array( '\'', '"', ',' , ';', '<', '>',' ','!','?','.','/'), '', $data->title);
+                        $filename = str_replace( array( '\'', '"', ',' , ';', '<', '>',' ','!','?','.','/'), '', $request->title);
 
                         $image = $filename.'.'.$request->image->getClientOriginalExtension();
                         $request->image->move(public_path($path), $image);
                     }else{
-                        $image = $data->image;
-                    }
-                }
+                        $user_id = $request->reviewer_user_id;
 
-                if($request->content_id == 3){
-                    $user = User::where('name', 'LIKE', '%'.$request->title.'%')->first();
-                    $teacher = Teacher::where('user_id', $user->id)->first();
-                    $title = $request->title;
-                    $subtitle = $teacher->title;
-                    $description = $teacher->description;
-                    $link = $teacher->id; // $link used to save teacher_id on table content home
-                    $link_text = $request->link_text;
-                    $image = $user->profilephoto;
-                }else{
-                    $title = $request->title;
-                    $subtitle = $request->subtitle;
-                    $description = $request->description;
-                    $link = $request->link;
-                    $link_text = $request->link_text;
+                        if($user_id != ""){
+                            // COPY PROFILE PHOTO USER KE TESTIMONIAL
+                            if(User::where('id', $user_id)->first()->profilephoto != ""){
+                                $filename = User::where('id', $user_id)->first()->profilephoto;
+                            }else{
+                                $username = User::where('id', $user_id)->first()->username;
+                                $filename = strtolower(substr($username, 0,1)).".jpg";
+                            }
+                            $source = public_path(User::getPhoto($user_id));
+                            $destination = public_path("landingpage/assets/img/testimonials/".$filename);
+                            $image = $filename;
+                            copy($source, $destination);
+                        }else{
+                            $filename = strtolower(substr($request->title, 0,1)).".jpg";
+                            $image = $filename;
+                        }
+                    }
+
+                    $data = new ContentHomeDetail(array(
+                        "content_id" => 4,
+                        "title" => $request->title,
+                        "subtitle" => $request->subtitle,
+                        "description" => $request->description,
+                        "image" => $image,
+                        "creator" => session('user_id'),
+                    ));
+                    $data->save();
                 }
-                
-    
-                $data->title = $title;
-                $data->subtitle = $subtitle;
-                $data->description = $description;
-                $data->link = $link;
-                $data->link_text = $link_text;
-                $data->image = $image;
-                $data->save();
-    
                 return response()->json($data);
             }catch(\Exception $e){
                 return redirect()->back()->withErrors($e->getMessage());
@@ -136,6 +196,10 @@ class ContentManagementController extends Controller
                 $details = ContentHomeDetail::where('content_id', $id)->get();
                 $icons = BootstrapIcon::all();
                 return response()->json(view('dashboard.content.content-management.form',compact('data', 'details', 'icons','teachers'))->render());    
+            }elseif($id == 4){
+                $reviews = OrderReview::orderBy('rating', 'desc')->get();
+                $details = ContentHomeDetail::where('content_id', $id)->get();
+                return response()->json(view('dashboard.content.content-management.form',compact('data', 'details','reviews'))->render());
             }else{
                 $details = ContentHomeDetail::where('content_id', $id)->get();
                 $icons = BootstrapIcon::all();
@@ -183,9 +247,17 @@ class ContentManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $data = ContentHomeDetail::where('id', $id)->first();
+        if($data != NULL){
+            $log_id = Log::setLog('CTHOD','Delete detail segment : '.$data->content_id, $request->user_id);
+            RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data), $request->user_id);
+            $data->delete();
+            return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
+        }else{
+            return ApiFormatter::createApi(Response::HTTP_BAD_REQUEST, 'Failed');
+        }
     }
 
     public function changeStatus(Request $request, $id){

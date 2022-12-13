@@ -21,6 +21,7 @@ use App\Models\TeacherSchedule;
 use App\Models\Day;
 use App\Models\OrderDetail;
 use App\Helpers\File;
+use App\Models\TeacherCourse;
 use DateTime;
 use PDF;
 
@@ -153,9 +154,10 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        // 
+        $data = Order::HistoryOrder($request, $id);
+        return $data;
     }
 
     /**
@@ -173,8 +175,9 @@ class OrderController extends Controller
         }else{
             $students = Student::all();
         }
-        $teachers = Teacher::where('status', 1)->get();
         $courses = Course::where('status', 1)->get();
+        $teacher_course = TeacherCourse::where('course_id', $data->course_id)->select('teacher_id')->get();
+        $teachers = Teacher::whereIn('id', $teacher_course)->where('status', 1)->get();
         $grades = Grade::all();
         $packages = Package::where('status', 1)->get();
         // $users = User::getUserListByRole('!=', 4);
@@ -190,9 +193,6 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // echo "<pre>";
-        // print_r($request->all());
-        // die;
         $validator = Validator::make($request->all(), [
             "student_id" => "required|integer",
             "grade_id" => "required|integer",
@@ -481,12 +481,13 @@ class OrderController extends Controller
 
         // new file
         $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
+        $filepath = "download/".$filename;
+        $writer->save($filepath);
 
         // read file
         // $writer = IOFactory::createWriter($spreadsheet, "Xlsx");
         // $writer->save($filename);
 
-        File::download($filename);
+        File::download($filepath);
     }
 }

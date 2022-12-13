@@ -91,7 +91,6 @@ class ContentPromoController extends Controller
             $validator = Validator::make($request->all(), [
                 'package_id' => 'required',
                 'icon' => 'required',
-                'price' => 'required',
             ]);
             // IF Validation fail
             if ($validator->fails()) {
@@ -99,15 +98,14 @@ class ContentPromoController extends Controller
             // Validation success
             }else{
                 try{
+                    $position = ContentPromo::orderBy('position', 'desc')->first()->position + 1;
                     $data = new ContentPromo(array(
                         "package_id" => $request->package_id,
                         'icon' => $request->icon,
-                        'price' => $request->price,
-                        'time_signature' => $request->time_signature,
                         'link_text' => $request->link_text,
-                        'link' => $request->link,
                         'category' => $request->category,
                         "creator" => session('user_id'),
+                        'position' => $position,
                     ));
                     $data->save();
 
@@ -193,7 +191,6 @@ class ContentPromoController extends Controller
             $validator = Validator::make($request->all(), [
                 'package_id' => 'required',
                 'icon' => 'required',
-                'price' => 'required',
             ]);
             // IF Validation fail
             if ($validator->fails()) {
@@ -204,8 +201,6 @@ class ContentPromoController extends Controller
                     $data = ContentPromo::where('id', $id)->first();
                     $data->package_id = $request->package_id;
                     $data->icon = $request->icon;
-                    $data->price = $request->price;
-                    $data->time_signature = $request->time_signature;
                     $data->link_text = $request->link_text;
                     $data->category = $request->category;
                     $data->creator = session('user_id');

@@ -63,7 +63,7 @@ class Teacher extends Model
                 $user_id = User::select('id')->where(function ($query2) use ($searchValue){
                     $query2->orWhere('address_city', 'LIKE', '%'.$searchValue.'%')->orWhere('address_province', 'LIKE', '%'.$searchValue.'%');
                 })->get();
-                $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('title', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $user_id);
+                $query->orWhere('u.name', 'LIKE', '%'.$searchValue.'%')->orWhere('title', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhereIn('u.id', $user_id);
             });
         }
 
@@ -86,6 +86,7 @@ class Teacher extends Model
             $courses_button = '';
             // $prices_button = '';
             $schedules_button = '';
+            $reviews_button = '';
  
             if (array_search("MDTCV",$page)){
                 // if(TeacherPrice::where('teacher_id', $key->id)->count() != 0){
@@ -111,10 +112,20 @@ class Teacher extends Model
                     $count_course = "Empty";
                     $color_course = "#FF0000";
                 }
+
+                if(OrderReview::where('teacher_id', $key->id)->count() != 0){
+                    $count_review = OrderReview::where('teacher_id', $key->id)->count();
+                    $color_review = "#000";
+                }else{
+                    $count_review = "Empty";
+                    $color_review = "#FF0000";
+                }
+
                 $profile_button .= '<a class="btn btn-info m-5" onclick="view_profile('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i> View Profile</a> ';
                 $courses_button .= '<a class="btn btn-info m-5" onclick="view_subject('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-list-ul"></i> View Subjects <span style="color:'.$color_course.'">('.$count_course.')</span></a> ';
                 // $prices_button .= '<a class="btn btn-info m-5" onclick="view_price('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-usd"></i> View Packages <span style="color:'.$color_price.'">('.$count_price.')</span></a> ';
                 $schedules_button .= '<a class="btn btn-info m-5" onclick="view_schedules('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-list-ul"></i> View Schedules <span style="color:'.$color_schedule.'">('.$count_schedule.')</span></a>';
+                $reviews_button .= '<a class="btn btn-info m-5" onclick="view_reviews('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-list-ul"></i> View Reviews <span style="color:'.$color_review.'">('.$count_review.')</span></a>';
             }
 
             $options = '';
@@ -137,6 +148,7 @@ class Teacher extends Model
             $detail->put('courses', $courses_button);
             // $detail->put('prices',$prices_button);
             $detail->put('schedules', $schedules_button);
+            $detail->put('reviews', $reviews_button);
             $detail->put('options', $options);
             $data->push($detail);
         }
@@ -279,8 +291,9 @@ class Teacher extends Model
         }
         $colors = Color::getColor()->shuffle();
         $i=0;
+        $datas = Teacher::where('status', 1)->get();
 
-        foreach(Teacher::where('status', 1)->get() as $key){
+        foreach($datas as $key){
             $temp = collect();
             if($month != null){
                 $count_orders = Order::whereIn('order_status', [1,2])->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end)->where('teacher_id', $key->id)->count();
@@ -317,7 +330,6 @@ class Teacher extends Model
         }else{
             $result = $data;
         }
-
         return $result;
     }
 

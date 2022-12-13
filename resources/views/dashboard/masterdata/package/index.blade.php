@@ -125,7 +125,7 @@
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "name", name : "name"},
-                    {data : "description", name : "description", orderable : false},
+                    {data : "description", name : "description"},
                     {data : "number_meet", name : "number_meet"},
                     {data : "price", name : "price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                     {data : "discount_rate", name : "discount_rate", render: $.fn.dataTable.render.number( '.', ',', 2, '', '%' )},

@@ -20,12 +20,15 @@ class RecycleBin extends Model
         return $result;
     }
 
-    public static function moveToRecycleBin($log_id,$tablename,$content){
+    public static function moveToRecycleBin($log_id,$tablename,$content,$user_id=null){
+        if($user_id == null){
+            $user_id = session('user_id');
+        }
         $data = new RecycleBin(array(
             "log_id" => $log_id,
             "table_origin" => $tablename,
             "content" => $content,
-            "creator" => session('user_id'),
+            "creator" => $user_id,
         ));
 
         $data->save();

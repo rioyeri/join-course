@@ -368,8 +368,19 @@ class UserController extends Controller
         $profilephoto = User::getPhoto($data->id);
 
         if(session('role_id') == 4){
+            $student = Student::where('user_id', session('user_id'))->first();
             $grades = Grade::all();
-            return  view('dashboard.user.profile.index', compact('page','data','grades','profilephoto'));
+
+            // INCOME, RATING AND ORDERCOUNT
+            $order_count = Order::where('student_id', $student->id)->whereIn('order_status', [1,2])->count();
+            // $review_count = OrderReview::getReviewCount($student->id);
+
+            $stats = json_decode(json_encode(array(
+                "order_count" => $order_count,
+                // "review_count" => $review_count,
+            )),FALSE);
+
+            return  view('dashboard.user.profile.index', compact('page','data','grades','profilephoto','stats','student'));
         }elseif(session('role_id') == 5){
             $teacher = Teacher::where('user_id', session('user_id'))->first();
 
@@ -386,14 +397,16 @@ class UserController extends Controller
             $details = TeacherSchedule::where('teacher_id', $teacher->id)->get();
 
             // INCOME, RATING AND ORDERCOUNT
-            $income = Order::getTeacherIncome($teacher->id);
+            // $income = Order::getTeacherIncome($teacher->id);
             $rating = OrderReview::getRating($teacher->id);
-            $order_count = Order::where('teacher_id', $teacher->id)->where('order_status', 2)->count();
+            $order_count = Order::where('teacher_id', $teacher->id)->whereIn('order_status', [1,2])->count();
+            $review_count = OrderReview::getReviewCount($teacher->id);
 
             $stats = json_decode(json_encode(array(
-                "income" => $income,
+                // "income" => $income,
                 "order_count" => $order_count,
                 "rate" => $rating,
+                "review_count" => $review_count,
             )),FALSE);
     
             return  view('dashboard.user.profile.index', compact('page','data','courses','exist_course','exist_packages','packages','stats','profilephoto','days','details'));

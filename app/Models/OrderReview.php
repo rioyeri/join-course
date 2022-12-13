@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrderReview extends Model
 {
@@ -35,9 +37,67 @@ class OrderReview extends Model
 
     public static function getReviewCount($teacher_id){
         $total_review = OrderReview::where('teacher_id', $teacher_id)->count();
-        if($total_review == 0){
-            $total_review = 1;
-        }
+        // if($total_review == 0){
+        //     $total_review = 1;
+        // }
         return $total_review;
+    }
+
+    public static function ReviewWithoutName(Request $request, $id){
+        $draw = $request->draw;
+        $row = $request->start;
+        $rowperpage = $request->length; // Rows display per page
+        $columnIndex = $request['order'][0]['column']; // Column index
+        $columnName = $request['columns'][$columnIndex]['data']; // Column name
+        $columnSortOrder = $request['order'][0]['dir']; // asc or desc
+        $searchValue = $request['search']['value']; // Search value
+
+        $reviews = OrderReview::select('id', 'review')->where('teacher_id', $id);
+
+        $totalRecords = $reviews->count();
+
+        if($searchValue != ''){
+            $reviews->where('review', 'LIKE', '%'.$searchValue.'%');
+        }
+
+        $totalRecordwithFilter = $reviews->count();
+
+        if($columnName == "no"){
+            $reviews->orderBy('id', $columnSortOrder);
+        }else{
+            $reviews->orderBy($columnName, $columnSortOrder);
+        }
+
+        $reviews = $reviews->offset($row)->limit($rowperpage)->get();
+
+        $datas = collect();
+        $i = $row+1;
+
+        foreach ($reviews as $review) {
+            $detail = collect();
+            $detail->put('no', $i++);
+            $detail->put('id',$review->id);
+            $detail->put('review', $review->review);
+            $datas->push($detail);
+        }
+
+        if(count($datas) == 0){
+            $message = "Failed";
+            $code = Response::HTTP_BAD_REQUEST;
+        }else{
+            $message = "Success";
+            $code = Response::HTTP_OK;
+        }
+
+        $response = array(
+            'message' => $message,
+            'code' => $code,
+            'draw' => intval($draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecordwithFilter,
+            'data' => $datas,
+        );
+
+        return json_encode($response);
     }
 }

@@ -177,26 +177,42 @@ Your Profile
                         <!-- /detailed -->
                         </div>
                         <!-- /col-md-6 -->
+                        @if(session('role_id') == 4)
+                            <div class="col-md-6 detailed">
+                                <h4>User Stats</h4>
+                                <div class="row centered mt mb">
+                                    <div class="col-sm-12">
+                                        <h1><i class="fa fa-trophy" style="color:#008374"></i></h1>
+                                        <h3>{{ number_format($stats->order_count, 0, ",", ".") }}</h3>
+                                        <h6>COMPLETED COURSE</h6>
+                                    </div>
+                                </div>
+                                <!-- /row -->
+                            </div>
+                        @endif
                         @if(session('role_id') == 5)
                             <div class="col-md-6 detailed">
                                 <h4>User Stats</h4>
                                 <div class="row centered mt mb">
-                                    <div class="col-sm-4">
+                                    {{-- <div class="col-sm-4">
                                         <h1><i class="fa fa-money"></i></h1>
                                         <h3>Rp {{ number_format($stats->income, 2, ",", ".") }}</h3>
-                                        {{-- <h3>Rp {{ $stats->income }}</h3> --}}
                                         <h6>LIFETIME EARNINGS</h6>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-sm-4">
-                                        <h1><i class="fa fa-trophy"></i></h1>
-                                        <h3>{{ number_format($stats->order_count, 0, ",", ".") }}</h3>
-                                        {{-- <h3>{{ $stats->order_count }}</h3> --}}
+                                        <h1><a href="" onclick="getHistory({{ $data->get_teacher->id }})" data-toggle="modal" data-target="#myModal"><i class="fa fa-trophy" style="color:#008374"></i></a></h1>
+                                        <h3><a href="" onclick="getHistory({{ $data->get_teacher->id }})" data-toggle="modal" data-target="#myModal" style="color:#008374">{{ number_format($stats->order_count, 0, ",", ".") }}</a></h3>
                                         <h6>COMPLETED COURSE</h6>
                                     </div>
                                     <div class="col-sm-4">
                                         <h1><i class="fa fa-star" style="color:#FFD700;"></i></h1>
                                         <h3>{{ $stats->rate }}</h3>
                                         <h6>YOUR RATE</h6>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h1><a href="" onclick="getReview({{ $data->get_teacher->id }})" data-toggle="modal" data-target="#myModal"><i class="fa fa-comment-o" style="color:#ed5565"></i></a></h1>
+                                        <h3><a href="" onclick="getReview({{ $data->get_teacher->id }})" data-toggle="modal" data-target="#myModal" style="color:#ed5565">{{ $stats->review_count }}</a></h3>
+                                        <h6>REVIEW COUNTS</h6>
                                     </div>
                                 </div>
                                 <!-- /row -->
@@ -438,8 +454,8 @@ Your Profile
 <!-- /row -->
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -649,6 +665,36 @@ Your Profile
             dataType: 'json',
             data: {
                 "type": "changePassword",
+            }
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function getReview(id){
+        $.ajax({
+            url : "home/"+id,
+            type : "get",
+            dataType: 'json',
+            data: {
+                modal_type: "review",
+            }
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function getHistory(id){
+        $.ajax({
+            url : "/home/"+id,
+            type : "get",
+            dataType: 'json',
+            data: {
+                modal_type: "order",
             }
         }).done(function (data) {
             $('#view-form').html(data);

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Order extends Model
 {
@@ -110,31 +111,32 @@ class Order extends Model
             }
             
             $options = '';
-            if (array_search("ORORU",$page)){
-                if((session('role_id') == 4 || session('role_id') == 5) && ($key->order_status == 1 || $key->order_status == 2)){
-                    $options .= '<a class="btn btn-primary btn-round m-5"><i class="fa fa-pencil"></i> Edit</a> ';
-                }else{
-                    $options .= '<a class="btn btn-primary btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
+            if(array_search("ORORU",$page)){
+                $options .= '<a class="btn btn-primary btn-round m-5 btn-sm" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
+            }
+            if(array_search("ORORD",$page)){
+                $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5 btn-sm" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
+            }
+            if($key->order_status == 1 || $key->order_status == 2){
+                $options .= '<a href="" class="btn btn-info btn-round m-5 btn-sm" onclick="view_report('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-file-text"></i> Report</a>';
+                if($key->order_status == 2){
+                    $options .= '<a onclick="view_review('.$key->id.')" data-toggle="modal" data-target="#myModal" class="btn btn-theme btn-sm btn-round m-5"><i class="fa fa-star" style="color:#FFA500"></i> Review</a>';
                 }
             }
-            if (array_search("ORORD",$page)){
-                $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
-            }
             $options .= '<input type="hidden" id="route'.$key->id.'" value="'.route('getInvoice',['order_id' => $key->id]).'">';
-            $options .= '<a href="javascript:;" class="btn btn-info btn-round m-5" onclick="printPdf('.$key->id.')"><i class="fa fa-file-pdf-o"></i> Invoice</a>';
+            $options .= '<a href="javascript:;" class="btn btn-theme03 btn-round m-5 btn-sm" onclick="printPdf('.$key->id.')"><i class="fa fa-file-pdf-o"></i> Invoice</a>';
+
             $status = '';
-
             $student_name = $key->student_name;
-
             if(session('role_id') != 4 && session('role_id') != 5){
                 if($key->order_status == -1){
-                    $status .= '<a class="btn btn-danger btn-round m-5" onclick="confirm_order('.$key->id.')"><i class="fa fa-power-off"></i> Declined</a> ';
+                    $status .= '<a class="btn btn-danger btn-round m-5 btn-sm" onclick="confirm_order('.$key->id.')"><i class="fa fa-power-off"></i> Declined</a> ';
                 }elseif($key->order_status == 1){
-                    $status .= '<a class="btn btn-success btn-round m-5" onclick="finishing_order('.$key->id.')"><i class="fa fa-power-off"></i> Ongoing</a> ';
+                    $status .= '<a class="btn btn-success btn-round m-5 btn-sm" onclick="finishing_order('.$key->id.')"><i class="fa fa-power-off"></i> Ongoing</a> ';
                 }elseif($key->order_status == 2){
-                    $status .= '<a class="btn btn-default btn-round m-5" onclick="canceling_finish_order('.$key->id.')"><i class="fa fa-power-off"></i> Finish</a> ';
+                    $status .= '<a class="btn btn-default btn-round m-5 btn-sm" onclick="canceling_finish_order('.$key->id.')"><i class="fa fa-power-off"></i> Finish</a> ';
                 }else{
-                    $status .= '<a class="btn btn-warning btn-round m-5" onclick="confirm_order('.$key->id.')"><i class="fa fa-power-off"></i> Not Confirmed</a>';
+                    $status .= '<a class="btn btn-warning btn-round m-5 btn-sm" onclick="confirm_order('.$key->id.')"><i class="fa fa-power-off"></i> Not Confirmed</a>';
                 }
 
                 if($key->student_phone != ""){
@@ -306,11 +308,13 @@ class Order extends Model
             $detail = collect();
 
             $today = date('Y-m-d');
-            $orderdet = OrderDetail::where('order_id', $key->id)->where('schedule_time', '>=', $today)->orderBy('schedule_time', 'asc')->get();
-            if($orderdet->count() == 0){
-                $this_schedule = "There is no schedule";
-            }else{
-                $date = date_create($orderdet[0]->schedule_time);
+            $this_schedule = "There is no schedule";
+            $orderdet = OrderDetail::where('order_id', $key->id)->orderBy('schedule_time', 'asc')->get();
+            $next_schedule = OrderDetail::where('order_id', $key->id)->where('schedule_time', '>=', $today)->orderBy('schedule_time', 'asc')->get();
+            if($orderdet->count() != 0 && $next_schedule->count() == 0){
+                $this_schedule = 'All schedules is finished <i class="fa fa-check" style="color:green"></i>';
+            }elseif($next_schedule->count() != 0){
+                $date = date_create($next_schedule[0]->schedule_time);
                 $this_schedule = date_format($date, "D, d-m-Y H:i:s");
             }
 
@@ -321,19 +325,20 @@ class Order extends Model
 
             $report = "";
             if(array_search("DSRPV", $page_report)){
-                $report .= '<a href="" onclick="view_report('.$key->id.')" data-toggle="modal" data-target="#myModal" class="btn btn-sm btn-info"><i class="fa fa-file-text"></i> See Report</a>';
+                $report .= '<a href="" onclick="view_report('.$key->id.')" data-toggle="modal" data-target="#myModal" class="btn btn-sm btn-info btn-round btn-sm"><i class="fa fa-file-text"></i> View Report</a>';
             }
 
-            $review = '<a onclick="view_review('.$key->id.')" data-toggle="modal" data-target="#myModal" class="btn btn-primary"><i class="fa fa-star" style="color:#FFA500"></i> Review</a>';
-            if(OrderDetail::where('order_id', $key->id)->orderBy('schedule_time','desc')->count() != 0){
+            $review = '<a class="btn btn-theme btn-sm btn-round" disabled><i class="fa fa-star-o"></i> Review</a>';
+
+            $now = date("Y-m-d H:i:s", strtotime('+1 hours'));
+            $last_schedule = date("Y-m-d H:i:s", strtotime('+2hours'));
+            if(OrderDetail::where('order_id', $key->id)->count() != 0){
                 $last_schedule = OrderDetail::where('order_id', $key->id)->orderBy('schedule_time','desc')->first()->schedule_time;
-                $now = date("Y-m-d H:i:s", strtotime('+1 hours'));
-
-                if(strtotime($last_schedule) <= $now){
-                    $review = '<a class="btn btn-primary"><i class="fa fa-star" style="color:yellow"></i> Review</a>';
-                }
             }
-
+            if($last_schedule <= $now){
+                $review = '<a onclick="view_review('.$key->id.')" data-toggle="modal" data-target="#myModal" class="btn btn-theme btn-round btn-sm"><i class="fa fa-star" style="color:#FFA500"></i> Review</a>';
+            }
+            
             $detail->put('no', $i++);
             $detail->put('order_id', '#'.$key->order_id);
             $detail->put('student_name', $key->student_name);
@@ -707,5 +712,78 @@ class Order extends Model
         }
 
         return $result;
+    }
+
+    public static function HistoryOrder($request, $teacher_id){
+        $draw = $request->draw;
+        $row = $request->start;
+        $rowperpage = $request->length; // Rows display per page
+        $columnIndex = $request['order'][0]['column']; // Column index
+        $columnName = $request['columns'][$columnIndex]['data']; // Column name
+        $columnSortOrder = $request['order'][0]['dir']; // asc or desc
+        $searchValue = $request['search']['value']; // Search value
+
+        $orders = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','teacher_id','ut.name as teacher_name','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_type','order_status')->where('teacher_id', $teacher_id)->whereIn('order_status', [1,2]);
+        $totalRecords = $orders->count();
+
+        if($searchValue != ''){
+            $orders->where(function ($query) use ($searchValue) {
+                $detail_id = OrderDetail::select('order_id')->where('schedule_time', 'LIKE', '%'.$searchValue.'%')->get();
+                $query->orWhere('us.name', 'LIKE', '%'.$searchValue.'%')->orWhere('ut.name','LIKE', '%'.$searchValue.'%')->orWhere('c.name','LIKE', '%'.$searchValue.'%')->orWhere('grade_id','LIKE', '%'.$searchValue.'%')->orWhere('p.name','LIKE', '%'.$searchValue.'%')->orWhere('order_type','LIKE', '%'.$searchValue.'%')->orWhere('order.order_id', 'LIKE', '%'.$searchValue.'%')->orWhereIn('order.id', $detail_id);
+            });
+        }
+
+        $totalRecordwithFilter = $orders->count();
+
+        if($columnName == "no"){
+            $orders->orderBy('id', $columnSortOrder);
+        }else{
+            $orders->orderBy($columnName, $columnSortOrder);
+        }
+
+        $orders = $orders->offset($row)->limit($rowperpage)->get();
+
+        $datas = collect();
+        $i = $row+1;
+
+        foreach ($orders as $order) {
+            $schedules = '';
+            $order_detail = OrderDetail::where('order_id', $order->id)->get();
+            foreach($order_detail as $det){
+                $schedules .= '<li>'.date('Y-m-d H:i', strtotime($det->schedule_time)).'</li>';
+            }
+
+            $detail = collect();
+            $detail->put('no', $i++);
+            $detail->put('id',$order->id);
+            $detail->put('order_id', $order->order_id);
+            $detail->put('student_name', $order->student_name);
+            $detail->put('grade_id', $order->grade_id);
+            $detail->put('course_name', $order->course_name);
+            $detail->put('package_name', $order->package_name);
+            $detail->put('order_type', $order->order_type);
+            $detail->put('schedules', $schedules);
+            $detail->put('status', $order->order_status);
+            $datas->push($detail);
+        }
+
+        if(count($datas) == 0){
+            $message = "Failed";
+            $code = Response::HTTP_BAD_REQUEST;
+        }else{
+            $message = "Success";
+            $code = Response::HTTP_OK;
+        }
+
+        $response = array(
+            'message' => $message,
+            'code' => $code,
+            'draw' => intval($draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecordwithFilter,
+            'data' => $datas,
+        );
+
+        return json_encode($response);
     }
 }

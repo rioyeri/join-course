@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ContentPromo extends Model
@@ -26,14 +27,15 @@ class ContentPromo extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"CTPR");
-        $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->join('package as p', 'content_promo.package_id', 'p.id')->select('content_promo.id','content_promo.package_id','p.name as package_name','icon','content_promo.price','time_signature','link_text','link','category', 'content_promo.creator', 'u.name as creator_name');
+        $promos = ContentPromo::join('users as u', 'content_promo.creator', 'u.id')->join('package as p', 'content_promo.package_id', 'p.id')->select('content_promo.id','content_promo.package_id','p.name as package_name','icon','p.price','p.discount_rate', DB::raw('p.price - (p.price / 100 * p.discount_rate) as discount_price'),'link_text','category', 'content_promo.creator', 'u.name as creator_name','content_promo.position');
 
         $totalRecords = $promos->count();
 
         if($searchValue != ''){
             $promos->where(function ($query) use ($searchValue) {
                 $promo_ids = ContentPromoDetail::select('promo_id')->where('text', 'LIKE', '%'.$searchValue.'%')->get();
-                $query->orWhere('p.name', 'LIKE', '%'.$searchValue.'%')->orWhere('price', 'LIKE', '%'.$searchValue.'%')->orWhere('time_signature', 'LIKE', '%'.$searchValue.'%')->orWhere('link_text', 'LIKE', '%'.$searchValue.'%')->orWhere('link', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $promo_ids);
+                $price_ids = Package::select('id')->where(DB::raw('price - (price / 100 * discount_rate)'), 'LIKE', '%'.$searchValue.'%')->get();
+                $query->orWhere('p.name', 'LIKE', '%'.$searchValue.'%')->orWhere('p.price', 'LIKE', '%'.$searchValue.'%')->orWhere('link_text', 'LIKE', '%'.$searchValue.'%')->orWhereIn('content_promo.id', $promo_ids)->orWhereIn('content_promo.package_id', $price_ids);
             });
         }
 
@@ -66,11 +68,12 @@ class ContentPromo extends Model
                 $options .= '<a href="javascript:;" class="btn btn-danger btn-round m-5" onclick="delete_data('.$key->id.')"><i class="fa fa-trash-o"></i> Delete</a>';
             }
 
-            $detail->put('no', $i++.' <i class="fa fa-sort"></i>');
+            $detail->put('no', $key->position.' <i class="fa fa-sort"></i>');
             $detail->put('package_name', $key->package_name);
             $detail->put('icon', $key->icon);
             $detail->put('price', $key->price);
-            $detail->put('time_signature', $key->time_signature);
+            $detail->put('discount_rate', $key->discount_rate);
+            $detail->put('discount_price', $key->discount_price);
             $detail->put('link_text', $key->link_text);
             $detail->put('category', $category);
             $detail->put('options', $options);
@@ -89,7 +92,7 @@ class ContentPromo extends Model
 
     public static function getContent(){
         $result = collect();
-        $promos = ContentPromo::join('package as p', 'content_promo.package_id', 'p.id')->select('content_promo.id', 'content_promo.package_id', 'p.name as package_name', 'icon','content_promo.price','time_signature','link_text', 'link','category')->orderBy('position', 'asc')->get();
+        $promos = ContentPromo::join('package as p', 'content_promo.package_id', 'p.id')->select('content_promo.id', 'content_promo.package_id', 'p.name as package_name', 'icon', 'p.price', 'p.discount_rate', 'link_text', 'link', 'category')->orderBy('position', 'asc')->get();
         
         $count_detail = $promos->count();
         if($count_detail == 3){
@@ -113,10 +116,13 @@ class ContentPromo extends Model
                 $row_detail->push($detail);
             }
 
+            $disc_price = $promo->price - ($promo->price/100*$promo->discount_rate);
+
             $row->put('package_name', $promo->package_name);
             $row->put('icon', $promo->icon);
             $row->put('price', $promo->price);
-            $row->put('time_signature', $promo->time_signature);
+            $row->put('discount_rate', $promo->discount_rate);
+            $row->put('discount_price', $disc_price);
             $row->put('link_text', $promo->link_text);
             $row->put('link', $promo->link);
             $row->put('category', $promo->category);

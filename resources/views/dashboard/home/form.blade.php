@@ -10,6 +10,7 @@
     {{ method_field('PUT') }}
     @csrf
     <h4 class="mb"><i class="fa fa-angle-right"></i> Course Schedule for Order ID : <strong>#{{ $data->order_id }}</strong> (<span id="package_number_meet">{{ $package_number_meet }}</span> <span id="order_type">{{ $order_type }}</span> Meets)</h4>
+    <input type="hidden" id="order_id" value="{{ $data->order_id }}">
     @if(array_search("DSSCU",$submoduls))
     <h5 id="row_title" style="display:none;">Update Schedule no : <strong><span id="row_number"></span></strong> <a class="btn btn-xs btn-danger" href="javascript:;" onclick="resetForm()"><i class="fa fa-eraser"></i> Cancel Editing</a></h5>
 
@@ -59,7 +60,9 @@
                         <th>Zoom Link</th>
                     @endif
                     <th>Documents Link</th>
-                    <th>Share Invitation</th>
+                    @if(session('role_id') == 1 || session('role_id') == 2 || session('role_id') == 3)
+                        <th>Share Invitation</th>
+                    @endif
                     @if(array_search("DSSCU",$submoduls) && array_search("DSSCD",$submoduls))
                     <th>Options</th>
                     @endif
@@ -77,6 +80,7 @@
                             @endif
                             <td style="width:25%"><a href="{{ $key->link_drive }}" target="_blank" id="alink_drive{{ $i }}">{{ $key->link_drive }}</a></td>
                             <input type="hidden" name="link_drive[]" id="link_drive{{ $i }}" value="{{ $key->link_drive }}">
+                            @if(session('role_id') == 1 || session('role_id') == 2 || session('role_id') == 3)
                             <td style="width:10%">
                                 @if(OrderDetail::getWALink($key->id,'student') != "")
                                     @if (OrderDetail::getWALink($key->id,'student') == "no_link")
@@ -100,6 +104,7 @@
                                     <a href="javascript:;" class="btn btn-round btn-theme02 btn-sm" id="copytextteacherbtn{{ $i }}" data-toggle="popover" onclick="copyText({{ $key->id }}, '{{ $copy_text }}')"><i class="fa fa-copy"></i> Teacher</a>
                                 @endif
                             </td>
+                            @endif
                             @if(array_search("DSSCU", $submoduls) || array_search("DSSCD", $submoduls))
                             <td class="text-center" style="width:20%">
                                 @if(array_search("DSSCU", $submoduls))
@@ -155,6 +160,7 @@
             document.getElementById('table_schedule').style.display = 'block';
         }
 
+        var order_id = $('#order_id').val();
         var package_meet_number = $('#package_number_meet').text();
         var order_type = $('#order_type').text();
         var schedule_no = $('#row_number').text();
@@ -180,9 +186,9 @@
         if(duplicate == 0){
             if(count <= package_meet_number){
                 if(order_type == "online"){
-                    var append = '<tr style="width:100%" id="trow'+count+'" class="trow"><td style="width:5%">'+count+'</td><td style="width:15%">'+format_schedule+'</td><input type="hidden" name="schedule_datetime[]" id="schedule_datetime'+count+'" value="'+schedule+'"><td style="width:30%"><a href="'+link_zoom+'" target="_blank" id="alink_zoom'+count+'">'+link_zoom+'</a></td><input type="hidden" name="link_zoom[]" id="link_zoom'+count+'" value="'+link_zoom+'"><td style="width:30%"><a href="'+link_drive+'" target="_blank" id="alink_drive'+count+'">'+link_drive+'</a></td><input type="hidden" name="link_drive[]" id="link_drive'+count+'" value="'+link_drive+'"><td>This schedule need to be saved</td><td class="text-center" style="width:20%"><a href="javascript:;" type="button" class="btn btn-primary btn-trans waves-effect w-xs waves-danger m-b-5" onclick="edit_row('+count+')">Edit</a> <a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-xs waves-danger m-b-5" onclick="deleteItem('+count+')" >Delete</a></td></tr>';
+                    var append = '<tr style="width:100%" id="trow'+count+'" class="trow"><td style="width:5%">'+count+'</td><td style="width:15%">'+format_schedule+'</td><input type="hidden" name="schedule_datetime[]" id="schedule_datetime'+count+'" value="'+schedule+'"><td style="width:25%"><a href="'+link_zoom+'" target="_blank" id="alink_zoom'+count+'">'+link_zoom+'</a></td><input type="hidden" name="link_zoom[]" id="link_zoom'+count+'" value="'+link_zoom+'"><td style="width:25%"><a href="'+link_drive+'" target="_blank" id="alink_drive'+count+'">'+link_drive+'</a></td><input type="hidden" name="link_drive[]" id="link_drive'+count+'" value="'+link_drive+'"><td style="width:10%">This schedule need to be saved</td><td class="text-center" style="width:20%"><a href="javascript:;" type="button" class="btn btn-primary btn-trans waves-effect w-xs waves-danger m-b-5" onclick="edit_row('+count+')">Edit</a> <a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-xs waves-danger m-b-5" onclick="deleteItem('+count+')" >Delete</a></td></tr>';
                 }else{
-                    var append = '<tr style="width:100%" id="trow'+count+'" class="trow"><td style="width:5%">'+count+'</td><td style="width:15%">'+format_schedule+'</td><input type="hidden" name="schedule_datetime[]" id="schedule_datetime'+count+'" value="'+schedule+'"><td style="width:30%"><a href="'+link_drive+'" target="_blank" id="alink_drive'+count+'">'+link_drive+'</a></td><input type="hidden" name="link_drive[]" id="link_drive'+count+'" value="'+link_drive+'"><td>This schedule need to be saved</td><td class="text-center" style="width:20%"><a href="javascript:;" type="button" class="btn btn-primary btn-trans waves-effect w-xs waves-danger m-b-5" onclick="edit_row('+count+')">Edit</a> <a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-xs waves-danger m-b-5" onclick="deleteItem('+count+')" >Delete</a></td></tr>';
+                    var append = '<tr style="width:100%" id="trow'+count+'" class="trow"><td style="width:5%">'+count+'</td><td style="width:15%">'+format_schedule+'</td><input type="hidden" name="schedule_datetime[]" id="schedule_datetime'+count+'" value="'+schedule+'"><td style="width:25%"><a href="'+link_drive+'" target="_blank" id="alink_drive'+count+'">'+link_drive+'</a></td><input type="hidden" name="link_drive[]" id="link_drive'+count+'" value="'+link_drive+'"><td>This schedule need to be saved</td><td class="text-center" style="width:20%"><a href="javascript:;" type="button" class="btn btn-primary btn-trans waves-effect w-xs waves-danger m-b-5" onclick="edit_row('+count+')">Edit</a> <a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-xs waves-danger m-b-5" onclick="deleteItem('+count+')" >Delete</a></td></tr>';
                 }
                 $('#table-body-schedule').append(append);
             }else{
@@ -195,6 +201,7 @@
         }else{
             $("#table-body-schedule tr").each(function(){
                 var value_count = $(this).find('td:eq(0)').text();
+
                 if(value_count == schedule_no){
                     $(this).find('td:eq(1)').text(schedule);
                     $('#schedule_datetime'+value_count).val(schedule);
@@ -203,10 +210,10 @@
                         $(this).find('td:eq(2)').text(link_zoom);
                         $('#link_zoom'+value_count).val(link_zoom);
 
-                        $(this).find('td:eq(3)').text(link_drive);
+                        $(this).find('td:eq(4)').text(link_drive);
                         $('#link_drive'+value_count).val(link_drive);
                     }else{
-                        $(this).find('td:eq(2)').text(link_drive);
+                        $(this).find('td:eq(3)').text(link_drive);
                         $('#link_drive'+value_count).val(link_drive);
                     }
                 }

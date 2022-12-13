@@ -83,7 +83,8 @@
                     <th>Title</th>
                     <th>Icon</th>
                     <th>Price</th>
-                    <th>/ Time</th>
+                    <th>Discount Rate</th>
+                    <th>Discount Price</th>
                     <th>Link Text</th>
                     <th>Category</th>
                     <th>Options</th>
@@ -128,11 +129,20 @@
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "package_name", name : "package_name"},
                     {data : "icon", name : "icon", orderable : false, searchable : false},
-                    {data : "price", name : "price", orderable : false},
-                    {data : "time_signature", name : "time_signature"},
+                    {data : "price", name : "price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                    {data : "discount_rate", name : "discount_rate", render: $.fn.dataTable.render.number( '.', ',', 2, '', '%' )},
+                    {data : "discount_price",name : "discount_price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                     {data : "link_text", name : "link_text"},
                     {data : "category", name : "category", searchable : false},
                     {data : "options", name : "options", orderable : false, searchable : false,}
+            ],
+            "columnDefs" : [
+                {
+                    render: function (data, type, full, meta) {
+                        return '<i class="'+data+'"></i> '+data;
+                    },
+                    targets: [2],
+                },
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},
         });

@@ -20,3 +20,22 @@ use Illuminate\Http\Request;
 Route::get('allteacher', 'HelperController@getAllTeacher')->name('getAllTeacher');
 
 Route::get('getDatas', 'HelperController@apigetDatas')->name('apigetDatas');
+
+Route::get('package/{id}', 'PackageController@show');
+
+Route::get('orderreview/{id}', 'OrderReviewController@show');
+
+Route::get('orderhistory/{id}', 'OrderController@show');
+
+Route::get('getreview/{id}', 'HelperController@apiGetReview');
+
+Route::get('deletecontent/{id}', 'ContentManagementController@destroy');
+
+Route::get('bestteacher', 'StatisticsController@bestTeacher');
+Route::get('mostsubject', 'StatisticsController@mostSubject');
+Route::get('gradestats', 'StatisticsController@GradeStats');
+Route::get('ordertypestats', 'StatisticsController@OrderTypeStats');
+Route::get('packagestats', 'StatisticsController@PackageStats');
+
+Route::get('orderreport', 'ReportController@OrderReport');
+Route::get('incomereport', 'ReportController@IncomeReport');

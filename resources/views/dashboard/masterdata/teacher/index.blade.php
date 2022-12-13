@@ -93,6 +93,7 @@
                     <th>Courses</th>
                     {{-- <th>Prices</th> --}}
                     <th>Schedules</th>
+                    <th>Reviews</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body">
@@ -141,9 +142,10 @@
                     {data : "teacher_name", name : "teacher_name"},
                     {data : "title", name : "title"},
                     {data : "teacher_profile", name : "teacher_profile", orderable : false, searchable: false},
-                    {data : "courses", name : "courses", orderable : false},
+                    {data : "courses", name : "courses", orderable : false, searchable : false},
                     // {data : "prices", name : "prices", orderable : false},
-                    {data : "schedules", name : "schedules"},
+                    {data : "schedules", name : "schedules", orderable : false, searchable : false},
+                    {data : "reviews", name : "reviews", orderable : false, searchable : false},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             "columnDefs" : [
@@ -159,7 +161,7 @@
                     render: function (data, type, full, meta) {
                         return "<div class='text-center'>" + data + "</div>";
                     },
-                    targets: [3,4,5],
+                    targets: [3,4,5,6],
                     width: "15%",
                 }
             ],
@@ -320,6 +322,18 @@
     function view_schedules(id){
         $.ajax({
             url : "teacherschedule/"+id+"/edit",
+            type : "get",
+            dataType: 'json',
+        }).done(function (data) {
+            $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function view_reviews(id){
+        $.ajax({
+            url : "orderreview/"+id+"/edit",
             type : "get",
             dataType: 'json',
         }).done(function (data) {

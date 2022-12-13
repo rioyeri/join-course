@@ -15,7 +15,8 @@
                     <div class="icon">
                         <i class="{{ $promo->icon }}"></i>
                     </div>
-                    <h5><span>Mulai dari</span><br>@if(is_int($promo->price)) {{ number_format($promo->price,0,",",".") }} @else {{ $promo->price }} @endif<span> / {{ $promo->time_signature }}</span></h5>
+                    {{-- <h5><span>Mulai dari</span><br>@if(is_int($promo->price)) {{ number_format($promo->price,0,",",".") }} @else {{ $promo->price }} @endif<span> / {{ $promo->time_signature }}</span></h5> --}}
+                    <h5><span><del>&ensp;Rp {{ number_format($promo->price, 0,",",".") }}&ensp;</del> @if($promo->discount_rate != 0)<span style="background: #dd3214; color:white; border-radius: 3px; padding: 0 5px 0 5px;">{{ $promo->discount_rate }}% off</span>@endif</span><br>Rp {{ number_format($promo->discount_price,0,",",".") }}</h5>
                     <ul>
                         @foreach ($promo->detail as $det)
                             @if ($det->status==0)

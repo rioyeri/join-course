@@ -128,7 +128,7 @@
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "name", name : "name"},
                     {data : "topic", name : "topic"},
-                    {data : "description", name : "description", orderable : false},
+                    {data : "description", name : "description"},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             // "columnDefs" : [

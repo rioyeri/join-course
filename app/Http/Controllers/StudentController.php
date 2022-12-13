@@ -10,6 +10,8 @@ use App\Models\Grade;
 use App\Models\Log;
 use App\Models\MenuMapping;
 use App\Models\RecycleBin;
+use App\Models\RoleMapping;
+use App\Models\Teacher;
 
 class StudentController extends Controller
 {
@@ -71,6 +73,14 @@ class StudentController extends Controller
                     ));
 
                     $data->save();
+
+                    $user = User::where('id', $request->user_id)->first();
+                    RoleMapping::setData($user->username, 4);
+
+                    if(Teacher::where('user_id', $request->user_id)->count() != 0){
+                        Teacher::where('user_id', $request->user_id)->delete();
+                    }
+
                     Log::setLog('MDSTC','Create Student : '.$request->user_id);
                     return redirect()->route('student.index')->with('status','Successfully saved');
                 }
@@ -128,6 +138,8 @@ class StudentController extends Controller
                     'school_name' => $request->school_name,
                     'student_grade' => $request->student_grade,
                 ));
+                $user = User::where('id', $id)->first();
+                RoleMapping::setData($user->username, 4);
                 if($request->type=="profile"){
                     $student = Student::where('id', $id)->first();
                     Log::setLog('MDSTC','Update Student Profile : '.$student->student->name);

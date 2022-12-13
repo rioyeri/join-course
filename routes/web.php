@@ -109,6 +109,10 @@ Route::middleware(['checkUser'])->group(function () {
         'teacherschedule' => 'TeacherScheduleController',
         // Order Review
         'orderreview' => 'OrderReviewController',
+        // Statistic
+        'statistic' => 'StatisticsController',
+        // Report
+        'report' => 'ReportController',
     ]);
 
     Route::get('logout','HomeController@logout')->name('Logout');

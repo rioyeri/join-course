@@ -53,7 +53,7 @@
                         <strong>Email:</strong> {{ $company_profile[3]->content }}<br>
                     @endif
                     @if($company_profile[4]->status == 1)
-                        <strong>Admin Whatsapp:</strong> <a href="{{ $phone_redirect }}" class="btn-wa-admin" target="_blank" title="Whatsapp Admin"><i class="fa fa-whatsapp"></i> {{ $company_profile[4]->content }}</a><br>
+                        <strong>Admin Whatsapp:</strong> <a href="{{ $phone_redirect }}" class="btn-wa-admin" target="_blank" title="Whatsapp Admin"><ins><i class="fa fa-whatsapp"></i> {{ $company_profile[4]->content }}</ins></a><br>
                     @endif
                 </p>
             </div>

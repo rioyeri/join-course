@@ -39,7 +39,7 @@ class HelperController extends Controller
         if($request->jenisdata == "get_teacher"){
             if($request->params != NULL){
                 $course = Course::where('id', $request->params)->first();
-                $list = TeacherCourse::where('course_id', $request->params)->get();
+                $list = TeacherCourse::join('teacher as t', 'teacher_course.teacher_id', 't.id')->where('course_id', $request->params)->where('status', 1)->get();
                 $append = '<option value="#" disabled selected>Pick your '.$course->name.'\'s Teacher</option>';
         
                 foreach($list as $key){
@@ -350,6 +350,27 @@ class HelperController extends Controller
                     'append' => $append,
                 );
             }
+        }
+
+        if($data != NULL){
+            return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
+        }else{
+            return ApiFormatter::createApi(Response::HTTP_BAD_REQUEST, 'Failed');
+        }
+    }
+
+    public function apiGetReview($id){
+        $data = NULL;
+        if(OrderReview::where('id', $id)->count() != 0){
+            $review = OrderReview::where('id', $id)->first();
+            $data = collect($review);
+            $photo = User::getPhoto($review->get_order->get_student->student->id);
+            $data->put('order_inv', $review->get_order->order_id);
+            $data->put('teacher_name', User::shortenName($review->get_teacher->teacher->name));
+            $data->put('course_name', $review->get_order->get_course->name);
+            $data->put('reviewer_name', $review->get_order->get_student->student->name);
+            $data->put('reviewer_photo', $photo);
+            $data->put('reviewer_user_id', $review->get_order->get_student->student->id);
         }
 
         if($data != NULL){

@@ -7,10 +7,13 @@
     <form class="form-horizontal style-form" method="post" action="{{ route('package.store') }}">
 @endif
     @csrf
+    <p class="text-muted font-14">
+        <label class="col-4 col-form-label">( <span class="text-danger">*</span> ) is a required field</label>
+    </p>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Package Name</label>
+        <label class="col-sm-3 col-sm-3 control-label">Package Name <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="name" id="name" value="@isset($data->name){{ $data->name }}@endisset">
+            <input type="text" class="form-control" name="name" id="name" value="@isset($data->name){{ $data->name }}@endisset" required>
         </div>
     </div>
     <div class="form-group">
@@ -20,21 +23,21 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Number of Meet</label>
+        <label class="col-sm-3 col-sm-3 control-label">Number of Meet <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="number_meet" id="number_meet" value="@isset($data->number_meet){{ $data->number_meet }}@endisset">
+            <input type="text" class="form-control" name="number_meet" id="number_meet" value="@isset($data->number_meet){{ $data->number_meet }}@endisset" required>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Price</label>
+        <label class="col-sm-3 col-sm-3 control-label">Price <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="price" id="price" value="@isset($data->price){{ $data->price }}@endisset">
+            <input type="text" class="form-control" name="price" id="price" value="@isset($data->price){{ $data->price }}@endisset" required>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Discount Rate</label>
+        <label class="col-sm-3 col-sm-3 control-label">Discount Rate <span class="text-danger">*</span></label>
         <div class="col-sm-2">
-            <input type="number" class="form-control" step="0.01" name="discount_rate" id="discount_rate" value="@isset($data->discount_rate){{ $data->discount_rate }}@else{{ 0 }}@endisset">
+            <input type="number" class="form-control" step="0.01" name="discount_rate" id="discount_rate" value="@isset($data->discount_rate){{ $data->discount_rate }}@else{{ 0 }}@endisset" required>
         </div>
         <label class="col-sm-1 control-label" style="margin-left:-20px">%</label>
     </div>

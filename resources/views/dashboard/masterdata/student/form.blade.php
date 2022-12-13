@@ -12,6 +12,9 @@
     <form class="form-horizontal style-form" method="post" action="{{ route('student.store') }}">
 @endisset
     @csrf
+    <p class="text-muted font-14">
+        <label class="col-4 col-form-label">( <span class="text-danger">*</span> ) is a required field</label>
+    </p>
     @isset($data)
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Name</label>
@@ -21,9 +24,9 @@
     </div>
     @else
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Choose User</label>
+        <label class="col-sm-3 col-sm-3 control-label">Choose User <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <select class="form-control select2" parsley-trigger="change" name="user_id" id="user_id">
+            <select class="form-control select2" parsley-trigger="change" name="user_id" id="user_id" required>
                 <option value="#" selected disabled>-- Choose --</option>
                 @foreach ($users as $user)
                     <option value="{{$user->id}}">{{$user->name}}</option>
@@ -33,15 +36,15 @@
     </div>
     @endisset
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">School's Name</label>
+        <label class="col-sm-3 col-sm-3 control-label">School's Name <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="school_name" id="school_name" value="@isset($data){{ $data->school_name }}@endisset">
+            <input type="text" class="form-control" name="school_name" id="school_name" value="@isset($data){{ $data->school_name }}@endisset" required>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Student's Grade</label>
+        <label class="col-sm-3 col-sm-3 control-label">Student's Grade <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <select class="form-control select2" parsley-trigger="change" name="student_grade" id="student_grade">
+            <select class="form-control select2" parsley-trigger="change" name="student_grade" id="student_grade" required>
                 <option value="#" disabled selected>-- Choose --</option>
                 @foreach ($grades as $grade)
                     @isset($data->student_grade)

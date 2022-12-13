@@ -9,6 +9,9 @@ use App\Models\Log;
 use App\Models\MenuMapping;
 use App\Models\RecycleBin;
 
+use Symfony\Component\HttpFoundation\Response;
+use App\Helpers\ApiFormatter;
+
 class PackageController extends Controller
 {
     /**
@@ -58,7 +61,9 @@ class PackageController extends Controller
         // Validation success
         }else{
             try{
-                $discount_rate = floatval(str_replace(',', '.', str_replace('.', '', $request->discount_rate)));
+                // $discount_rate = floatval(str_replace(',', '.', str_replace('.', '', $request->discount_rate)));
+                $discount_rate = floatval($request->discount_rate);
+
                 $data = new Package(array(
                     "name" => $request->name,
                     "description" => $request->description,
@@ -84,7 +89,13 @@ class PackageController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Package::where('id', $id)->first();
+
+        if($data != NULL){
+            return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
+        }else{
+            return ApiFormatter::createApi(Response::HTTP_BAD_REQUEST, 'Failed');
+        }
     }
 
     /**
@@ -108,6 +119,9 @@ class PackageController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // echo "<pre>";
+        // print_r($request->all());
+        // die;
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'price' => 'required',
@@ -120,7 +134,8 @@ class PackageController extends Controller
         // Validation success
         }else{
             try{
-                $discount_rate = floatval(str_replace(',', '.', str_replace('.', '', $request->discount_rate)));
+                // $discount_rate = floatval(str_replace(',', '.', str_replace('.', '', $request->discount_rate)));
+                $discount_rate = floatval($request->discount_rate);
 
                 Package::where('id', $id)->update(array(
                     "name" => $request->name,

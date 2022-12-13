@@ -24,6 +24,12 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="col-sm-3 col-sm-3 control-label">Report Link</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" id="link" value="">
+        </div>
+    </div>
+    <div class="form-group">
         <div class="col-lg-offset-3 col-lg-9">
             <a class="btn btn-md btn-theme" onclick="addToTable()" id="save_button"><i class="fa fa-plus"></i> Save Report</a>
         </div>
@@ -38,6 +44,7 @@
                     <th>Report Date</th>
                     <th>Title</th>
                     <th>File</th>
+                    <th>Link</th>
                     @if(array_search("DSRPD", $submoduls))
                     <th>Options</th>
                     @endif
@@ -48,10 +55,11 @@
                         <tr style="width:100%" id="trow{{ $i }}" class="trow">
                             <td style="width:5%">{{ $i }}</td>
                             <td style="width:25%">{{ $key->created_at->format('Y-m-d H:i:s') }}</td>
-                            <td style="width:20%">{{ $key->title }}</a></td>
-                            <td style="width:30%"><a href="{{ asset('dashboard/assets/order/'.$data->order_id.'/'.$key->file) }}" target="_blank"><i class="fa fa-file-text-o"></i> {{ $key->file }}</a></td>
+                            <td style="width:20%">{{ $key->title }}</td>
+                            <td style="width:20%"><a href="{{ asset('dashboard/assets/order/'.$data->order_id.'/'.$key->file) }}" target="_blank"><i class="fa fa-file-text-o"></i> {{ $key->file }}</a></td>
+                            <td style="width:20%"><a href="{{ $key->link }}" target="_blank">{{ $key->link }}</a></td>
                             @if(array_search("DSRPD", $submoduls))
-                            <td class="text-center" style="width:20%">
+                            <td class="text-center" style="width:10%">
                                 <a href="javascript:;" type="button" class="btn btn-danger btn-trans waves-effect w-xs waves-danger m-b-5" onclick="deleteItem({{ $key->id }}, {{ $i }})">Delete</a>
                             </td>
                             @endif
@@ -69,16 +77,17 @@
         var token = $("meta[name='csrf-token']").attr("content");
         var order_id = $('#order_id').val();
         var title = $('#title').val();
-        // var file = $('#file').val();
         var file = document.getElementById('file').files[0];
         if(file == undefined){
             file == "";
         }
+        var link = $('#link').val();
 
         var form_data = new FormData();
         form_data.append('order_id', order_id);
         form_data.append('title', title);
         form_data.append('file', file);
+        form_data.append('link', link);
 
         console.log(form_data)
 
@@ -106,6 +115,7 @@
     function resetForm(){
         $('#title').val("");
         $('#file').val("");
+        $('#link').val("");
     }
 
     function deleteItem(report_id,id){

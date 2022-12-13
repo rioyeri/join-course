@@ -9,10 +9,9 @@
 @endif
     @csrf
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Promo Name</label>
+        <label class="col-sm-3 col-sm-3 control-label">Package Name</label>
         <div class="col-sm-9">
-            {{-- <input type="text" class="form-control" name="name" id="name" placeholder="Paket Hemat / Paket Lengkap" value="@isset($data->name){{ $data->name }}@endisset"> --}}
-            <select class="form-control select2" name="package_id" id="package_id">
+            <select class="form-control select2" name="package_id" id="package_id" onchange="getPackage(this.value)">
                 <option value="#" selected disabled>-- Choose --</option>
                 @foreach ($packages as $package)
                     @isset($data->package_id)
@@ -28,17 +27,10 @@
             </select>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Package Price</label>
-        <div class="col-sm-9">
-            <input type="text" class="form-control" name="price" id="price" placeholder="100000 / 100k" value="@isset($data->price){{ $data->price }}@endisset">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">/ Time</label>
-        <div class="col-sm-9">
-            <input type="text" class="form-control" name="time_signature" id="time_signature" placeholder="pertemuan / minggu / bulan" value="@isset($data->time_signature){{ $data->time_signature }}@endisset">
-        </div>
+    <div class="form-group" style="margin-top:-30px;">
+        <label class="col-sm-4 col-sm-4 control-label">Price : <span name="price" id="price"></span></label>
+        <label class="col-sm-4 col-sm-4 control-label">Discount % : <span name="discount_rate" id="discount_rate"></span></label>
+        <label class="col-sm-4 col-sm-4 control-label">Disc Price : <span name="discount_price" id="discount_price"></span></label>
     </div>
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Link Text</label>
@@ -337,4 +329,35 @@
             $(this).find('td:eq(0)').text(i++);
         })
     }
-</script>    
+
+    function getPackage(id){
+        $.ajax({
+            url : "/api/package/"+id,
+            type : "get",
+            dataType: 'json',
+        }).done(function (data) {
+            var price = data.data.price;
+            var discount_rate = data.data.discount_rate;
+            var discount_price = price - (price / 100 * discount_rate);
+            // $('#price').val('Rp '+number_format(price,2,",","."));
+            // $('#discount_rate').val(number_format(discount_rate, 2, ",", ".")+'%');
+            // $('#discount_price').val('Rp '+number_format(discount_price, 2, ",", "."));
+            $('#price').html('<b>Rp '+number_format(price,2,",",".")+"</b>");
+            $('#discount_rate').html('<b>'+number_format(discount_rate, 2, ",", ".")+'%</b');
+            $('#discount_price').html('<b>Rp '+number_format(discount_price, 2, ",", ".")+"</b>");
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+</script>
+
+@isset($data)
+<script>
+    $(document).ready(function(){
+        var package_id = $('#package_id').val();
+        if(package_id != null || package_id != "#"){
+            getPackage(package_id);
+        }
+    });
+</script>
+@endisset

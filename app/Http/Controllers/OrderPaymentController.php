@@ -437,12 +437,13 @@ class OrderPaymentController extends Controller
 
         // new file
         $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
+        $filepath = "download/".$filename;
+        $writer->save($filepath);
 
         // read file
         // $writer = IOFactory::createWriter($spreadsheet, "Xlsx");
         // $writer->save($filename);
 
-        File::download($filename);
+        File::download($filepath);
     }
 }

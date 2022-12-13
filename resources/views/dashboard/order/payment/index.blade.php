@@ -128,11 +128,13 @@
                                         <a class="btn btn-theme" onclick="getDatas('not-confirm')"><i class="fa fa-filter"></i> Filter</a>
                                         <a class="btn" onclick="resetParamProcess('not-confirm')"><i class="fa fa-rotate-left"></i> Clear</a>
                                     </div>
+                                    @if(array_search("ORPYX", $submoduls))
                                     <div class="col-6 text-right">
                                         <button class="btn btn-success btn-round m-b-5">
                                             <i class="fa fa-file-text-o"></i> Export to Excel
                                         </button>
                                     </div>
+                                    @endif
                                 </div>
                             </form>
 
@@ -179,11 +181,13 @@
                                         <a class="btn btn-theme" onclick="getDatas('confirm')"><i class="fa fa-filter"></i> Filter</a>
                                         <a class="btn" onclick="resetParamProcess('confirm')"><i class="fa fa-rotate-left"></i> Clear</a>
                                     </div>
+                                    @if(array_search("ORPYX", $submoduls))
                                     <div class="col-6 text-right">
                                         <button class="btn btn-success btn-round m-b-5">
                                             <i class="fa fa-file-text-o"></i> Export to Excel
                                         </button>
                                     </div>
+                                    @endif
                                 </div>
                             </form>
                             <table width="100%" class="table table-bordered datatable wrap" id="table-payment-confirm">
@@ -229,11 +233,13 @@
                                         <a class="btn btn-theme" onclick="getDatas('decline')"><i class="fa fa-filter"></i> Filter</a>
                                         <a class="btn" onclick="resetParamProcess('decline')"><i class="fa fa-rotate-left"></i> Clear</a>
                                     </div>
+                                    @if(array_search("ORPYX", $submoduls))
                                     <div class="col-6 text-right">
                                         <button class="btn btn-success btn-round m-b-5">
                                             <i class="fa fa-file-text-o"></i> Export to Excel
                                         </button>
                                     </div>
+                                    @endif
                                 </div>
                             </form>
                             <table width="100%" class="table table-bordered datatable wrap" id="table-payment-decline">
