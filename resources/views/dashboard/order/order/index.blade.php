@@ -386,7 +386,7 @@
                 {data : "order_type", name : "order_type"},
                 {data : "schedules", name : "schedules", orderable : false},
                 {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "bill_paid", name : "bill_paid", orderable : false, render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_status", name : "payment_status", orderable : false},
                 {data : "status", name : "status", orderable : false},
                 {data : "options", name : "options", orderable : false, searchable : false,}
@@ -473,7 +473,7 @@
                 {data : "order_type", name : "order_type"},
                 {data : "schedules", name : "schedules"},
                 {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "bill_paid", name : "bill_paid", orderable : false, render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_status", name : "payment_status", orderable : false},
                 {data : "status", name : "status", orderable : false},
                 {data : "options", name : "options", orderable : false, searchable : false,}
@@ -560,7 +560,7 @@
                 {data : "order_type", name : "order_type"},
                 {data : "schedules", name : "schedules"},
                 {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "bill_paid", name : "bill_paid", orderable : false, render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_status", name : "payment_status", orderable : false},
                 {data : "status", name : "status", orderable : false},
                 {data : "options", name : "options", orderable : false, searchable : false,}
@@ -647,7 +647,7 @@
                 {data : "order_type", name : "order_type"},
                 {data : "schedules", name : "schedules"},
                 {data : "order_bill", name : "order_bill", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
-                {data : "bill_paid", name : "bill_paid", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                {data : "bill_paid", name : "bill_paid", orderable : false, render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                 {data : "payment_status", name : "payment_status", orderable : false},
                 {data : "status", name : "status", orderable : false},
                 {data : "options", name : "options", orderable : false, searchable : false,}

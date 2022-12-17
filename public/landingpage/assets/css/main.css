@@ -2928,3 +2928,39 @@ section {
   border-color: #fff; */
   color : #f82;
 }
+
+/* ADDITIONAL LINE */
+/*--------------------------------------------------------------
+# WA CONTACT button
+--------------------------------------------------------------*/
+.wa-contact {
+  position: fixed;
+  /* visibility: hidden; */
+  opacity: 1;
+  right: 15px;
+  bottom: 80px;
+  /* z-index: 99999; */
+  background: var(--color-primary);
+  background: rgb(233, 233, 233);
+  width: 150px;
+  height: 44px;
+  border-radius: 50px;
+  transition: all 0.4s;
+}
+
+.wa-contact i {
+  /* font-size: 24px;
+  color: var(--color-primary);
+  line-height: 0; */
+  margin-right: 10px;
+}
+
+.wa-contact:hover {
+  color: #ffffff;
+  background: rgba(0, 131, 116, 0.8);
+}
+
+.wa-contact i:hover {
+  color: #fff;
+  line-height: 0;
+}

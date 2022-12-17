@@ -12,8 +12,6 @@
     <link href="{{ asset('dashboard/additionalplugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Sweet Alert css -->
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Editable-->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
     <!-- File Upload-->
     <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-fileupload/bootstrap-fileupload.css') }}" />
     <!-- Bootstrap Icon -->
@@ -78,7 +76,7 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-content">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-content">
                 <thead>
                     <th>No</th>
                     <th>Segment</th>
@@ -114,8 +112,6 @@
 
     <!-- File Upload -->
     <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-fileupload/bootstrap-fileupload.js') }}"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.js"></script>
 @endsection
 
 @section('script-js')

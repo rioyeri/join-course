@@ -206,14 +206,16 @@
                     $(this).find('td:eq(1)').text(schedule);
                     $('#schedule_datetime'+value_count).val(schedule);
 
+                    btn_drive = '<a href="'+link_drive+'" target="_blank" id="alink_drive'+value_count+'">'+link_drive+'</a>';
                     if(order_type == "online"){
-                        $(this).find('td:eq(2)').text(link_zoom);
+                        btn_zoom = '<a href="'+link_zoom+'" target="_blank" id="alink_zoom'+value_count+'">'+link_zoom+'</a>';
+                        $(this).find('td:eq(2)').html(btn_zoom);
                         $('#link_zoom'+value_count).val(link_zoom);
 
-                        $(this).find('td:eq(4)').text(link_drive);
+                        $(this).find('td:eq(3)').html(btn_drive);
                         $('#link_drive'+value_count).val(link_drive);
                     }else{
-                        $(this).find('td:eq(3)').text(link_drive);
+                        $(this).find('td:eq(2)').html(btn_drive);
                         $('#link_drive'+value_count).val(link_drive);
                     }
                 }

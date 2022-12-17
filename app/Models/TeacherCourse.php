@@ -34,6 +34,11 @@ class TeacherCourse extends Model
     }
 
     public static function setData($id, $courses_id){
+        if(session()->has('user_id')){
+            $user_id = session('user_id');
+        }else{
+            $user_id = 0;
+        }
         $old_list = TeacherCourse::where('teacher_id', $id)->get();
         if($old_list->count() != 0){
             foreach($old_list as $list){
@@ -46,6 +51,7 @@ class TeacherCourse extends Model
                         $new = new TeacherCourse(array(
                             "teacher_id" => $id,
                             "course_id" => $course,
+                            "creator" => $user_id,
                         ));
                         $new->save();
                     }
@@ -64,6 +70,7 @@ class TeacherCourse extends Model
                     $new = new TeacherCourse(array(
                         "teacher_id" => $id,
                         "course_id" => $course,
+                        "creator" => $user_id,
                     ));
                     $new->save();
                 }

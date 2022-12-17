@@ -270,8 +270,8 @@ class OrderPaymentController extends Controller
                 OrderPayment::checkPaid($payment->order_id, $request->_token);
 
                 if($request->status == 1){
-                    // $email = $payment->get_order->get_student->student->email;
-                    $email = "rioyeri@gmail.com";
+                    $email = $payment->get_order->get_student->student->email;
+                    // $email = "rioyeri@gmail.com";
 
                     Mail::to($email)->send(new PaymentInvoiceMail($id));
                 }

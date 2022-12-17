@@ -393,7 +393,7 @@ Your Profile
                                 <br>
                                 <div id="table_schedule_detail">
                                     <div class="adv-table">
-                                        <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-schedule-detail">
+                                        <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-schedule-detail">
                                             <thead>
                                                 <th>No</th>
                                                 <th>Day</th>

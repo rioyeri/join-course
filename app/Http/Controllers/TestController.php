@@ -18,6 +18,17 @@ use Excel;
 class TestController extends Controller
 {
     public function index(){
+        // $users = User::whereBetween('id', [7,26])->get();
+        $ids = [7,9,11,13,14,15,16,17,18,19,20,21,22,23,25,26];
+        $users = User::whereIn('id', $ids)->get();
+        foreach($users as $user){
+            $user->profilephoto = $user->username.".jpg";
+            $user->save();
+        }
+    }
+
+    public function importTeacher(){
+    // public function index(){
         $filename = "TeachersList.xlsx"; // pake Avail 3
         $path = public_path($filename);
         $array = Excel::toArray(new TeacherImport, $path);

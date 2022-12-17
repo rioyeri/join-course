@@ -8,10 +8,13 @@
     <form class="form-horizontal style-form" method="post" action="{{ route('contentpromo.store') }}">
 @endif
     @csrf
+    <p class="text-muted font-14">
+        <label class="col-4 col-form-label">( <span class="text-danger">*</span> ) is a required field</label>
+    </p>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Package Name</label>
+        <label class="col-sm-3 col-sm-3 control-label">Package Name  <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <select class="form-control select2" name="package_id" id="package_id" onchange="getPackage(this.value)">
+            <select class="form-control select2" name="package_id" id="package_id" onchange="getPackage(this.value)" required>
                 <option value="#" selected disabled>-- Choose --</option>
                 @foreach ($packages as $package)
                     @isset($data->package_id)
@@ -33,9 +36,9 @@
         <label class="col-sm-4 col-sm-4 control-label">Disc Price : <span name="discount_price" id="discount_price"></span></label>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Link Text</label>
+        <label class="col-sm-3 col-sm-3 control-label">Link Text  <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="link_text" id="link_text" placeholder="Pesan sekarang / Ambil Promo" value="@isset($data->link_text){{ $data->link_text }}@endisset">
+            <input type="text" class="form-control" name="link_text" id="link_text" placeholder="Pesan sekarang / Ambil Promo" value="@isset($data->link_text){{ $data->link_text }}@endisset" required>
         </div>
     </div>
     {{-- <div class="form-group">
@@ -45,9 +48,9 @@
         </div>
     </div> --}}
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Icon</label>
+        <label class="col-sm-3 col-sm-3 control-label">Icon  <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <select class="form-control select2" name="icon" id="icon">
+            <select class="form-control select2" name="icon" id="icon" required>
                 <option value="#" selected disabled>-- Choose --</option>
                 @foreach ($icons as $icon)
                     @isset($data->icon)
@@ -64,9 +67,9 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Category</label>
+        <label class="col-sm-3 col-sm-3 control-label">Category  <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <select class="form-control select2" name="category" id="category">
+            <select class="form-control select2" name="category" id="category" required>
                 @isset($data->category)
                     <option value="0" @if($data->category == 0) selected @endif>Regular Offer</option>
                     <option value="1" @if($data->category == 1) selected @endif>Best Offer</option>
@@ -107,7 +110,7 @@
     <br>
     <div id="table_promo_detail" style="margin-top:30px;">
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-detail">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-detail">
                 <thead>
                     <th>No</th>
                     <th>Status</th>
@@ -295,6 +298,7 @@
 
         if(promo_id == undefined){
             $('#trow'+id).remove();
+            correctionNumber();
         }else{
             var detail_id = $('#detail_id'+id).val();
             $.ajax({
@@ -306,11 +310,12 @@
                 },
             }).done(function (data) {
                 $('#trow'+data).remove();
+                correctionNumber();
             }).fail(function (msg) {
                 alert('Gagal menampilkan data, silahkan refresh halaman.');
             });
         }
-        correctionNumber();
+
     }
 
     function clearForm(){

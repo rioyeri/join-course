@@ -38,7 +38,7 @@ class PaymentAccount extends Model
 
         if($searchValue != ''){
             $account->where(function ($query) use ($searchValue) {
-                $query->orWhere('account_type', 'LIKE', '%'.$searchValue.'%')->orWhere('account_number', 'LIKE', '%'.$searchValue.'%')->orWhere('account_name', 'LIKE', '%'.$searchValue.'%')->orWhere('creator_name', 'LIKE', '%'.$searchValue.'%');
+                $query->orWhere('account_type', 'LIKE', '%'.$searchValue.'%')->orWhere('account_number', 'LIKE', '%'.$searchValue.'%')->orWhere('account_name', 'LIKE', '%'.$searchValue.'%')->orWhere('u.name', 'LIKE', '%'.$searchValue.'%');
             });
         }
 

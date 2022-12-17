@@ -7,8 +7,11 @@
     <form class="form-horizontal style-form" method="post" action="{{ route('role.store') }}">
 @endif
     @csrf
+    <p class="text-muted font-14">
+        <label class="col-4 col-form-label">( <span class="text-danger">*</span> ) is a required field</label>
+    </p>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Role Name</label>
+        <label class="col-sm-3 col-sm-3 control-label">Role Name <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="name" id="name" value="@isset($data){{ $data->name }}@endisset">
         </div>

@@ -72,7 +72,7 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-profile">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-profile">
                 <thead>
                     <th>No</th>
                     <th>Segment</th>
@@ -117,8 +117,8 @@
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
-                    {data : "title", name : "title", orderable : false},
-                    {data : "content", name : "content", orderable : false},
+                    {data : "title", name : "title"},
+                    {data : "content", name : "content"},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},

@@ -16,9 +16,6 @@
                                     <div>
                                         <h3>{{ $detail->title }}</h3>
                                         <h4>{{ $detail->subtitle }}</h4>
-                                        <div class="stars">
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                        </div>
                                     </div>
                                 </div>
                                 <p>

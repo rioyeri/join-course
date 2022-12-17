@@ -12,107 +12,30 @@
 <form class="form-horizontal style-form" method="post" action="{{ route('contentmanagement.update', ['id' => $data->id]) }}" enctype="multipart/form-data">
     {{ method_field('PUT') }}
     @csrf
+    <p class="text-muted font-14">
+        <label class="col-4 col-form-label">( <span class="text-danger">*</span> ) is a required field</label>
+    </p>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Title</label>
+        <label class="col-sm-3 col-sm-3 control-label">Title <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="title" id="title" value="@isset($data->title){{ $data->title }}@endisset">
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Subtitle</label>
+        <label class="col-sm-3 col-sm-3 control-label">Subtitle <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <textarea class="form-control" name="subtitle" id="subtitle" rows="3">@isset($data->subtitle){{ $data->subtitle }}@endisset</textarea>
         </div>
     </div>
     <input type="hidden" id="content_id" value="{{ $data->id }}">
     @if($data->id != 1)
-        {{-- @if($data->id == 4)
-            <div id="create_box">
-                <h5>Add Detail Row</h5>
-                <div class="form-group">
-                    <div class="form-group-sm" style="margin-bottom: 35px;">
-                        <label class="col-sm-3 col-sm-3 control-label">Review</label>
-                        <div class="col-sm-4">
-                            <div class="radio">
-                                <label><input type="radio" name="optionsRadios" id="options-manual" value="manual" checked onchange="changeType(this.value)"> Input Review</label>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="radio">
-                                <label><input type="radio" name="optionsRadios" id="options-select" value="select" onchange="changeType(this.value)"> Select Review</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="select-rev" class="form-group-sm" style="display:none;">
-                        <label class="col-sm-3 col-sm-3 control-label">Select Reviewer</label>
-                        <div class="col-sm-9">
-                            <select name="select-review" id="select-review" class="form-control select2" onchange="getReview(this.value)">
-                                <option value="#" selected disabled>-- Choose --</option>
-                                @foreach ($reviews as $review)
-                                    <option value="{{ $review->id }}">{{ $review->get_order->get_student->student->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group-sm">
-                        <label class="col-sm-3 col-sm-3 control-label">Title</label>
-                        <div class="col-sm-9">
-                            <input class="form-control" name="reviewer_name" id="reviewer_name" placeholder="Name">
-                        </div>
-                    </div>
-                    <div class="form-group-sm">
-                        <label class="col-sm-3 col-sm-3 control-label">Subitle</label>
-                        <div class="col-sm-9">
-                            <input class="form-control" name="teacher_name" id="teacher_name" placeholder="Name">
-                        </div>
-                    </div>
-                    <div class="form-group-sm">
-                        <label class="col-sm-3 col-sm-3 control-label">Rating</label>
-                        <div class="col-sm-9">
-                            <input class="form-control" name="rating" id="rating" placeholder="Rating">
-                        </div>
-                    </div>
-                    <div class="form-group-sm">
-                        <label class="col-sm-3 col-sm-3 control-label">Review</label>
-                        <div class="col-sm-9">
-                            <textarea class="form-control" name="review" id="review" rows="3" placeholder="Review"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group-sm">
-                        <label class="control-label col-sm-3 col-sm-3">Image</label>
-                        <div class="col-md-9">
-                            <div class="fileupload fileupload-new" data-provides="fileupload">
-                                <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;">
-                                    <img src="" alt="" id="image-display"/>
-                                </div>
-                                <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 200px; max-height: 150px; line-height: 20px;">
-                                </div>
-                                <div>
-                                    <span class="btn btn-theme02 btn-file">
-                                        <span class="fileupload-new"><i class="fa fa-paperclip"></i> Select image</span>
-                                        <span class="fileupload-exists"><i class="fa fa-undo"></i> Change</span>
-                                        <input type="file" class="default" name="detail_image" id="detail_image"/>
-                                    </span>
-                                    <a href="javascript:;" class="btn btn-theme04 fileupload-exists" data-dismiss="fileupload"><i class="fa fa-trash-o"></i> Remove</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group-sm" style="margin-bottom: 10px;">
-                        <div class="col-lg-offset-3 col-lg-9">
-                            <a class="btn btn-theme03" onclick="add_row()">Add Row</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif --}}
         <div id="update_box" @if($data->id != 4)style="display: none;"@endif>
-            <h5 class="mb" id="title-edit"><strong>Update Detail Row : </strong></h5>
+            <h5 class="mb" id="title-edit"><strong>Add Detail Row : </strong></h5>
             <input type="hidden" id="detail_id" value="0">
             <div class="form-group">
                 @if($data->id == 4)
                     <div class="form-group-sm" style="margin-bottom: 35px;">
-                        <label class="col-sm-3 col-sm-3 control-label">Review</label>
+                        <label class="col-sm-3 col-sm-3 control-label">Review <span class="text-danger">*</span></label>
                         <div class="col-sm-4">
                             <div class="radio">
                                 <label><input type="radio" name="optionsRadios" id="options-manual" value="manual" checked onchange="changeType(this.value)"> Input Review</label>
@@ -125,7 +48,7 @@
                         </div>
                     </div>
                     <div id="select-rev" class="form-group-sm" style="display:none;">
-                        <label class="col-sm-3 col-sm-3 control-label">Select Reviewer</label>
+                        <label class="col-sm-3 col-sm-3 control-label">Select Reviewer <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
                             <select name="select-review" id="select-review" class="form-control select2" onchange="getReview(this.value)">
                                 <option value="#" selected disabled>-- Choose --</option>
@@ -139,7 +62,7 @@
                 @endif
                 @if($data->id == 3)
                     <div class="form-group-sm">
-                        <label class="col-sm-3 col-sm-3 control-label">Title</label>
+                        <label class="col-sm-3 col-sm-3 control-label">Title <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
                             <select class="form-control select2" name="detail_title" id="detail_title" onchange="getTeachersDetailbyName(this.value)">
                                 <option value="#" selected disabled>-- Choose --</option>
@@ -151,7 +74,7 @@
                     </div>
                 @else
                     <div class="form-group-sm">
-                        <label class="col-sm-3 col-sm-3 control-label">Title</label>
+                        <label class="col-sm-3 col-sm-3 control-label">Title <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" name="detail_title" id="detail_title" value="">
                         </div>
@@ -195,7 +118,7 @@
                                 <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;">
                                     <img src="" alt="" id="image-display"/>
                                 </div>
-                                <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 200px; max-height: 150px; line-height: 20px;">
+                                <div id="image-upload-display" class="fileupload-preview fileupload-exists thumbnail" style="max-width: 200px; max-height: 150px; line-height: 20px;">
                                 </div>
                                 @if($data->id != 3)
                                     <div>
@@ -253,7 +176,7 @@
         </div>
         @if($data->id != 7)
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-detail">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-detail">
                 <thead>
                     <th>No</th>
                     <th>Title</th>
@@ -474,25 +397,42 @@ function update_row(){
                     $('#image_name'+number).val(data.image);
                 }else{
                     if(data.image != "" && data.image != null){
-                        if(content_id == 3){
-                            image_path = 'dashboard/assets/users/photos/';
-                        }else if(content_id == 8){
-                            image_path = 'landingpage/assets/img/';
-                        }else{
-                            image_path = 'landingpage/assets/img/testimonials/';
-                        }
-                        field_image = $(this).find('td:eq(4)').text().replaceAll(/\s/g, '');
-                        
-                        if(field_image == "NOTSETYET"){
-                            var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
-                            var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 50px; max-height:50px;">';
-                            content = content1.concat(content2);
-                            console.log(content);
-                            $(this).find('td:eq(4)').html(content);
-                        }
+                        swal({
+                            title: 'Loading',
+                            allowEscapeKey: false,
+                            allowOutsideClick: false,
+                            timer: 5000,
+                            showConfirmButton: false,
+                            onOpen: () => {
+                                swal.showLoading();
+                            }
+                        }).then(
+                            () => {},
+                            (dismiss) => {
+                                if (dismiss === 'timer') {
+                                    console.log('closed by timer!!!!');
+                                    if(content_id == 3){
+                                        image_path = '{{ asset("dashboard/assets/users/photos/") }}';
+                                    }else if(content_id == 8){
+                                        image_path = 'asset("landingpage/assets/img/")';
+                                    }else{
+                                        image_path = '{{ asset("landingpage/assets/img/testimonials/") }}';
+                                    }
+                                    field_image = $(this).find('td:eq(4)').text().replaceAll(/\s/g, '');
+                                    
+                                    if(field_image == "NOTSETYET"){
+                                        var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
+                                        var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 50px; max-height:50px;">';
+                                        content = content1.concat(content2);
+                                        $(this).find('td:eq(4)').html(content);
+                                    }
 
-                        document.getElementById('image'+number).src = image_path+data.image;
-                        $('#image_name'+number).val(image_path+data.image);
+                                    document.getElementById('image'+number).src = image_path+'/'+data.image;
+                                    $('#image_name'+number).val(image_path+'/'+data.image);
+                                    console.log(image_path+'/'+data.image);
+                                }
+                            }
+                        )
                     }
                 }
             }
@@ -504,6 +444,8 @@ function update_row(){
         if(content_id == 4){
             document.getElementById('update_button').style.display = 'none';
             document.getElementById('add_button').style.display = 'block';
+            document.getElementById('title-edit').innerHTML = "<strong>Add Detail Row<strong>";
+            changeType('manual');
         }
     }).fail(function (msg) {
         alert('Gagal menampilkan data, silahkan refresh halaman.');
@@ -546,6 +488,7 @@ function changeType(id){
         $('#detail_description').val("");
         $('#reviewer_user_id').val("");
         document.getElementById('image-display').src = "";
+        $('.fileupload').fileupload('clear')
     }
 }
 
@@ -558,7 +501,7 @@ function getReview(id){
         }).done(function (data) {
             console.log(data.data);
             $('#detail_title').val(data.data.reviewer_name);
-            $('#detail_subtitle').val(data.data.teacher_name+' ('+data.data.course_name+')');
+            $('#detail_subtitle').val('Belajar '+data.data.course_name+' bersama '+data.data.teacher_name);
             $('#detail_description').val(data.data.review);
             $('#reviewer_user_id').val(data.data.reviewer_user_id);
             document.getElementById('image-display').src = data.data.reviewer_photo;
@@ -610,46 +553,28 @@ function add_row(){
         processData: false,
     }).done(function (data) {
         console.log(data);
-        // $("#table-body-detail tr").each(function(){
-        //     var number = $(this).find('td:eq(0)').text();
-        //     var detail_id = $('#detail_id'+number).val();
-        //     if(data.id == detail_id){
-        //         var new_title = data.title;
-        //         var new_subtitle = data.subtitle;
-        //         var new_description = data.description;
-        //         if(data.link_text == null){
-        //             var new_link = "";
-        //             var new_link_text = "";
-        //         }else{
-        //             var new_link = data.link;
-        //             var new_link_text = data.link_text;
-        //         }
-
-        //         $(this).find('td:eq(1)').text(new_title);
-        //         $(this).find('td:eq(2)').text(new_subtitle);
-        //         $(this).find('td:eq(3)').text(new_description);
-        //         $(this).find('td:eq(5)').text(new_link);
-        //         $(this).find('td:eq(6)').text(new_link_text);
-
-        //         if(data.image != "" && data.image != null){
-        //             image_path = 'landingpage/assets/img/testimonials/';
-        //             field_image = $(this).find('td:eq(4)').text().replaceAll(/\s/g, '');
-                    
-        //             if(field_image == "NOTSETYET"){
-        //                 var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
-        //                 var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 50px; max-height:50px;">';
-        //                 content = content1.concat(content2);
-        //                 console.log(content);
-        //                 $(this).find('td:eq(4)').html(content);
-        //             }
-
-        //             document.getElementById('image'+number).src = image_path+data.image;
-        //             $('#image_name'+number).val(image_path+data.image);
-        //         }
-        //     }
-        // })
-        // $('#detail_id').val("");
-        // document.getElementById('update_box').style.display = 'none';
+        var i = $('#table-detail tbody tr.trow').length + 1;
+        var append = '<tr style="width:100%" id="trow'+i+'" class="trow" role="row">';
+        append += '<input type="hidden" id="detail_id'+i+'" value="'+data.id+'">';
+        append += '<td>'+i+'</td>';
+        append += '<td>'+data.title+'</td>';
+        append += '<td>'+data.subtitle+'</td>';
+        append += '<td>'+data.description+'</td>';
+        append += '<td>';
+        if(data.image != ""){
+            path = "landingpage/assets/img/testimonials/"+data.image;
+            append += '<input type="hidden" id="image_name'+i+'" value="'+path+'">';
+            append += '<img id="image'+i+'" src="'+path+'" style="object-fit:cover; min-height: 50px; max-height:50px;">';
+        }else{
+            append += 'NOT SET YET';
+        }
+        append += '</td>';
+        append += '<td class="text-center">';
+        append += '<a href="javascript:;" type="button" class="btn btn-primary" onclick="edit_row('+i+')"> Edit</a> ';
+        append += '<a href="javascript:;" type="button" class="btn btn-danger" onclick="delete_row('+i+')"> Delete</a>';
+        append += '</td></tr>';
+        $('#table-body-detail').append(append);
+        changeType('manual');
     }).fail(function (msg) {
         alert('Gagal menampilkan data, silahkan refresh halaman.');
     });
@@ -682,6 +607,7 @@ function delete_row(id){
                 }
             }).done(function (data) {
                 $('#trow'+id).remove();
+                correctionNumber();
             }).fail(function (msg) {
                 alert('Gagal menampilkan data, silahkan refresh halaman.');
             });

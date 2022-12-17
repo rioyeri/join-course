@@ -381,7 +381,7 @@ Dashboard
                 {data : "grade_id", name : "grade_id"},
                 {data : "teacher_name", name : "teacher_name"},
                 {data : "package_name", name : "package_name"},
-                {data : "schedules", name : "schedules"},
+                {data : "schedules", name : "schedules", orderable : false},
                 {data : "order_type", name : "order_type"},
                 {data : "payment_status", name : "payment_status", orderable : false, searchable : false},
                 {data : "order_status", name : "order_status", orderable : false, searchable : false,}
@@ -427,10 +427,11 @@ Dashboard
             "serverSide" : true,
             "order": [[ 8, "asc" ]],
             "ajax" : {
-                "url" : "{{ route('orderpayment.index') }}",
+                "url" : "{{ route('home.index') }}",
                 "type" : "get",
                 "data" : {
                     "_token" : $("meta[name='csrf-token']").attr("content"),
+                    "type" : "incoming-payment",
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                 {data : "invoice_id", name : "invoice_id"},

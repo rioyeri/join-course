@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-role">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-role">
                 <thead>
                     <th>No</th>
                     <th>Role Name</th>
@@ -121,7 +121,7 @@
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "name", name : "name"},
-                    {data : "description", name : "description", orderable : false},
+                    {data : "description", name : "description"},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},

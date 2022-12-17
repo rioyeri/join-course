@@ -19,7 +19,6 @@ Route::group(['prefix' => 'google', 'namespace' => 'Auth', 'as' => 'google.'], f
 });
 Route::get('/testuser','TestController@index');
 Route::get('/','HomeController@index')->name('getHome');
-// Route::get('/login','HomeController@index2')->name('getHome2');
 
 // Login Normal
 Route::get('/login', 'HomeController@get_login')->name('get_login');

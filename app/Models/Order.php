@@ -57,9 +57,9 @@ class Order extends Model
 
         $page = MenuMapping::getMap(session('role_id'),"OROR");
         if(session('role_id') == 4 || session('role_id') == 5){
-            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type')->where('us.id', session('user_id'));
+            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->join('order_payment as py', 'order.id', 'py.order_id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type')->where('us.id', session('user_id'));
         }else{
-            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type');
+            $order = Order::join('student as s', 'student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->join('teacher as t', 'teacher_id', 't.id')->join('users as ut', 't.user_id', 'ut.id')->join('course as c','course_id','c.id')->join('package as p', 'package_id', 'p.id')->join('order_payment as py', 'order.id', 'py.order_id')->select('order.id','order.order_id','student_id','us.name as student_name','us.phone as student_phone','teacher_id','ut.name as teacher_name','ut.phone as teacher_phone','course_id','c.name as course_name','grade_id','package_id','p.name as package_name','course_start','order_bill','order_status','payment_status','order_type');
         }
 
         if($start != "" && $end != ""){
@@ -287,7 +287,7 @@ class Order extends Model
 
         if($searchValue != ''){
             $order->where(function ($query) use ($searchValue) {
-                $query->orWhere('order.order_id', 'LIKE', '%'.$searchValue.'%')->orWhere('us.name', 'LIKE', '%'.$searchValue.'%')->orWhere('ut.name', 'LIKE', '%'.$searchValue.'%')->orWhere('c.name', 'LIKE', '%'.$searchValue.'%')->orWhere('grade_id', 'LIKE', '%'.$searchValue.'%')->orWhere('p.name', 'LIKE', '%'.$searchValue.'%');
+                $query->orWhere('order.order_id', 'LIKE', '%'.$searchValue.'%')->orWhere('us.name', 'LIKE', '%'.$searchValue.'%')->orWhere('ut.name', 'LIKE', '%'.$searchValue.'%')->orWhere('c.name', 'LIKE', '%'.$searchValue.'%')->orWhere('grade_id', 'LIKE', '%'.$searchValue.'%')->orWhere('p.name', 'LIKE', '%'.$searchValue.'%')->orWhere('order_type', 'LIKE', '%'.$searchValue.'%');
             });
         }
 
@@ -384,7 +384,7 @@ class Order extends Model
 
         if($searchValue != ''){
             $order->where(function ($query) use ($searchValue) {
-                $query->orWhere('order.order_id', 'LIKE', '%'.$searchValue.'%')->orWhere('us.name', 'LIKE', '%'.$searchValue.'%')->orWhere('ut.name', 'LIKE', '%'.$searchValue.'%')->orWhere('c.name', 'LIKE', '%'.$searchValue.'%')->orWhere('grade_id', 'LIKE', '%'.$searchValue.'%')->orWhere('p.name', 'LIKE', '%'.$searchValue.'%');
+                $query->orWhere('order.order_id', 'LIKE', '%'.$searchValue.'%')->orWhere('us.name', 'LIKE', '%'.$searchValue.'%')->orWhere('ut.name', 'LIKE', '%'.$searchValue.'%')->orWhere('c.name', 'LIKE', '%'.$searchValue.'%')->orWhere('grade_id', 'LIKE', '%'.$searchValue.'%')->orWhere('p.name', 'LIKE', '%'.$searchValue.'%')->orWhere('order_type', 'LIKE', '%'.$searchValue.'%');
             });
         }
 
@@ -614,9 +614,9 @@ class Order extends Model
 
         $page = MenuMapping::getMap(session('role_id'),"ORPY");
         if(session('role_id') == 4 || session('role_id') == 5){
-            $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->join('student as s', 'o.student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at')->where('us.id', session('user_id'));
+            $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->join('student as s', 'o.student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','us.name AS student_name','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at')->where('us.id', session('user_id'));
         }else{
-            $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at');
+            $orderpayment = OrderPayment::join('users as u', 'order_payment.creator', 'u.id')->join('payment_account as pa', 'order_payment.payment_method', 'pa.id')->join('order as o', 'order_payment.order_id', 'o.id')->join('student as s', 'o.student_id', 's.id')->join('users as us', 's.user_id', 'us.id')->select('order_payment.id','order_payment.invoice_id','order_payment.order_id as order_fk','o.order_id','o.order_bill','us.name AS student_name','payment_amount','payment_method','pa.account_number','pa.account_type','payment_evidence','order_payment.creator','u.name AS creator_name','payment_confirmation','confirmation_by','order_payment.created_at','order_payment.updated_at');
         }
 
         $orderpayment->where('payment_confirmation', 0);
@@ -650,8 +650,8 @@ class Order extends Model
             $payment_account = PaymentAccount::where('id', $key->payment_method)->first();
             $payment_method = $payment_account->account_type." ".$payment_account->account_number;
 
-            $student_id = Order::where('id', $key->order_fk)->first()->student_id;
-            $student_name = Student::where('id', $student_id)->first()->student->name;
+            // $student_id = Order::where('id', $key->order_fk)->first()->student_id;
+            // $student_name = Student::where('id', $student_id)->first()->student->name;
 
             if (array_search("ORPYS",$page)){
                 if($key->payment_confirmation == 1){
@@ -682,7 +682,8 @@ class Order extends Model
             $detail->put('no', $i++);
             $detail->put('invoice_id', '#'.$key->invoice_id);
             $detail->put('order_id', '#'.$key->order_id);
-            $detail->put('student_name', $student_name);
+            // $detail->put('student_name', $student_name);
+            $detail->put('student_name', $key->student_name);
             $detail->put('order_bill', $key->order_bill);
             $detail->put('payment_amount', $key->payment_amount);
             $detail->put('payment_method', $payment_method);

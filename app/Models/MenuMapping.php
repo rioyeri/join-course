@@ -134,7 +134,7 @@ class MenuMapping extends Model
             }
 
             $detail->put('no', $i++);
-            $detail->put('role_name', $key->name);
+            $detail->put('name', $key->name);
             $detail->put('options', $options);
             $data->push($detail);
         }

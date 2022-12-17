@@ -7,10 +7,13 @@
     <form class="form-horizontal style-form" method="post" action="{{ route('paymentaccount.store') }}">
 @endif
     @csrf
+    <p class="text-muted font-14">
+        <label class="col-4 col-form-label">( <span class="text-danger">*</span> ) is a required field</label>
+    </p>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Account Type</label>
+        <label class="col-sm-3 col-sm-3 control-label">Account Type <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <select class="form-control select2" parsley-trigger="change" name="account_type" id="account_type">
+            <select class="form-control select2" parsley-trigger="change" name="account_type" id="account_type" required>
                 <option value="#" selected disabled>-- Choose --</option>
                 @foreach ($account_types as $type)
                     @isset($data->account_type)
@@ -27,15 +30,15 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Account Number</label>
+        <label class="col-sm-3 col-sm-3 control-label">Account Number <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="account_number" id="account_number" value="@isset($data->account_number){{ $data->account_number }}@endisset">
+            <input type="text" class="form-control" name="account_number" id="account_number" value="@isset($data->account_number){{ $data->account_number }}@endisset" required>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Account Name</label>
+        <label class="col-sm-3 col-sm-3 control-label">Account Name <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="account_name" id="account_name" value="@isset($data->account_name){{ $data->account_name }}@endisset">
+            <input type="text" class="form-control" name="account_name" id="account_name" value="@isset($data->account_name){{ $data->account_name }}@endisset" required>
         </div>
     </div>
 

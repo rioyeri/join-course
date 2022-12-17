@@ -34,7 +34,7 @@ class ContentPromo extends Model
         if($searchValue != ''){
             $promos->where(function ($query) use ($searchValue) {
                 $promo_ids = ContentPromoDetail::select('promo_id')->where('text', 'LIKE', '%'.$searchValue.'%')->get();
-                $price_ids = Package::select('id')->where(DB::raw('price - (price / 100 * discount_rate)'), 'LIKE', '%'.$searchValue.'%')->get();
+                $price_ids = Package::select('id')->where(DB::raw('price - (price / 100 * discount_rate)'), 'LIKE', '%'.$searchValue.'%')->orWhere('discount_rate', 'LIKE', '%'.$searchValue.'%')->get();
                 $query->orWhere('p.name', 'LIKE', '%'.$searchValue.'%')->orWhere('p.price', 'LIKE', '%'.$searchValue.'%')->orWhere('link_text', 'LIKE', '%'.$searchValue.'%')->orWhereIn('content_promo.id', $promo_ids)->orWhereIn('content_promo.package_id', $price_ids);
             });
         }

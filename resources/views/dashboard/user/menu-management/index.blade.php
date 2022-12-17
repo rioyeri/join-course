@@ -72,7 +72,7 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-menu-user">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-menu-user">
                 <thead>
                     <th>No</th>
                     <th>Role Name</th>
@@ -116,7 +116,7 @@
                     "_token" : $("meta[name='csrf-token']").attr("content"),
                 }
             },"columns" : [{data : "no", name : "no", searchable : false},
-                    {data : "role_name", name : "role_name"},
+                    {data : "name", name : "name"},
                     {data : "options", name : "options", orderable : false, searchable : false,}
             ],
             oLanguage : {sProcessing: "<div id='loader'></div>"},

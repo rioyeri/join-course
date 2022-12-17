@@ -127,7 +127,7 @@ class User extends Model
 
         if($searchValue != ''){
             $users->where(function ($query) use ($searchValue) {
-                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('username', 'LIKE', '%'.$searchValue.'%')->orWhere('last_login', 'LIKE', '%'.$searchValue.'%')->orWhere('phone', 'LIKE', '%'.$searchValue.'%')->orWhere('email', '%'.$searchValue.'%')->orWhere('birthdate', '%'.$searchValue.'%')->orWhere('birthplace', '%'.$searchValue.'%')->orWhere('regis_date', '%'.$searchValue.'%')->orWhere('address_province', '%'.$searchValue.'%')->orWhere('address_city', '%'.$searchValue.'%');
+                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('username', 'LIKE', '%'.$searchValue.'%')->orWhere('last_login', 'LIKE', '%'.$searchValue.'%')->orWhere('phone', 'LIKE', '%'.$searchValue.'%')->orWhere('email', 'LIKE', '%'.$searchValue.'%')->orWhere('birthdate', 'LIKE', '%'.$searchValue.'%')->orWhere('birthplace', 'LIKE', '%'.$searchValue.'%')->orWhere('regis_date', 'LIKE', '%'.$searchValue.'%')->orWhere('address_province', 'LIKE', '%'.$searchValue.'%')->orWhere('address_city', 'LIKE', '%'.$searchValue.'%');
             });
         }
 

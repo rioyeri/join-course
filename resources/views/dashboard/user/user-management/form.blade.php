@@ -65,14 +65,17 @@
     <form id="form" role="form" class="form-horizontal style-form" method="post" action="{{ route('user.store') }}" enctype="multipart/form-data">
 @endif
     @csrf
+    <p class="text-muted font-14">
+        <label class="col-4 col-form-label">( <span class="text-danger">*</span> ) is a required field</label>
+    </p>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Name</label>
+        <label class="col-sm-3 col-sm-3 control-label">Name <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="name" id="name" onchange="checkfield()" autocomplete="off" value="@isset($data->name){{ $data->name }}@endisset">
         </div>
     </div>
     <div class="form-group input-box" id="username-box">
-        <label class="col-sm-3 col-sm-3 control-label">Username</label>
+        <label class="col-sm-3 col-sm-3 control-label">Username <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="username" id="username" onkeyup="checkUniqueUsername()" onchange="checkUniqueUsername()" autocomplete="off" value="@isset($data->username){{ $data->username }}@endisset">
             <span class="username-error" id="uname-error" style="display: none;">Username has been taken</span>
@@ -80,7 +83,7 @@
     </div>
     @if(!isset($data))
     <div class="form-group form-inline input-box">
-        <label class="col-sm-3 col-sm-3 control-label">Password</label>
+        <label class="col-sm-3 col-sm-3 control-label">Password <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="password" class="form-control" name="password" id="password" onchange="checkfield()" autocomplete="new-password">
             <span class="eye" onclick="showpass('pass1')">
@@ -89,7 +92,7 @@
         </div>
     </div>
     <div class="form-group form-inline input-box">
-        <label class="col-sm-3 col-sm-3 control-label">Confirm Password</label>
+        <label class="col-sm-3 col-sm-3 control-label">Confirm Password <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="password" class="form-control" name="password_retype" id="password_retype" onchange="checkfield()" autocomplete="new-password">
             <span class="eye" onclick="showpass('pass2')">
@@ -99,21 +102,21 @@
     </div>
     @endif
     <div class="form-group input-box" id="email-box">
-        <label class="col-sm-3 col-sm-3 control-label">Email</label>
+        <label class="col-sm-3 col-sm-3 control-label">Email <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="email" class="form-control" name="email" id="email" onchange="checkEmail(this.value)" autocomplete="off" value="@isset($data->email){{ $data->email }}@endisset">
             <span class="email-error" id="email-error" style="display: none;">Email Invalid</span>
         </div>
     </div>
     <div class="form-group input-box" id="phone-box">
-        <label class="col-sm-3 col-sm-3 control-label">Whatsapp Number</label>
+        <label class="col-sm-3 col-sm-3 control-label">Whatsapp Number <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="phone" id="phone" onchange="checkPhone(this.value)" autocomplete="off" value="@isset($data->phone){{ $data->phone }}@endisset">
             <span class="phone-error" id="phone-error" style="display: none;">Phone Number Invalid</span>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Date of Birth</label>
+        <label class="col-sm-3 col-sm-3 control-label">Date of Birth <span class="text-danger">*</span></label>
         <div class="col-sm-3">
             {{-- <input type="text" class="form-control datepicker" name="birthdate" id="birthdate" data-date-format='yyyy-mm-dd' onchange="checkfield()" value="@isset($data->birthdate){{ $data->birthdate }}@endisset" required> --}}
             <select class="form-control select2" parsley-trigger="change" name="birthdate_month" id="birthdate_month" required>

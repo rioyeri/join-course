@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-teacherschedule">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-teacherschedule">
                 <thead>
                     <th>No</th>
                     <th>Teacher Name</th>

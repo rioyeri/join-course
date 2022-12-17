@@ -38,7 +38,7 @@
 
     <div id="table_report">
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered dt-responsive wrap" id="table-report">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered dt-responsive wrap" id="table-report">
                 <thead>
                     <th>No</th>
                     <th>Report Date</th>

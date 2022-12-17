@@ -64,6 +64,10 @@ class ContentManagementController extends Controller
                     }else{
                         // Upload Foto
                         if($request->image != null || $request->image != '' && $request->content_id != 3){
+                            // echo "<pre>";
+                            // print_r($request->all());
+                            // die;
+                            
                             if($request->content_id == 4){
                                 $path = "landingpage/assets/img/testimonials/";
                             }elseif($request->content_id == 8){

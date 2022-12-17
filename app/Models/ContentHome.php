@@ -29,7 +29,10 @@ class ContentHome extends Model
 
         if($searchValue != ''){
             $home->where(function ($query) use ($searchValue) {
-                $query->orWhere('segment', 'LIKE', '%'.$searchValue.'%')->orWhere('title', 'LIKE', '%'.$searchValue.'%')->orWhere('subtitle', 'LIKE', '%'.$searchValue.'%');
+                $contents_id = ContentHomeDetail::select('content_id')->where(function ($query2) use ($searchValue){
+                    $query2->orWhere('title', 'LIKE', '%'.$searchValue.'%')->orWhere('subtitle', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%');
+                })->get();
+                $query->orWhere('segment', 'LIKE', '%'.$searchValue.'%')->orWhere('title', 'LIKE', '%'.$searchValue.'%')->orWhere('subtitle', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $contents_id);
             });
         }
 
@@ -64,7 +67,7 @@ class ContentHome extends Model
                         if($det->link != ""){
                             $teacher = Teacher::where('id', $det->link)->first();
                             if($teacher->title != null){
-                                $subtitle = '('.$teacher->title.')';
+                                $subtitle = ' | '.$teacher->title;
                             }else{
                                 $subtitle = "";
                             }
@@ -73,7 +76,7 @@ class ContentHome extends Model
                         }
                     }else{
                         if($det->subtitle != null){
-                            $subtitle = '('.$det->subtitle.')';
+                            $subtitle = ' | '.$det->subtitle;
                         }else{
                             $subtitle = "";
                         }
@@ -87,7 +90,7 @@ class ContentHome extends Model
             if (array_search("CTHOU",$page)){
                 $options .= '<a class="btn btn-primary btn-block btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
             }
-            if($key->id != 1 && $key->id != 2 && $key->id != 3){
+            if($key->id != 1 && $key->id != 2 && $key->id != 3 && $key->id != 8 && $key->id != 9){
                 if (array_search("CTHOS",$page)){
                     if($key->status == 0){
                         $options .= '<a class="btn btn-warning btn-block btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Non-Active</a> ';

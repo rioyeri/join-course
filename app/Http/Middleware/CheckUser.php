@@ -25,8 +25,6 @@ class CheckUser
             // $request->session()->put('isItMaintenance', 'maintenance');
             Carbon::setLocale('id');
             if ($request->session()->has('isLoggedIn')) {
-                $role = session('role');
-
                 return $next($request);
             }else{
                 return redirect()->route('getHome');

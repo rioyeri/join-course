@@ -17,7 +17,7 @@
     <div class="container" data-aos="fade-up">
         <div class="section-header">
             <h2>{{ $content[2]->title }}</h2>
-            <p>{{ $content[2]->title }}</p>
+            <p>{{ $content[2]->subtitle }}</p>
         </div>
         <div class="row gy-4">
             @php($i=1)

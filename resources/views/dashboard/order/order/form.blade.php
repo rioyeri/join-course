@@ -261,7 +261,7 @@
     <br>
     <div id="table_schedule" style="margin-top:30px;">
         <div class="adv-table">
-            <table cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-detail">
+            <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-detail">
                 <thead>
                     <th>No</th>
                     <th>Date</th>

@@ -1,7 +1,7 @@
 @extends('dashboard.layout.main')
 
 @section('title')
-Reports
+Statistics
 @endsection
 
 @section('css')
