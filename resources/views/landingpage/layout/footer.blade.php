@@ -10,7 +10,8 @@
         <div class="row gy-4">
             <div class="col-lg-5 col-md-12 footer-info">
                 <a href="{{ route('getHome') }}" class="logo d-flex align-items-center">
-                    <span>{{ $company_profile[0]->content }}</span>
+                    {{-- <span>{{ $company_profile[0]->content }}</span> --}}
+                    Flash<span>Academia</span>
                 </a>
                 <div class="social-links d-flex mt-4">
                     {{-- <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>

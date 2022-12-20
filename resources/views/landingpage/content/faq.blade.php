@@ -1,21 +1,21 @@
 <!-- ======= Frequently Asked Questions Section ======= -->
 <section id="faq" class="faq">
-    <div class="container" data-aos="fade-up">
+    <div class="container">
 
         <div class="row gy-4">
 
             <div class="col-lg-4">
                 <div class="content px-xl-5">
-                    <h3><strong>{{ $content[4]->title }}</strong></h3>
-                    <p>{{ $content[4]->subtitle }}</p>
+                    <h3 data-aos="zoom-in-down"><strong>{{ $content[4]->title }}</strong></h3>
+                    <p data-aos="zoom-out-right" data-aos-delay="100">{{ $content[4]->subtitle }}</p>
                 </div>
             </div>
 
             <div class="col-lg-8">
-                <div class="accordion accordion-flush" id="faqlist" data-aos="fade-up" data-aos-delay="100">
+                <div class="accordion accordion-flush" id="faqlist">
                     @php($i=1)
                     @foreach ($content[4]->detail as $detail)
-                        <div class="accordion-item">
+                        <div class="accordion-item" data-aos="flip-down" data-aos-delay="{{ $i * 50 }}">
                             <h3 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#faq-content-{{ $i }}">

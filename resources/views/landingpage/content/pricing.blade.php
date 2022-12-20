@@ -1,13 +1,14 @@
 <!-- ======= Pricing Section ======= -->
 <section id="pricing" class="pricing sections-bg">
-    <div class="container" data-aos="fade-up">
+    <div class="container">
 
         <div class="section-header">
-            <h2>{{ $content[5]->title }}</h2>
-            <p>{{ $content[5]->subtitle }}</p>
+            <h2 data-aos="zoom-in-down">{{ $content[5]->title }}</h2>
+            <p data-aos="zoom-out-up" data-aos-delay="250">{{ $content[5]->subtitle }}</p>
         </div>
 
-        <div class="row g-4 py-lg-5" data-aos="zoom-out" data-aos-delay="100">
+        <div class="row g-4 py-lg-5" data-aos="flip-left">
+            @php($i=1)
             @foreach ($promos as $promo)
             <div class="{{ $promo->column_size_detail }}">
                 <div class="pricing-item @if($promo->category == 1) featured @endif">
@@ -28,7 +29,8 @@
                     </ul>
                     <div class="text-center"><a href="#contact" class="buy-btn">{{ $promo->link_text }}</a></div>
                 </div>
-            </div><!-- End Pricing Item -->                
+            </div><!-- End Pricing Item -->
+            @php($i++)                
             @endforeach
         </div>
 

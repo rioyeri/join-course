@@ -1,11 +1,11 @@
 <!-- ======= Testimonials Section ======= -->
 <section id="testimonials" class="testimonials">
-    <div class="container" data-aos="fade-up">
+    <div class="container">
         <div class="section-header">
-            <h2>{{ $content[3]->title }}</h2>
-            <p>{{ $content[3]->subtitle }}</p>
+            <h2 data-aos="zoom-in-down">{{ $content[3]->title }}</h2>
+            <p data-aos="zoom-out-up" data-aos-delay="250">{{ $content[3]->subtitle }}</p>
         </div>
-        <div class="slides-3 swiper" data-aos="fade-up" data-aos-delay="100">
+        <div class="slides-3 swiper" data-aos="flip-down" data-aos-delay="250" data-aos-anchor-placement="center-bottom">
             <div class="swiper-wrapper">
                 @foreach ($content[3]->detail as $detail)
                     <div class="swiper-slide">
@@ -27,7 +27,6 @@
                         </div>
                     </div><!-- End testimonial item -->                    
                 @endforeach
-
             </div>
             <div class="swiper-pagination"></div>
         </div>

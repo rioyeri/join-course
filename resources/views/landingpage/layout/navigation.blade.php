@@ -70,11 +70,11 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
     border-radius: 4px 4px 0px 0px;
     -webkit-border-radius: 4px 4px 0px 0px;
 }
-
+/* 
 .dropdown-menu.extended li p.green {
     background-color: #4ECDC4;
     color: #fff;
-}
+} */
 
 .dropdown-menu.extended li a {
     border-bottom: 1px solid #EBEBEB !important;

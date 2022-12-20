@@ -1,4 +1,8 @@
 <style>
+    input {
+        width: 100% !important;
+    }
+
     .select2 {
         position: relative;
     }
@@ -22,6 +26,7 @@
         padding-top:10px;
         padding-left:5px;
         font-size: 15px;
+        width: 100% !important;
     }
 
     .select2-container--default .select2-selection--multiple{
@@ -32,7 +37,7 @@
         padding-top:10px;
         padding-left:10px;
         font-size: 15px;
-        width: 100%;
+        width: 100% !important;
     }
 
     .select2-container--default .select2-selection--single .select2-selection__rendered {

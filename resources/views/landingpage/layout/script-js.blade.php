@@ -144,7 +144,7 @@
 
     function formatText (obj) {
         if($(obj.element).data('text') == 1){
-            return $('<span>'+obj.text+' <span style="align:right; background: #008374; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px; color:white">Bisa langsung pilih jadwal</span></span>');
+            return $('<span>'+obj.text+' <span class="instant-label">Bisa langsung pilih jadwal</span></span>');
         }else{
             return $('<span>'+obj.text+'</span>');
         }
