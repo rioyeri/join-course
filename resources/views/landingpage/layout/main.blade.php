@@ -4,7 +4,6 @@
 <body>
     @php
         use App\Models\User;
-
         $phone_format = User::getFormatWANumber($company_profile[4]->content);
         $phone_redirect = "https://api.whatsapp.com/send?phone=".$phone_format;
     @endphp

@@ -379,4 +379,11 @@ class HelperController extends Controller
             return ApiFormatter::createApi(Response::HTTP_BAD_REQUEST, 'Failed');
         }
     }
+
+    public function showAllPackage(){
+        $results = Package::where('status', 1)->get();
+        $company_profile = ContentProfile::all();
+        $keyword = "";
+        return view('landingpage.content.allpackage', compact('company_profile', 'results'));
+    }
 }

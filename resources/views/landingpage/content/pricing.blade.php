@@ -33,6 +33,8 @@
             @php($i++)                
             @endforeach
         </div>
-
+        <div class="text-center" style="margin: 40px 0 0 0">
+            <a href="{{ route('showAllPackage') }}">Tampilkan semua Paket <i class="bi bi-caret-down-fill"></i></a>
+        </div>
     </div>
 </section><!-- End Pricing Section -->

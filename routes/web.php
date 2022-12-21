@@ -56,6 +56,7 @@ Route::get('/search/{keyword}', 'HelperController@showSearchResult')->name('show
 Route::get('/showTeacherDetail/{id}', 'HelperController@showTeacherDetail')->name('showTeacherDetail');
 Route::get('/getLocation', 'HelperController@getLocation')->name('getLocation');
 Route::get('/all-teacher', 'HelperController@showAllTeacher')->name('showAllTeacher');
+Route::get('/all-package', 'HelperController@showAllPackage')->name('showAllPackage');
 
 // Order Controller
 Route::post('/neworder', 'OrderController@neworder')->name('neworder');
