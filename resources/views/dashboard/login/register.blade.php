@@ -375,7 +375,7 @@
             @isset($user)
             <form class="form-box" id="form" role="form" action="{{ route('storePassword', ['id' => $user->id]) }}" method="POST">
                 <h2>One Step Closer
-                    <p class="small-text">You have try to login with <b>{{ $user->email }}<b> ( <a href="{{ route('Logout') }}" class="logout-google">Logout?</a>)</p>
+                    <p class="small-text">You have try to login with <b>{{ $user->email }}<b> ( <a href="{{ route('Logout') }}" class="logout-google">Logout?</a> )</p>
                 </h2>
             @else
             <form class="form-box" id="form" role="form" action="{{ route('post_register') }}" method="POST">
@@ -504,11 +504,11 @@
                     <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-user"></i> Sign Up</button>
                 </div>
                 <h5 class="text-center">
-                    Already have account? <a href="{{ route('get_login') }}"> Sign In</a>
+                    Already have account? <a href="{{ route('get_login') }}" class="logout-google"> Sign In</a>
                 </h5>
 
                 <h5 class="text-center">
-                    <a href="{{ route('getHome') }}"  style="color:#000;"><i class="fa fa-home"></i> Back to <strong  style="color: #00b6a1; font-size:18px"> Homepage</strong></a>
+                    <a href="{{ route('getHome') }}"  style="color:#000;"><i class="fa fa-home"></i> Back to <strong class="back-to-homepage"> Homepage</strong></a>
                 </h5>
             </form>
         </div>

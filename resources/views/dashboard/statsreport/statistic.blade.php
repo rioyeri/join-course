@@ -488,7 +488,7 @@ Statistics
 
     function setSwitch(){
         var switch1 = document.querySelector('#switch1');
-        new Switchery(switch1, {size: 'small',color: '#008374'});
+        new Switchery(switch1, {size: 'small',color: 'var(--color-primary)'});
     }
 </script>
 @endsection

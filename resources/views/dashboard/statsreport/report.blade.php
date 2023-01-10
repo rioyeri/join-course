@@ -263,7 +263,7 @@ Reports
 
     function setSwitch(){
         var switch2 = document.querySelector('#switch2');
-        new Switchery(switch2, {size: 'small',color: '#008374'});
+        new Switchery(switch2, {size: 'small',color: 'var(--color-primary)'});
     }
 </script>
 @endsection

@@ -182,7 +182,7 @@ Your Profile
                                 <h4>User Stats</h4>
                                 <div class="row centered mt mb">
                                     <div class="col-sm-12">
-                                        <h1><i class="fa fa-trophy" style="color:#008374"></i></h1>
+                                        <h1><i class="fa fa-trophy" style="color:var(--color-secondary)"></i></h1>
                                         <h3>{{ number_format($stats->order_count, 0, ",", ".") }}</h3>
                                         <h6>COMPLETED COURSE</h6>
                                     </div>

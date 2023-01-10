@@ -103,10 +103,11 @@
         }
         
         a {
-            color: #f85a40;
+            /* color: #f85a40; */
+            color: var(--color-secondary);
         }
         a:hover {
-            color: #f82;
+            color: var(--color-secondary-bright);
         }
 
         .btn-google-login {
@@ -152,7 +153,7 @@
                     <a href="{{ route('google.redirect') }}" class="btn btn-google-login btn-block" id="button-google"><i class="fa fa-google-plus" style="margin-left:25px"></i> Login with Google</a>
                 </h4>
                 <h5 class="text-center">
-                    <a href="{{ route('getHome') }}"  style="color:#fff;"><i class="fa fa-home"></i> Back to <strong  style="color: #00b6a1; font-size:18px"> Homepage</strong></a>
+                    <a href="{{ route('getHome') }}"  style="color:#fff;"><i class="fa fa-home"></i> Back to <strong class="back-to-homepage"> Homepage</strong></a>
                 </h5>
             </form>
             <form action="{{route('forgotpassword')}}" method="POST">
