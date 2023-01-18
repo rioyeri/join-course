@@ -42,7 +42,7 @@ class ContentPromoController extends Controller
     {
         $icons = BootstrapIcon::all();
         $promo_package_id = ContentPromo::select('package_id')->get();
-        $packages = Package::whereNotIn('id', $promo_package_id)->get();
+        $packages = Package::whereNotIn('id', $promo_package_id)->where('status', 1)->get();
         return response()->json(view('dashboard.content.content-promo.form', compact('icons','packages'))->render());
     }
 
@@ -149,7 +149,7 @@ class ContentPromoController extends Controller
         $data = ContentPromo::where('id', $id)->first();
         $icons = BootstrapIcon::all();
         $details = ContentPromoDetail::where('promo_id', $id)->get();
-        $packages = Package::all();
+        $packages = Package::where('status', 1)->get();
         return response()->json(view('dashboard.content.content-promo.form',compact('data','icons','details','packages'))->render());
     }
 

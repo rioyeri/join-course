@@ -150,6 +150,24 @@
         }
     }
 
+    $('#package_id').select2({
+        templateResult: formatPrice,
+        templateSelection: formatPrice,
+    })
+
+    function formatPrice (obj) {
+        if(obj.text == "Paket"){
+            return $('<span>'+obj.text+'</span>');
+        }else{
+            if($(obj.element).data('discount') != 0){
+                final_price = $(obj.element).data('price') - ($(obj.element).data('price')/100 * $(obj.element).data('discount'));
+                return $('<span>'+obj.text+' <del class="realprice-label">Rp '+number_format($(obj.element).data('price'), 0,",",".")+'</del><span class="discountrate-label">-'+number_format($(obj.element).data('discount'),1,",",".")+'%</span><span class="finalprice-label">Rp '+number_format(final_price, 0,",",".")+'</span></span>');
+            }else{
+                return $('<span>'+obj.text+' <span class="finalprice-label">Rp '+number_format($(obj.element).data('price'), 0,",",".")+'</span></span>')
+            }
+        }
+    }
+
     function getOptionByValue (select, value) {
         var options = select.options;
         for (var i = 0; i < options.length; i++) {
@@ -180,23 +198,23 @@
         });
     }
 
-    // function get_package(params){
-    //     var jenisdata = "get_package";
-    //     get_schedule(params);
-    //     $.ajax({
-    //         url : "{{route('getDatas')}}",
-    //         type : "get",
-    //         dataType: 'json',
-    //         data:{
-    //             params: params,
-    //             jenisdata: jenisdata,
-    //         },
-    //     }).done(function (data) {
-    //         $('#package_id').html(data.append);
-    //     }).fail(function (msg) {
-    //         alert('Gagal menampilkan data, silahkan refresh halaman.');
-    //     });
-    // }
+    function get_package(params){
+        var jenisdata = "get_package";
+        // get_schedule(params);
+        $.ajax({
+            url : "{{route('getDatas')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                params: params,
+                jenisdata: jenisdata,
+            },
+        }).done(function (data) {
+            $('#package_id').html(data.append);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
 
     function get_schedule(params) {
         var jenisdata = "get_schedule";

@@ -25,7 +25,7 @@
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             /* border-top: 16px solid #3498db; */
-            border-top: 16px solid #f85a40;
+            border-top: 16px solid var(--color-secondary);
             width: 50px;
             height: 50px;
             -webkit-animation: spin 2s linear infinite;

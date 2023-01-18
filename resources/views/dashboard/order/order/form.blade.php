@@ -111,7 +111,7 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Grade</label>
         <div class="col-sm-9">
-            <select class="form-control select2" parsley-trigger="change" name="grade_id" id="grade_id">
+            <select class="form-control select2" parsley-trigger="change" name="grade_id" id="grade_id" onchange="get_package(this.value)">
                 <option value="#" selected disabled>-- Select --</option>
                 @foreach ($grades as $grade)
                     @isset($data->grade_id)

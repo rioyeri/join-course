@@ -1,3 +1,13 @@
+<style>
+    .select2-container--default .select2-selection--multiple{
+        width: 100%;
+    }
+</style>
+<script>
+    $(".select2").select2({
+        width:'100%',
+    });
+</script>
 @isset($data)
     <h4 class="mb"><i class="fa fa-angle-right"></i> Update Package</h4>
     <form class="form-horizontal style-form" method="post" action="{{ route('package.update', ['id' => $data->id]) }}">
@@ -20,6 +30,26 @@
         <label class="col-sm-3 col-sm-3 control-label">Description</label>
         <div class="col-sm-9">
             <textarea class="form-control" name="description" id="description" rows="3">@isset($data->description){{ $data->description }}@endisset</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 col-sm-3 control-label">Grades Level <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+            <select class="form-control select2 select2-multiple" multiple="multiple" multiple parsley-trigger="change" name="package_grade[]" id="package_grade" data-placeholder="-- Select --">
+                @isset($package_grade)
+                    @foreach ($grades as $grade)
+                        @if(in_array($grade->id, $package_grade))
+                            <option value="{{$grade->id}}" selected>{{$grade->name}}</option>
+                        @else
+                            <option value="{{$grade->id}}" >{{$grade->name}}</option>
+                        @endif
+                    @endforeach
+                @else
+                    @foreach ($grades as $grade)
+                        <option value="{{$grade->id}}">{{$grade->name}}</option>
+                    @endforeach
+                @endisset
+            </select>
         </div>
     </div>
     <div class="form-group">

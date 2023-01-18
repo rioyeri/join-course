@@ -19,7 +19,7 @@
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             /* border-top: 16px solid #3498db; */
-            border-top: 16px solid #f85a40;
+            border-top: 16px solid var(--color-secondary);
             width: 50px;
             height: 50px;
             -webkit-animation: spin 2s linear infinite;
@@ -77,14 +77,15 @@
         <div class="adv-table">
             <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-package">
                 <thead>
-                    <th>No</th>
-                    <th>Package Name</th>
-                    <th>Description</th>
-                    <th>Number of meet</th>
-                    <th>Price</th>
-                    <th>Discount Rate</th>
-                    <th>Final Price</th>
-                    <th>Options</th>
+                    <th width="5%">No</th>
+                    <th width="15%">Package Name</th>
+                    <th width="25%">Description</th>
+                    <th width="10%">Grades Level</th>
+                    <th width="5%">Number of meet</th>
+                    <th width="10%">Price</th>
+                    <th width="10%">Discount Rate</th>
+                    <th width="10%">Final Price</th>
+                    <th width="10%">Options</th>
                 </thead>
                 <tbody id="table-body">
                 </tbody>
@@ -126,6 +127,7 @@
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "name", name : "name"},
                     {data : "description", name : "description"},
+                    {data : "grades", name : "grades", orderable : false},
                     {data : "number_meet", name : "number_meet"},
                     {data : "price", name : "price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                     {data : "discount_rate", name : "discount_rate", render: $.fn.dataTable.render.number( '.', ',', 2, '', '%' )},

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use App\Models\Package;
 use App\Models\Log;
 use App\Models\MenuMapping;
@@ -11,6 +12,8 @@ use App\Models\RecycleBin;
 
 use Symfony\Component\HttpFoundation\Response;
 use App\Helpers\ApiFormatter;
+use App\Models\Grade;
+use App\Models\PackageGrade;
 
 class PackageController extends Controller
 {
@@ -38,7 +41,8 @@ class PackageController extends Controller
      */
     public function create()
     {
-        return response()->json(view('dashboard.masterdata.package.form')->render());
+        $grades = Grade::all();
+        return response()->json(view('dashboard.masterdata.package.form',compact('grades'))->render());
     }
 
     /**
@@ -72,7 +76,18 @@ class PackageController extends Controller
                     "number_meet" => $request->number_meet,
                     "creator" => session('user_id'),
                 ));
-                $data->save();
+                if($data->save()){
+                    if(isset($request->package_grade)){
+                        foreach($request->package_grade as $key){
+                            $detail = new PackageGrade(array(
+                                "package_id" => $data->id,
+                                "grade_id" => $key,
+                            ));
+                            $detail->save();
+                        }
+                    }
+                }
+
                 Log::setLog('MDPCC','Create Package : '.$request->name);
                 return redirect()->route('package.index')->with('status','Successfully saved');
             }catch(\Exception $e){
@@ -107,7 +122,10 @@ class PackageController extends Controller
     public function edit($id)
     {
         $data = Package::where('id', $id)->first();
-        return response()->json(view('dashboard.masterdata.package.form',compact('data'))->render());
+        $grades = Grade::all();
+        $package_grade = array_values(array_column(DB::select("SELECT grade_id FROM package_grade WHERE package_id LIKE $id"), 'grade_id'));
+
+        return response()->json(view('dashboard.masterdata.package.form',compact('data','grades','package_grade'))->render());
     }
 
     /**
@@ -145,6 +163,20 @@ class PackageController extends Controller
                     "number_meet" => $request->number_meet,
                     "creator" => session('user_id'),
                 ));
+
+                if(PackageGrade::where('package_id', $id)->count() != 0){
+                    PackageGrade::where('package_id', $id)->delete();
+                }
+
+                if(count($request->package_grade) && isset($request->package_grade)){
+                    foreach($request->package_grade as $key){
+                        $detail = new PackageGrade(array(
+                            "package_id" => $id,
+                            "grade_id" => $key,
+                        ));
+                        $detail->save();
+                    }    
+                }
                 Log::setLog('MDPCU','Update Package : '.$request->name);
                 return redirect()->route('package.index')->with('status','Successfully saved');
             }catch(\Exception $e){

@@ -20,6 +20,7 @@ use App\Models\City;
 use App\Models\Day;
 use App\Models\OrderReview;
 use App\Models\Package;
+use App\Models\PackageGrade;
 
 class HelperController extends Controller
 {
@@ -60,11 +61,12 @@ class HelperController extends Controller
             }
         }elseif($request->jenisdata == "get_package"){
             if($request->params != NULL){
-                $list = TeacherPrice::where('teacher_id', $request->params)->get();
+                // $list = TeacherPrice::where('teacher_id', $request->params)->get();
+                $list = PackageGrade::join('package as p', 'package_grade.package_id', 'p.id')->where('p.status', 1)->where('grade_id', $request->params)->get();
                 $append = '<option value="#" disabled selected>Pick Available Package</option>';
         
                 foreach($list as $key){
-                    $append.='<option value="'.$key->package_id.'" data-meet="'.$key->get_package->number_meet.'">'.$key->get_package->name.'</option>';
+                    $append.='<option value="'.$key->package_id.'" data-meet="'.$key->number_meet.'" data-price="'.$key->price.'" data-discount="'.$key->discount_rate.'">'.$key->get_package->name.'</option>';
                 }
         
                 $data = array(
@@ -127,11 +129,12 @@ class HelperController extends Controller
             }
         }elseif($request->jenisdata == "get_package"){
             if($request->params != NULL){
-                $list = TeacherPrice::where('teacher_id', $request->params)->get();
+                // $list = TeacherPrice::where('teacher_id', $request->params)->get();
+                $list = PackageGrade::join('package as p', 'package_grade.package_id', 'p.id')->where('p.status', 1)->where('grade_id', $request->params)->get();
                 $append = '<option value="#" disabled selected>Paket</option>';
         
                 foreach($list as $key){
-                    $append.='<option value="'.$key->package_id.'" data-meet="'.$key->get_package->number_meet.'">'.$key->get_package->name.'</option>';
+                    $append.='<option value="'.$key->package_id.'" data-price="'.$key->price.'" data-discount="'.$key->discount_rate.'">'.$key->name.'</option>';
                 }
 
                 $data = array(
@@ -315,19 +318,6 @@ class HelperController extends Controller
                     }else{
                         $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
                     }
-                }
-
-                $data = array(
-                    'append' => $append,
-                );
-            }
-        }elseif($request->jenisdata == "get_package"){
-            if($request->params != NULL){
-                $list = TeacherPrice::where('teacher_id', $request->params)->get();
-                $append = '<option value="#" disabled selected>Paket</option>';
-        
-                foreach($list as $key){
-                    $append.='<option value="'.$key->package_id.'" data-meet="'.$key->get_package->number_meet.'">'.$key->get_package->name.'</option>';
                 }
 
                 $data = array(

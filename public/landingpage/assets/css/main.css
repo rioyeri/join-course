@@ -3024,3 +3024,26 @@ section {
   padding: 0 10px 0 10px;
   color:black;
 }
+
+.realprice-label {
+  margin-left: 10px;
+  font-size: 15px;
+}
+
+.discountrate-label {
+  background: red;
+  border-radius: 3px;
+  margin-left: 5px;
+  padding: 0 5px 0 5px;
+  color:white;
+  font-size: 10px;
+  vertical-align: top;
+}
+
+.finalprice-label {
+  background: var(--color-primary);
+  border-radius: 3px;
+  margin-left: 10px;
+  padding: 0 5px 0 5px;
+  color: white;
+}

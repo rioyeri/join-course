@@ -15,6 +15,12 @@ class Package extends Model
         'name','description','status','creator','number_meet','price','discount_rate'
     ];
 
+    public function getPrice(){
+        $package = Package::where('id', $this->id)->first();
+        $result = $package->price - ($package->price / 100 * $package->discount_rate);
+        return $result;
+    }
+
     public static function dataIndex(Request $request){
         $draw = $request->draw;
         $row = $request->start;
@@ -35,7 +41,10 @@ class Package extends Model
                 if(is_numeric($searchValue)){
                     $data_package = Package::select('id')->where(DB::raw('price - (price/100*discount_rate)'), 'LIKE', '%'.$searchValue.'%')->get();
                 }
-                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhere('number_meet', 'LIKE', '%'.$searchValue.'%')->orWhere('price', 'LIKE', '%'.$searchValue.'%')->orWhere('discount_rate', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $data_package);
+                $package_grade = PackageGrade::join('grade as g', 'package_grade.grade_id', 'g.id')->select('package_grade.package_id')->where(function ($query2) use ($searchValue) {
+                    $query2->orWhere('g.id', 'LIKE', $searchValue)->orWhere('g.name', 'LIKE', $searchValue);
+                })->get();
+                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhere('number_meet', 'LIKE', '%'.$searchValue.'%')->orWhere('price', 'LIKE', '%'.$searchValue.'%')->orWhere('discount_rate', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $data_package)->orWhereIn('id', $package_grade);
             });
         }
 
@@ -56,6 +65,13 @@ class Package extends Model
 
         foreach($package as $key){
             $detail = collect();
+
+            $grades = '';
+            if(PackageGrade::where('package_id', $key->id)->count() != 0){
+                foreach(PackageGrade::where('package_id', $key->id)->get() as $grade){
+                    $grades .= '<li>'.$grade->get_grade->name.'</li>';
+                }
+            }
 
             $options = '';
 
@@ -78,6 +94,7 @@ class Package extends Model
             $detail->put('no', $i++);
             $detail->put('name', $key->name);
             $detail->put('description', $key->description);
+            $detail->put('grades', $grades);
             $detail->put('number_meet', $key->number_meet);
             $detail->put('price', $key->price);
             $detail->put('discount_rate', $key->discount_rate);

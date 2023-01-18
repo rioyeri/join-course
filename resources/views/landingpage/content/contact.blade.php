@@ -128,7 +128,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 form-group mt-3 mt-md-0">
-                            <select class="form-control select2" parsley-trigger="change" name="grade_id" id="grade_id">
+                            <select class="form-control select2" parsley-trigger="change" name="grade_id" id="grade_id" onchange="get_package(this.value)">
                                 <option value="#" disabled selected>Kelas</option>
                                 @foreach ($grades as $grade)
                                     <option value="{{$grade->id}}">{{$grade->name}}</option>
@@ -161,7 +161,7 @@
                             <select class="form-control select2" parsley-trigger="change" name="package_id" id="package_id">
                                 <option value="#" disabled selected>Paket</option>
                                 @foreach ($packages as $package)
-                                    <option value="{{$package->id}}">{{$package->name}}</option>
+                                    <option value="{{$package->id}}" data-price="{{ $package->price }}" data-discount="{{ $package->discount_rate }}">{{$package->name}}</option>
                                 @endforeach
                             </select>
                         </div>
