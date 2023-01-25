@@ -18,9 +18,12 @@ class TeacherCourse extends Model
     }
 
     public function teacher(){
-        // return $this->belongsTo('App\Models\Teacher', 'teacher_id', 'id');
         $teacher = Teacher::where('id', $this->teacher_id)->first()->teacher();
         return $teacher;
+    }
+
+    public function get_teacher(){
+        return $this->belongsTo('App\Models\Teacher', 'teacher_id', 'id');
     }
 
     public function isItInstantOrder(){

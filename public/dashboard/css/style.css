@@ -3753,3 +3753,27 @@ ul.chat-available-user li a:hover {
 .back-to-homepage:hover {
     color: var(--color-primary);
 }
+
+.availability-offline-label {
+    background: #f96f59;
+    border-radius: 3px;
+    margin-left: 20px;
+    padding: 0 10px 0 10px;
+    color:white;
+}
+  
+.availability-online-label {
+    background: #008374;
+    border-radius: 3px;
+    margin-left: 20px;
+    padding: 0 10px 0 10px;
+    color:white;
+}
+  
+.availability-online-offline-label {
+    background: var(--color-primary);
+    border-radius: 3px;
+    margin-left: 20px;
+    padding: 0 10px 0 10px;
+    color:white;
+}

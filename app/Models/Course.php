@@ -86,12 +86,12 @@ class Course extends Model
         return $response;
     }
 
-    public static function mostSubject($month=null){
+    public static function mostSubject($sort){
         $data = collect();
         $periodic = "";
-        if($month != null){
-            $start = date('Y-'.$month.'-01'); // hard-coded '01' for first day
-            $end  = date('Y-'.$month.'-t');
+        if($sort != 'all'){
+            $start = date('Y-m-01'); // hard-coded '01' for first day
+            $end  = date('Y-m-t');
             $periodic = date('M Y');    
         }
         $colors = Color::getColor()->shuffle();
@@ -100,11 +100,11 @@ class Course extends Model
         foreach(Course::where('status', 1)->get() as $key){
             $temp = collect();
 
-            if($month != null){
-                $count_orders = Order::whereIn('order_status', [1,2])->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end)->where('course_id', $key->id)->count();
-            }else{
-                $count_orders = Order::whereIn('order_status', [1,2])->where('course_id', $key->id)->count();
+            $count_orders = Order::whereIn('order_status', [1,2])->where('course_id', $key->id);
+            if($sort != 'all'){
+                $count_orders->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end);
             }
+            $count_orders = $count_orders->count();
 
             if($count_orders != 0){
                 $temp->put('course_name', $key->name);

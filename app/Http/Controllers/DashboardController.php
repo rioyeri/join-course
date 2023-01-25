@@ -34,44 +34,19 @@ class DashboardController extends Controller
                 $datas = Order::dataNotYetConfirmDashboard($request);
                 echo json_encode($datas);
             }elseif($request->type == "chart_bestteacher"){
-                if($request->sort == "all"){
-                    $datas = Teacher::bestTeacherThisMonth();
-                }else{
-                    $month = date('m');
-                    $datas = Teacher::bestTeacherThisMonth($month);
-                }
+                $datas = Teacher::bestTeacherThisMonth($request->sort);
                 echo json_encode($datas);
             }elseif($request->type == "chart_mostsubject"){
-                if($request->sort == "all"){
-                    $datas = Course::mostSubject();
-                }else{
-                    $month = date('m');
-                    $datas = Course::mostSubject($month);
-                }
+                $datas = Course::mostSubject($request->sort);
                 echo json_encode($datas);
             }elseif($request->type == "chart_grade"){
-                if($request->sort == "all"){
-                    $datas = Grade::gradeStats();
-                }else{
-                    $month = date('m');
-                    $datas = Grade::gradeStats($month);
-                }
+                $datas = Grade::gradeStats($request->sort);
                 echo json_encode($datas);
             }elseif($request->type == "chart_ordertype"){
-                if($request->sort == "all"){
-                    $datas = Order::orderTypeStats();
-                }else{
-                    $month = date('m');
-                    $datas = Order::orderTypeStats($month);
-                }
+                $datas = Order::orderTypeStats($request->sort);
                 echo json_encode($datas);
             }elseif($request->type == "chart_package"){
-                if($request->sort == "all"){
-                    $datas = Package::getPackageStats();
-                }else{
-                    $month = date('m');
-                    $datas = Package::getPackageStats($month);
-                }
+                $datas = Package::getPackageStats($request->sort);
                 echo json_encode($datas);
             }elseif($request->type == "chart_orderreport"){
                 $datas = Order::orderReport();

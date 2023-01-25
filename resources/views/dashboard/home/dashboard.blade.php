@@ -745,7 +745,6 @@ Dashboard
                 )
             });
         }, function (dismiss) {
-            console.log(dismiss);
             if(dismiss == 'cancel'){
                 $.ajax({
                     url : "/orderpayment/"+id+"/changestatus",
@@ -787,7 +786,7 @@ Dashboard
             if(value == "all"){
                 $("#title-bestteacher").html("Teacher Stats");
             }else{
-                $("#title-bestteacher").html("Teacher of the "+data[0].month_name);
+                // $("#title-bestteacher").html("Teacher of the "+data[0].month_name);
             }
 
             var count = data.length;
@@ -835,7 +834,7 @@ Dashboard
             if(value == "all"){
                 $("#title-mostsubject").html("Most Subject Stats");
             }else{
-                $("#title-mostsubject").html("Most Subject in "+data[0].month_name);
+                // $("#title-mostsubject").html("Most Subject in "+data[0].month_name);
             }
 
             var count = data.length;
@@ -882,7 +881,7 @@ Dashboard
             if(value == "all"){
                 $("#title-grade").html("Grade Statistic");
             }else{
-                $("#title-grade").html("Grade Statistic in "+data[0].month_name);
+                // $("#title-grade").html("Grade Statistic in "+data[0].month_name);
             }
 
             var colors = [];
@@ -930,7 +929,7 @@ Dashboard
             if(value == "all"){
                 $("#title-ordertype").html("Type of Order Stats");
             }else{
-                $("#title-ordertype").html("Type of Order Stats in "+data[0].month_name);
+                // $("#title-ordertype").html("Type of Order Stats in "+data[0].month_name);
             }
 
             var count = data.length;
@@ -978,7 +977,7 @@ Dashboard
             if(value == "all"){
                 $("#title-package").html("Package Stats");
             }else{
-                $("#title-package").html("Package Stats in "+data[0].month_name);
+                // $("#title-package").html("Package Stats in "+data[0].month_name);
             }
 
             var count = data.length;

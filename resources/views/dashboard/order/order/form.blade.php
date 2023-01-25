@@ -48,11 +48,22 @@
         });
 
         function formatText (obj) {
+            var line = '<span>'+obj.text;
+
             if($(obj.element).data('text') == 1){
-                return $('<span>'+obj.text+' <span style="background: #008374; color:white; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px;">Instant Order</span></span>');
-            }else{
-                return $('<span>'+obj.text+'</span>');
+                line += '<span style="background: #008374; color:white; border-radius: 3px; margin-left: 20px;padding: 0 10px 0 10px;">Instant Order</span></span>';
             }
+
+            if($(obj.element).data('availability') == 0){
+                line += '<span class="availability-offline-label">Mengajar Offline</span>';
+            }else if($(obj.element).data('availability') == 1){
+                line += '<span class="availability-online-label">Mengajar Online</span>';
+            }else if($(obj.element).data('availability') == 2){
+                line += '<span class="availability-online-offline-label">Mengajar Online & Offline</span>';
+            }
+
+            line += '</span>';
+            return $(line);
         }
     });
 </script>
@@ -154,9 +165,9 @@
                 @isset($data->teacher_id)
                     @foreach ($teachers as $teacher)
                         @if($data->teacher_id == $teacher->id)
-                            <option value="{{ $teacher->id }}" data-text="{{ $teacher->isItInstantOrder() }}" selected>{{ $teacher->teacher->name }}</option>
+                            <option value="{{ $teacher->id }}" data-text="{{ $teacher->isItInstantOrder() }}" data-availability="{{ $teacher->availability }}" selected>{{ $teacher->teacher->name }}</option>
                         @else
-                            <option value="{{ $teacher->id }}"data-text="{{ $teacher->isItInstantOrder() }}">{{ $teacher->teacher->name }}</option>
+                            <option value="{{ $teacher->id }}"data-text="{{ $teacher->isItInstantOrder() }}" data-availability="{{ $teacher->availability }}">{{ $teacher->teacher->name }}</option>
                         @endif
                     @endforeach
                 @endisset
@@ -224,14 +235,16 @@
     </div>
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Class Type</label>
-        <div class="col-sm-2">
-            <div class="radio">
-                <label><input type="radio" name="optionsRadios" id="options-online" value="online" @isset($data->order_type)@if($data->order_type=="online") checked @endif @endisset> Online</label>
+        <div id="class-type">
+            <div class="col-sm-2">
+                <div class="radio">
+                    <label><input type="radio" name="optionsRadios" id="options-online" value="online" @isset($data->order_type)@if($data->order_type=="online") checked @endif @endisset> Online</label>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-2">
-            <div class="radio">
-                <label><input type="radio" name="optionsRadios" id="options-offline" value="offline" @isset($data->order_type)@if($data->order_type=="offline") checked @endif @endisset> Offline</label>
+            <div class="col-sm-2">
+                <div class="radio">
+                    <label><input type="radio" name="optionsRadios" id="options-offline" value="offline" @isset($data->order_type)@if($data->order_type=="offline") checked @endif @endisset> Offline</label>
+                </div>
             </div>
         </div>
     </div>
@@ -299,6 +312,7 @@
 
 @if (session('user_data') && session('order'))
 <script>
+    get_availability($('#teacher_id').val())
 </script>
 @endif
 <script>

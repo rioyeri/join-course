@@ -55,7 +55,13 @@
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Number of Meet <span class="text-danger">*</span></label>
         <div class="col-sm-9">
-            <input type="text" class="form-control" name="number_meet" id="number_meet" value="@isset($data->number_meet){{ $data->number_meet }}@endisset" required>
+            <input type="number" class="form-control" name="number_meet" id="number_meet" step="1" value="@isset($data->number_meet){{ $data->number_meet }}@else{{ 4 }}@endisset" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 col-sm-3 control-label">Duration (Hours) <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+            <input type="number" class="form-control" name="duration_inhour" id="duration_inhour" step="0.5" value="@isset($data->duration_inhour){{ $data->duration_inhour }}@else{{ 2 }}@endisset" required>
         </div>
     </div>
     <div class="form-group">

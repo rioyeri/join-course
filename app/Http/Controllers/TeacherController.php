@@ -63,6 +63,7 @@ class TeacherController extends Controller
             'user_id' => 'required',
             'title' => 'required',
             'description' => 'required',
+            'availability' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -74,6 +75,7 @@ class TeacherController extends Controller
                     'user_id' => $request->user_id,
                     'title' => $request->title,
                     'description' => $request->description,
+                    'availability' => $request->availability,
                 ));
                 $teacher->save();
 
@@ -128,6 +130,7 @@ class TeacherController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
+            'availability' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -138,6 +141,7 @@ class TeacherController extends Controller
                 $teacher = Teacher::where('id', $id)->first();
                 $teacher->title = $request->title;
                 $teacher->description = $request->description;
+                $teacher->availability = $request->availability;
                 $teacher->save();
                 Log::setLog('MDTCU','Update Teacher : '.$teacher->user_id);
                 return redirect()->route('teacher.index')->with('status','Successfully saved');
@@ -259,6 +263,7 @@ class TeacherController extends Controller
             'title' => 'required',
             'description' => 'required',
             'teacher_subjects' => 'required',
+            'availability' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -269,6 +274,7 @@ class TeacherController extends Controller
                 $teacher = Teacher::where('id', $id)->first();
                 $teacher->title = $request->title;
                 $teacher->description = $request->description;
+                $teacher->availability = $request->availability;
                 $teacher->save();
 
                 TeacherCourse::setData($id, $request->teacher_subjects);

@@ -342,14 +342,15 @@
             dataType: 'json',
         }).done(function (data) {
             var price = data.data.price;
+            var number_meet = data.data.number_meet;
+            var duration_inhour = data.data.duration_inhour;
             var discount_rate = data.data.discount_rate;
-            var discount_price = price - (price / 100 * discount_rate);
-            // $('#price').val('Rp '+number_format(price,2,",","."));
-            // $('#discount_rate').val(number_format(discount_rate, 2, ",", ".")+'%');
-            // $('#discount_price').val('Rp '+number_format(discount_price, 2, ",", "."));
-            $('#price').html('<b>Rp '+number_format(price,2,",",".")+"</b>");
-            $('#discount_rate').html('<b>'+number_format(discount_rate, 2, ",", ".")+'%</b');
-            $('#discount_price').html('<b>Rp '+number_format(discount_price, 2, ",", ".")+"</b>");
+            var discount_price = (price - (price / 100 * discount_rate));
+            var price_inhour = price / number_meet / duration_inhour;
+            var discount_price_inhour = discount_price / number_meet / duration_inhour;
+            $('#price').html('<b>Rp '+number_format(price_inhour,0,",",".")+"/jam</b>");
+            $('#discount_rate').html('<b>'+number_format(discount_rate, 0, ",", ".")+'%</b');
+            $('#discount_price').html('<b>Rp '+number_format(discount_price_inhour, 0, ",", ".")+"/jam</b>");
         }).fail(function (msg) {
             alert('Gagal menampilkan data, silahkan refresh halaman.');
         });

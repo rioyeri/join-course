@@ -19,6 +19,7 @@
                         <th>Nama Paket</th>
                         <th>Deskripsi</th>
                         <th>Jumlah Pertemuan</th>
+                        <th>Durasi (Jam)</th>
                         <th style="text-align: right">Biaya <span style="color:red">*</span></th>
                         <th style="text-align: right">Diskon (%) <span style="color:red">*</span></th>
                         <th style="text-align: right">Biaya setelah diskon <span style="color:red">*</span></th>
@@ -30,10 +31,23 @@
                                 <td width="5%">{{ $i++ }}</td>
                                 <td width="15%">{{ $result->name }}</td>
                                 <td width="30%">{{ $result->description }}</td>
-                                <td width="10%" align="center">{{ $result->number_meet }}</td>
-                                <td width="15%" align="right">Rp {{ number_format($result->price,2,",",".") }}</td>
-                                <td width="10%" align="right">{{ number_format($result->discount_rate,1,",",".") }}%</td>
-                                <td width="25%" align="right">Rp {{ number_format($result->price - ($result->price / 100 * $result->discount_rate), 2, ",", ".") }}</td>
+                                <td width="5%" align="center">{{ $result->number_meet }}</td>
+                                <td width="5%" align="center">{{ $result->duration_inhour }}</td>
+                                <td width="15%" align="right">
+                                    <ul>Rp {{ number_format($result->price,2,",",".") }}</ul>
+                                    <ul><i>(Rp {{ number_format($result->price/$result->number_meet/$result->duration_inhour,0,",",".") }}/Jam)</i></ul>
+                                </td>
+                                <td width="10%" align="right">
+                                    @if($result->discount_rate != 0)
+                                        <b>{{ number_format($result->discount_rate,1,",",".") }}%</b>
+                                    @else
+                                        {{ number_format($result->discount_rate,1,",",".") }}%
+                                    @endif
+                                </td>
+                                <td width="25%" align="right">
+                                    <ul>Rp {{ number_format($result->price - ($result->price / 100 * $result->discount_rate), 2, ",", ".") }}</ul>
+                                    <ul><i>(Rp {{ number_format(($result->price - ($result->price / 100 * $result->discount_rate))/$result->number_meet/$result->duration_inhour) }}/Jam)</i></ul>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

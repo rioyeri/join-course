@@ -96,6 +96,32 @@ class HelperController extends Controller
             if($request->params != NULL){
                 $data = Teacher::getGeneratingTeacherSchedules($request->teacher_id, $request->package_id, $request->params, $request->teacher_schedules);
             }
+        }elseif($request->jenisdata == "get_availability"){
+            if($request->params != NULL){
+                $availability = Teacher::where('id', $request->params)->firstOrFail();
+                $append = '';
+        
+                if($availability->availability == 0){
+                    $append .= '<div class="col-sm-2"><div class="radio">';
+                    $append .= '<label><input type="radio" name="optionsRadios" id="options-offline" value="offline" checked> Offline</label>';
+                    $append .= '</div></div>';
+                }elseif($availability->availability == 1){
+                    $append .= '<div class="col-sm-2"><div class="radio">';
+                    $append .= '<label><input type="radio" name="optionsRadios" id="options-online" value="online" checked> Online</label>';
+                    $append .= '</div></div>';
+                }else{
+                    $append .= '<div class="col-sm-2"><div class="radio">';
+                    $append .= '<label><input type="radio" name="optionsRadios" id="options-online" value="online" checked> Online</label>';
+                    $append .= '</div></div>';
+                    $append .= '<div class="col-sm-2"><div class="radio">';
+                    $append .= '<label><input type="radio" name="optionsRadios" id="options-offline" value="offline"> Offline</label>';
+                    $append .= '</div></div>';
+                }
+        
+                $data = array(
+                    'append' => $append,
+                );
+            }
         }
 
         return response()->json($data);
@@ -108,7 +134,7 @@ class HelperController extends Controller
         if($request->jenisdata == "get_teacher"){
             if($request->params != NULL){
                 $course = Course::where('id', $request->params)->first();
-                $list = TeacherCourse::where('course_id', $request->params)->get();
+                $list = TeacherCourse::join('teacher as t', 'teacher_course.teacher_id', 't.id')->where('t.status', 1)->where('course_id', $request->params)->get();
                 $append = '<option value="#" disabled selected>Guru '.$course->name.'</option>';
 
                 foreach($list as $key){
@@ -117,9 +143,9 @@ class HelperController extends Controller
                         $location .= $key->teacher->address_city.", ".$key->teacher->address_province;
                     }
                     if($location != ""){
-                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.' ('.$location.')</option>';
+                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'" data-availability="'.$key->get_teacher->availability.'">'.$key->teacher->name.' ('.$location.')</option>';
                     }else{
-                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'">'.$key->teacher->name.'</option>';
+                        $append.='<option value="'.$key->teacher_id.'" data-text="'.$key->isItInstantOrder().'" data-availability="'.$key->get_teacher->availability.'">'.$key->teacher->name.'</option>';
                     }
                 }
 

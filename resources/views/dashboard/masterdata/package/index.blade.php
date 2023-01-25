@@ -79,9 +79,10 @@
                 <thead>
                     <th width="5%">No</th>
                     <th width="15%">Package Name</th>
-                    <th width="25%">Description</th>
+                    <th width="20%">Description</th>
                     <th width="10%">Grades Level</th>
                     <th width="5%">Number of meet</th>
+                    <th width="5%">Duration (Hours)</th>
                     <th width="10%">Price</th>
                     <th width="10%">Discount Rate</th>
                     <th width="10%">Final Price</th>
@@ -129,6 +130,7 @@
                     {data : "description", name : "description"},
                     {data : "grades", name : "grades", orderable : false},
                     {data : "number_meet", name : "number_meet"},
+                    {data : "duration_inhour", name : "duration_inhour"},
                     {data : "price", name : "price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                     {data : "discount_rate", name : "discount_rate", render: $.fn.dataTable.render.number( '.', ',', 2, '', '%' )},
                     {data : "final_price", name : "final_price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},

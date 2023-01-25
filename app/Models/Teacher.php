@@ -11,7 +11,7 @@ class Teacher extends Model
     use SoftDeletes;
     protected $table ='teacher';
     protected $fillable = [
-        'user_id','title','description','status'
+        'user_id','title','description','availability','status'
     ];
 
     public function teacher(){
@@ -20,9 +20,6 @@ class Teacher extends Model
 
     public function location(){
         $user = User::where('id', $this->user_id)->first();
-        // echo "<pre>";
-        // print_r($user);
-        // die;
         $location = "";
         if($user->address_city != ""){
             $location .= $user->address_city;
@@ -281,25 +278,28 @@ class Teacher extends Model
         return $data;
     }
 
-    public static function bestTeacherThisMonth($month=null){
+    public static function bestTeacherThisMonth($sort){
         $data = collect();
         $periodic = "";
-        if($month != null){
-            $start = date('Y-'.$month.'-01'); // hard-coded '01' for first day
-            $end  = date('Y-'.$month.'-t');
-            $periodic = date('M Y');    
+        if($sort != 'all'){
+            $start = date('Y-m-01'); // hard-coded '01' for first day
+            $end  = date('Y-m-t');
+            $periodic = date('M Y');
         }
+
         $colors = Color::getColor()->shuffle();
         $i=0;
         $datas = Teacher::where('status', 1)->get();
 
         foreach($datas as $key){
             $temp = collect();
-            if($month != null){
-                $count_orders = Order::whereIn('order_status', [1,2])->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end)->where('teacher_id', $key->id)->count();
-            }else{
-                $count_orders = Order::whereIn('order_status', [1,2])->where('teacher_id', $key->id)->count();
+            $count_orders = Order::whereIn('order_status', [1,2])->where('teacher_id', $key->id);
+
+            if($sort != 'all'){
+                $count_orders->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end);
             }
+
+            $count_orders = $count_orders->count();
 
             $shorted_name = User::shortenName($key->teacher->name);
             if($count_orders != 0){

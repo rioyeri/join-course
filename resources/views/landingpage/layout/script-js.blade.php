@@ -35,7 +35,6 @@
                 "word": word,
             },
         }).done(function (data) {
-            // console.log(data);
             if(data && data.length!=0){
                 // icon.onclick = ()=>{
                 //     webLink = `https://www.google.com/search?q=${userData}`;
@@ -45,7 +44,6 @@
                 data = data.map((data)=>{
                     return data = '<li>'+data+'</li>';
                 });
-                console.log(data.length);
                 searchWrapper.classList.add("active");
                 showSuggestions(data);
                 let allList = suggBox.querySelectorAll("li");
@@ -107,7 +105,6 @@
         element.style.top="100%";
         element.style.visibility="visible";
         element.style.display = "block";
-        // console.log(document.getElementById('loginForm'))
     }
 
     function hideLoginForm(){
@@ -116,11 +113,9 @@
         element.style.top="0%";
         element.style.visibility = "hidden";
         element.style.display = "none";
-        // console.log(document.getElementById('loginForm'))
     }
     
     function showDetail(id){
-        console.log(id);
         $.ajax({
             url : "/showTeacherDetail/"+id,
             type : "get",
@@ -143,11 +138,23 @@
     });
 
     function formatText (obj) {
+        var line = '<span>'+obj.text;
+
         if($(obj.element).data('text') == 1){
-            return $('<span>'+obj.text+' <span class="instant-label">Bisa langsung pilih jadwal</span></span>');
-        }else{
-            return $('<span>'+obj.text+'</span>');
+            line += ' <span class="instant-label">Bisa langsung pilih jadwal</span>';
         }
+
+        if($(obj.element).data('availability') == 0){
+            line += '<span class="availability-offline-label">Mengajar Offline</span>';
+        }else if($(obj.element).data('availability') == 1){
+            line += '<span class="availability-online-label">Mengajar Online</span>';
+        }else if($(obj.element).data('availability') == 2){
+            line += '<span class="availability-online-offline-label">Mengajar Online & Offline</span>';
+        }
+
+        line += '</span>';
+
+        return $(line);
     }
 
     $('#package_id').select2({
@@ -182,8 +189,7 @@
     function get_teacher(params) {
         var jenisdata = "get_teacher";
         $.ajax({
-            // url : "{{route('getDatas')}}",
-            url: "http://127.0.0.1:8000/api/getDatas",
+            url : "{{route('getDatas')}}",
             type : "get",
             dataType: 'json',
             data:{
@@ -191,8 +197,7 @@
                 jenisdata: jenisdata,
             },
         }).done(function (data) {
-            console.log(data);
-            $('#teacher_id').html(data.data.append);
+            $('#teacher_id').html(data.append);
         }).fail(function (msg) {
             alert('Gagal menampilkan data, silahkan refresh halaman.');
         });

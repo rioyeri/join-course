@@ -57,7 +57,8 @@ class PackageController extends Controller
             'name' => 'required',
             'price' => 'required',
             'discount_rate' => 'required',
-            'number_meet' => 'required',
+            'number_meet' => 'required|integer',
+            'duration_inhour' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -74,6 +75,7 @@ class PackageController extends Controller
                     "price" => $request->price,
                     "discount_rate" => $discount_rate,
                     "number_meet" => $request->number_meet,
+                    "duration_inhour" => $request->duration_inhour,
                     "creator" => session('user_id'),
                 ));
                 if($data->save()){
@@ -137,14 +139,12 @@ class PackageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // echo "<pre>";
-        // print_r($request->all());
-        // die;
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'price' => 'required',
             'discount_rate' => 'required',
             'number_meet' => 'required',
+            'duration_inhour' => 'required',
         ]);
         // IF Validation fail
         if ($validator->fails()) {
@@ -161,6 +161,7 @@ class PackageController extends Controller
                     "price" => $request->price,
                     "discount_rate" => $discount_rate,
                     "number_meet" => $request->number_meet,
+                    "duration_inhour" => $request->duration_inhour,
                     "creator" => session('user_id'),
                 ));
 
@@ -168,15 +169,18 @@ class PackageController extends Controller
                     PackageGrade::where('package_id', $id)->delete();
                 }
 
-                if(count($request->package_grade) && isset($request->package_grade)){
-                    foreach($request->package_grade as $key){
-                        $detail = new PackageGrade(array(
-                            "package_id" => $id,
-                            "grade_id" => $key,
-                        ));
-                        $detail->save();
-                    }    
+                if(isset($request->package_grade)){
+                    if(count($request->package_grade)){
+                        foreach($request->package_grade as $key){
+                            $detail = new PackageGrade(array(
+                                "package_id" => $id,
+                                "grade_id" => $key,
+                            ));
+                            $detail->save();
+                        }    
+                    }
                 }
+                
                 Log::setLog('MDPCU','Update Package : '.$request->name);
                 return redirect()->route('package.index')->with('status','Successfully saved');
             }catch(\Exception $e){

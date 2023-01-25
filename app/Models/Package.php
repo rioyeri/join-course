@@ -12,7 +12,7 @@ class Package extends Model
     use SoftDeletes;
     protected $table ='package';
     protected $fillable = [
-        'name','description','status','creator','number_meet','price','discount_rate'
+        'name','description','status','creator','number_meet','duration_inhour','price','discount_rate'
     ];
 
     public function getPrice(){
@@ -31,7 +31,7 @@ class Package extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"MDPC");
-        $package = Package::select('id','name','description','status','number_meet','price','discount_rate');
+        $package = Package::select('id','name','description','status','number_meet','duration_inhour','price','discount_rate');
 
         $totalRecords = $package->count();
 
@@ -44,7 +44,7 @@ class Package extends Model
                 $package_grade = PackageGrade::join('grade as g', 'package_grade.grade_id', 'g.id')->select('package_grade.package_id')->where(function ($query2) use ($searchValue) {
                     $query2->orWhere('g.id', 'LIKE', $searchValue)->orWhere('g.name', 'LIKE', $searchValue);
                 })->get();
-                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhere('number_meet', 'LIKE', '%'.$searchValue.'%')->orWhere('price', 'LIKE', '%'.$searchValue.'%')->orWhere('discount_rate', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $data_package)->orWhereIn('id', $package_grade);
+                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('description', 'LIKE', '%'.$searchValue.'%')->orWhere('number_meet', 'LIKE', '%'.$searchValue.'%')->orWhere('duration_inhour', 'LIKE', '%'.$searchValue.'%')->orWhere('price', 'LIKE', '%'.$searchValue.'%')->orWhere('discount_rate', 'LIKE', '%'.$searchValue.'%')->orWhereIn('id', $data_package)->orWhereIn('id', $package_grade);
             });
         }
 
@@ -96,6 +96,7 @@ class Package extends Model
             $detail->put('description', $key->description);
             $detail->put('grades', $grades);
             $detail->put('number_meet', $key->number_meet);
+            $detail->put('duration_inhour', $key->duration_inhour);
             $detail->put('price', $key->price);
             $detail->put('discount_rate', $key->discount_rate);
             $detail->put('final_price', $key->price - ($key->price/100*$key->discount_rate));
@@ -113,12 +114,12 @@ class Package extends Model
         return $response;
     }
 
-    public static function getPackageStats($month=null){
+    public static function getPackageStats($sort){
         $data = collect();
         $periodic = "";
-        if($month != null){
-            $start = date('Y-'.$month.'-01'); // hard-coded '01' for first day
-            $end  = date('Y-'.$month.'-t');
+        if($sort != 'all'){
+            $start = date('Y-m-01'); // hard-coded '01' for first day
+            $end  = date('Y-m-t');
             $periodic = date('M Y');    
         }
         $colors = Color::getColor()->shuffle();
@@ -126,11 +127,12 @@ class Package extends Model
 
         foreach(Package::where('status', 1)->get() as $key){
             $temp = collect();
-            if($month != null){
-                $count_orders = Order::whereIn('order_status', [1,2])->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end)->where('package_id', $key->id)->count();
-            }else{
-                $count_orders = Order::whereIn('order_status', [1,2])->where('package_id', $key->id)->count();
+
+            $count_orders = Order::whereIn('order_status', [1,2])->where('package_id', $key->id);
+            if($sort != 'all'){
+                $count_orders->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end);
             }
+            $count_orders = $count_orders->count();
 
             if($count_orders != 0){
                 $temp->put('package_name', $key->name);

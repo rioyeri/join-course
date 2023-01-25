@@ -151,7 +151,7 @@
                             <select class="form-control" parsley-trigger="change" name="teacher_id" id="teacher_id" onchange="get_schedule(this.value)">
                                 <option value="#" disabled selected>Guru</option>
                                 @foreach ($teachers as $teacher)
-                                    <option value="{{$teacher->id}}" data-text="{{ $teacher->isItInstantOrder() }}">{{$teacher->teacher->name}}</option>
+                                    <option value="{{$teacher->id}}" data-text="{{ $teacher->isItInstantOrder() }}" data-availability="{{ $teacher->availability }}">{{$teacher->teacher->name}}</option>
                                 @endforeach
                             </select>
                         </div>

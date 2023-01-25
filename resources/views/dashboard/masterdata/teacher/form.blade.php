@@ -44,6 +44,22 @@
             <textarea class="form-control" name="description" id="description" rows="3" placeholder="Misal: Saya telah berpengalaman dalam mengajar bidang ini selama 5 tahun" @isset($data->description) @endisset @isset($data)disabled @endisset required>@isset($data->description){{ $data->description }}@endisset</textarea>
         </div>
     </div>
+    <div class="form-group">
+        <label class="col-sm-3 col-sm-3 control-label">Availability</label>
+        <div class="col-sm-9">
+            <select class="form-control select2" parsley-trigger="change" name="availability" id="availability" required @isset($data->availability) disabled @endisset>
+                @isset($data->availability)
+                    <option value="0" @if($data->availability == 0) selected @endif>Offline</option>
+                    <option value="1" @if($data->availability == 1) selected @endif>Online</option>
+                    <option value="2" @if($data->availability == 2) selected @endif>Online & Offline</option>
+                @else
+                    <option value="0">Offline</option>
+                    <option value="1">Online</option>
+                    <option value="2" selected>Online & Offline</option>
+                @endisset
+            </select>
+        </div>
+    </div>
     @isset($data)
         <div class="form-group" style="display: none;" id="button-update">
             <div class="col-lg-offset-3 col-lg-9">
@@ -65,12 +81,12 @@
         if(btn == 'none'){
             document.getElementById('title').removeAttribute('disabled');
             document.getElementById('description').removeAttribute('disabled');
-            // document.getElementById('location').removeAttribute('disabled');
+            document.getElementById('availability').removeAttribute('disabled');
             document.getElementById('button-update').style.display = 'block';
         }else{
             document.getElementById('title').setAttribute('disabled',true);
             document.getElementById('description').setAttribute('disabled',true);
-            // document.getElementById('location').setAttribute('disabled',true);
+            document.getElementById('availability').setAttribute('disabled',true);
             document.getElementById('button-update').style.display = 'none';
         }
         change_button();

@@ -1015,8 +1015,8 @@
         var jenisdata = "get_schedule";
         var element_teacher = document.getElementById('teacher_id');
         var select_value = element_teacher.options[element_teacher.selectedIndex].getAttribute('data-text');
-
         var line_schedule = document.getElementById('line_schedule');
+        get_availability(params);
 
         if(select_value == 1){
             line_schedule.style.display = "block";
@@ -1161,6 +1161,24 @@
             },
         }).done(function (data) {
             $('#view-form').html(data);
+        }).fail(function (msg) {
+            alert('Gagal menampilkan data, silahkan refresh halaman.');
+        });
+    }
+
+    function get_availability(params){
+        var jenisdata = "get_availability";
+        $.ajax({
+            url : "{{route('getData')}}",
+            type : "get",
+            dataType: 'json',
+            data:{
+                params: params,
+                jenisdata: jenisdata,
+            },
+        }).done(function (data) {
+            // $('#teacher_schedules').html(data.append);
+            $('#class-type').html(data.append);
         }).fail(function (msg) {
             alert('Gagal menampilkan data, silahkan refresh halaman.');
         });

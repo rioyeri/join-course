@@ -238,6 +238,31 @@
             border-bottom: 1px solid #000;
         }
 
+        .select-box2 {
+            margin : 40px auto;
+            padding-bottom: 10px;
+        }
+
+        .select-box2 .select2{
+            width: 90%;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #000;
+            margin-top:5px;
+        }
+
+        .select-box2 label {
+            margin-left:7%;
+            width: 90%;
+        }
+
+        .select-box2 .col-md-4 .select2 {
+            width: 100%;
+            border-bottom: 1px solid #000;
+            margin-left: -30px;
+        }
+
         .mix-box {
             margin : 31px auto;
             padding-top: 15px;
@@ -423,6 +448,21 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-inline select-box2">
+                        <div class="col-md-4">
+                            <label style="margin-top:10%"><b>Your Location : </b></label>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-control select2 col-md-6" parsley-trigger="change" name="address_province" id="address_province" onchange="getCities(this.value)" required>
+                                <option value="#" disabled selected>Province</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-control select2 col-md-6" parsley-trigger="change" name="address_city" id="address_city" required>
+                                <option value="#" disabled selected>City</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-inline input-checkbox">
                         <div class="col-md-3">
                             <label style="margin-top:2px"><b>Your Role : </b></label>
@@ -496,6 +536,10 @@
     @endsection
     @section('script-js')
         <script>
+            $(document).ready(function() {
+                getProvinces();
+            })
+
             $('.select2').select2({
                 // theme: "themes-dark",
             });
@@ -644,6 +688,39 @@
                 
                 document.getElementById("form").submit();
             });
+
+            function getProvinces() {
+                var jenisdata = "getProvinces";
+                $.ajax({
+                    url : "{{route('getLocation')}}",
+                    type : "get",
+                    dataType: 'json',
+                    data:{
+                        jenisdata: jenisdata,
+                    },
+                }).done(function (data) {
+                    $('#address_province').html(data.append);
+                }).fail(function (msg) {
+                    alert('Gagal menampilkan data, silahkan refresh halaman.');
+                });
+            }
+
+            function getCities(params) {
+                var jenisdata = "getCities";
+                $.ajax({
+                    url : "{{route('getLocation')}}",
+                    type : "get",
+                    dataType: 'json',
+                    data:{
+                        province: params,
+                        jenisdata: jenisdata,
+                    },
+                }).done(function (data) {
+                    $('#address_city').html(data.append);
+                }).fail(function (msg) {
+                    alert('Gagal menampilkan data, silahkan refresh halaman.');
+                });
+            }
         </script>
     @endsection
     @include('dashboard.layout.js')

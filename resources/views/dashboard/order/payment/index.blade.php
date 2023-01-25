@@ -138,7 +138,7 @@
                                 </div>
                             </form>
 
-                            <table width="100%" class="table table-bordered datatable dt-responsive wrap" id="table-payment-notconfirm">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered datatable dt-responsive wrap" id="table-payment-notconfirm">
                                 <thead>
                                     <th>No</th>
                                     <th>Invoice ID</th>
@@ -190,7 +190,7 @@
                                     @endif
                                 </div>
                             </form>
-                            <table width="100%" class="table table-bordered datatable wrap" id="table-payment-confirm">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered datatable wrap" id="table-payment-confirm">
                                 <thead>
                                     <th>No</th>
                                     <th>Invoice ID</th>
@@ -242,7 +242,7 @@
                                     @endif
                                 </div>
                             </form>
-                            <table width="100%" class="table table-bordered datatable wrap" id="table-payment-decline">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered datatable wrap" id="table-payment-decline">
                                 <thead>
                                     <th>No</th>
                                     <th>Invoice ID</th>

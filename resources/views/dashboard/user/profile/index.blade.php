@@ -283,6 +283,22 @@ Your Profile
                                         <textarea class="form-control" name="description" id="description" rows="3" placeholder="Misal: Saya telah berpengalaman dalam mengajar bidang ini selama 5 tahun">@isset($data->get_teacher->description){{ $data->get_teacher->description }}@endisset</textarea>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 col-sm-2 control-label">Availability</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control select2" parsley-trigger="change" name="availability" id="availability">
+                                            @isset($data->get_teacher->availability)
+                                                <option value="0" @if($data->get_teacher->availability == 0) selected @endif>Offline</option>
+                                                <option value="1" @if($data->get_teacher->availability == 1) selected @endif>Online</option>
+                                                <option value="2" @if($data->get_teacher->availability == 2) selected @endif>Online & Offline</option>
+                                            @else
+                                                <option value="0">Offline</option>
+                                                <option value="1">Online</option>
+                                                <option value="2" selected>Online & Offline</option>
+                                            @endisset
+                                        </select>
+                                    </div>
+                                </div>
                                 <br>
                                 <h4 class="mb">What you teach?</h4>
                                 <div class="form-group">

@@ -82,9 +82,9 @@
                     <th>No</th>
                     <th>Title</th>
                     <th>Icon</th>
-                    <th>Price</th>
+                    <th>Price (/Hour)</th>
                     <th>Discount Rate</th>
-                    <th>Discount Price</th>
+                    <th>Discount Price (/Hour)</th>
                     <th>Link Text</th>
                     <th>Category</th>
                     <th>Options</th>
@@ -129,9 +129,9 @@
             },"columns" : [{data : "no", name : "no", searchable : false},
                     {data : "package_name", name : "package_name"},
                     {data : "icon", name : "icon", orderable : false, searchable : false},
-                    {data : "price", name : "price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                    {data : "price_inhour", name : "price_inhour", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                     {data : "discount_rate", name : "discount_rate", render: $.fn.dataTable.render.number( '.', ',', 2, '', '%' )},
-                    {data : "discount_price",name : "discount_price", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
+                    {data : "discount_price_inhour",name : "discount_price_inhour", render: $.fn.dataTable.render.number( '.', ',', 2, 'Rp ' )},
                     {data : "link_text", name : "link_text"},
                     {data : "category", name : "category", searchable : false},
                     {data : "options", name : "options", orderable : false, searchable : false,}

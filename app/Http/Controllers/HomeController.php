@@ -112,7 +112,7 @@ class HomeController extends Controller
             // NOT FOUND
             }else{
                 if(isset($request->order)){
-                    return redirect()->route('get_login_to_order')->with('failed', 'tidak berhasil login');
+                    return redirect()->route('get_login_to_order',['data' => $request->data,'order' => $request->order])->with('failed', 'tidak berhasil login');
                 }else{
                     return redirect()->route('get_login')->with('failed', 'tidak berhasil login');
 

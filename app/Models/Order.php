@@ -212,9 +212,9 @@ class Order extends Model
 
     public static function getFormatData($user_data, $order){
         $pieces = explode("+", $user_data);
-        $name = $pieces[0];
+        $name = str_replace("&", " ", $pieces[0]);
         $phone = $pieces[1];
-        $school = $pieces[2];
+        $school = str_replace("&", " ", $pieces[2]);
         $grade = $pieces[3];
 
         $schedules_id = array();
@@ -238,7 +238,12 @@ class Order extends Model
             $package_id = $pieces2[2];
         }
 
-        $order_bill = TeacherPrice::where('teacher_id', $teacher_id)->where('package_id', $package_id)->first()->price;
+        $package = Package::where('id', $package_id)->first();
+        if($package->discount_rate != 0){
+            $order_bill = $package->price - ($package->price / 100 * $package->discount_rate);
+        }else{
+            $order_bill = $package->price;
+        }
 
         if(isset($schedules_id) && count($schedules_id) != 0){
             $data = array(
@@ -535,12 +540,12 @@ class Order extends Model
         return json_decode(json_encode($data),FALSE);
     }
 
-    public static function orderTypeStats($month=null){
+    public static function orderTypeStats($sort){
         $data = collect();
         $periodic = "";
-        if($month != null){
-            $start = date('Y-'.$month.'-01'); // hard-coded '01' for first day
-            $end  = date('Y-'.$month.'-t');
+        if($sort != 'all'){
+            $start = date('Y-m-01'); // hard-coded '01' for first day
+            $end  = date('Y-m-t');
             $periodic = date('M Y');    
         }
         $colors = Color::getColor()->shuffle();
@@ -550,11 +555,12 @@ class Order extends Model
 
         foreach($array_of_type as $key){
             $temp = collect();
-            if($month != null){
-                $count_order = Order::whereIn('order_status', [1,2])->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end)->where('order_type', 'LIKE', $key)->count();
-            }else{
-                $count_order = Order::whereIn('order_status', [1,2])->where('order_type', 'LIKE', $key)->count();
+
+            $count_order = Order::whereIn('order_status', [1,2])->where('order_type', 'LIKE', $key);
+            if($sort != 'all'){
+                $count_order->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end);
             }
+            $count_order = $count_order->count();
 
             $temp->put('order_type', $key);
             $temp->put('order_count', $count_order);

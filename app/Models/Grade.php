@@ -11,12 +11,12 @@ class Grade extends Model
         'name','group'
     ];
 
-    public static function gradeStats($month=null){
+    public static function gradeStats($sort){
         $data = collect();
         $periodic = "";
-        if($month != null){
-            $start = date('Y-'.$month.'-01'); // hard-coded '01' for first day
-            $end  = date('Y-'.$month.'-t');
+        if($sort != 'all'){
+            $start = date('Y-m-01'); // hard-coded '01' for first day
+            $end  = date('Y-m-t');
             $periodic = date('M Y');    
         }
         $colors = Color::getColor()->shuffle();
@@ -25,11 +25,13 @@ class Grade extends Model
         foreach(Grade::orderBy('id', 'asc')->get() as $key){
             $temp = collect();
             $count_grade = Student::where('student_grade', $key->id)->count();
-            if($month != null){
-                $count_order = Order::whereIn('order_status', [1,2])->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end)->where('grade_id', $key->id)->count();
-            }else{
-                $count_order = Order::whereIn('order_status', [1,2])->where('grade_id', $key->id)->count();
+
+            $count_order = Order::whereIn('order_status', [1,2])->where('grade_id', $key->id);
+            if($sort != 'all'){
+                $count_order->whereDate('created_at', ">=", $start)->whereDate('created_at', "<=", $end);
             }
+            $count_order = $count_order->count();
+
             $temp->put('grade_name', $key->name);
             $temp->put('grade_count', $count_grade);
             $temp->put('order_count', $count_order);
