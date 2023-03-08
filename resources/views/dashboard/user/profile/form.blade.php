@@ -55,35 +55,38 @@
         {{ method_field('PUT') }}
 @endif
     @csrf
+    <p class="text-muted font-14">
+        <label class="col-4 col-form-label">( <span class="text-danger">*</span> ) is a required field</label>
+    </p>
     <input type="hidden" name="username" id="username" value="{{ $data->username }}">
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Name</label>
+        <label class="col-sm-3 col-sm-3 control-label">Name <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="name" id="name" autocomplete="off" value="@isset($data->name){{ $data->name }}@endisset">
         </div>
     </div>
     <div class="form-group input-box" id="email-box">
-        <label class="col-sm-3 col-sm-3 control-label">Email</label>
+        <label class="col-sm-3 col-sm-3 control-label">Email <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="email" class="form-control" name="email" id="email" onchange="checkEmail(this.value)" autocomplete="off" value="@isset($data->email){{ $data->email }}@endisset">
             <span class="email-error" id="email-error" style="display: none;">Email Invalid</span>
         </div>
     </div>
     <div class="form-group input-box" id="phone-box">
-        <label class="col-sm-3 col-sm-3 control-label">Whatsapp Number</label>
+        <label class="col-sm-3 col-sm-3 control-label">Whatsapp Number <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="text" class="form-control" name="phone" id="phone" onchange="checkPhone(this.value)" autocomplete="off" value="@isset($data->phone){{ $data->phone }}@endisset">
             <span class="phone-error" id="phone-error" style="display: none;">Phone Number Invalid</span>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Date of Birth</label>
+        <label class="col-sm-3 col-sm-3 control-label">Date of Birth <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <input type="text" class="form-control datepicker" name="birthdate" id="birthdate" data-date-format='yyyy-mm-dd' value="@isset($data->birthdate){{ $data->birthdate }}@endisset">
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 col-sm-3 control-label">Location</label>
+        <label class="col-sm-3 col-sm-3 control-label">Location <span class="text-danger">*</span></label>
         <div class="col-sm-4">
             <select class="form-control select2" parsley-trigger="change" name="address_province" id="address_province" onchange="getCities(this.value)" required>
                 <option value="#" disabled selected>Province</option>
@@ -102,7 +105,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-sm-3 col-sm-3">Image Upload</label>
+        <label class="control-label col-sm-3 col-sm-3">Image Upload <span class="text-danger">*</span></label>
         <div class="col-md-9">
             <div class="fileupload fileupload-new" data-provides="fileupload">
                 <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;">
@@ -119,6 +122,12 @@
                     <a href="javascript:;" class="btn btn-theme04 fileupload-exists" data-dismiss="fileupload"><i class="fa fa-trash-o"></i> Remove</a>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="form-group input-box" id="personality-box">
+        <label class="col-sm-3 col-sm-3 control-label">Personality Type</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" name="personality" id="personality" autocomplete="off" value="@isset($data->personality){{ $data->personality }}@endisset">
         </div>
     </div>
     <div class="form-group">
@@ -176,4 +185,9 @@
             }
         }
     }
+
+    $("#personality").keyup(function() {
+        var val = $(this).val()
+        $(this).val(val.toUpperCase())
+    })
 </script>

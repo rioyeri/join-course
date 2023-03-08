@@ -142,6 +142,7 @@
                     <th>Phone</th>
                     {{-- <th>Place of Birth</th> --}}
                     <th>Date of Birth</th>
+                    <th>Personality</th>
                     <th>Location</th>
                     <th>Registration Date</th>
                     <th>Last Time Login</th>
@@ -201,6 +202,7 @@
                     {data : "phone", name : "phone"},
                     // {data : "birthplace", name : "birthplace"},
                     {data : "birthdate", name : "birthdate"},
+                    {data : "personality", name : "personality"},
                     {data : "location", name : "location"},
                     {data : "regis_date", name : "regis_date"},
                     {data : "last_login", name : "last_login"},

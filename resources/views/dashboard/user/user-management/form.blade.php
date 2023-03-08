@@ -206,6 +206,12 @@
             </div>
         </div>
     </div>
+    <div class="form-group input-box" id="personality-box">
+        <label class="col-sm-3 col-sm-3 control-label">Personality Type</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" name="personality" id="personality" autocomplete="off" value="@isset($data->personality){{ $data->personality }}@endisset">
+        </div>
+    </div>
     <div class="form-group">
         <div class="col-lg-offset-3 col-lg-9">
             <button class="btn @isset($data) btn-theme @else disabled @endif" @if(!isset($data)) disabled @endif id="submit-button" type="submit">@isset($data) Update @else Submit @endisset</button>
@@ -415,4 +421,9 @@
 
         document.getElementById("form").submit();
     });
+
+    $("#personality").keyup(function() {
+        var val = $(this).val()
+        $(this).val(val.toUpperCase())
+    })
 </script>

@@ -57,7 +57,7 @@ class ContentHome extends Model
             $contents .= '<li> <strong>Title</strong> : '.$key->title.'</li>';
             $contents .= '<li> <strong>Subtitle</strong> : '.$key->subtitle.'</li>';    
 
-            if($key->id != 1){
+            if($key->id != 1 && $key->id != 10){
                 $details = ContentHomeDetail::where('content_id', $key->id)->get();
                 if(count($details) != 0){
                     $contents .= '<li> <strong>Contents</strong> :</li>';
@@ -146,6 +146,8 @@ class ContentHome extends Model
                         $image = asset('dashboard/assets/users/photos/'.$teacher_image);
                     }elseif($content->id == 4){
                         $image = asset('landingpage/assets/img/testimonials/'.$det->image);
+                    }elseif($content->id == 10){
+                        $image = asset('landingpage/assets/img/olimpiade/'.$det->image);
                     }else{
                         $image = $det->image;
                     }

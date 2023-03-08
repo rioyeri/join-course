@@ -29,7 +29,6 @@ class PaymentInvoiceMail extends Mailable
         $data_payment = OrderPayment::where('id', $this->id)->first();
         $data_order = Order::where('id', $data_payment->order_id)->first();
 
-        return $this->from('admin@nadasederhana.com', 'Admin Flash Academia')->subject('[NO REPLY] Your Payment is Confirmed in Flash Academia')->markdown('emails.payment_invoice', compact('data_order', 'data_payment'));
-        // return $this->from('admin@nadasederhana.com', 'Admin Flash Academia')->subject('[NO REPLY] Your Payment is Confirmed in Flash Academia')->markdown('emails.payment_invoice');
+        return $this->from('admin@flashacademia.com', 'Admin Flash Academia')->subject('[NO REPLY] Your Payment is Confirmed in Flash Academia')->markdown('emails.payment_invoice', compact('data_order', 'data_payment'));
     }
 }

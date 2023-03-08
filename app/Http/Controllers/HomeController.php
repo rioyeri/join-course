@@ -186,6 +186,7 @@ class HomeController extends Controller
                             'regis_date' => now(),
                             'address_province' => $request->address_province,
                             'address_city' => $request->address_city,
+                            'personality' => $request->personality,
                         ));
                         $user->save();
     

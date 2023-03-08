@@ -15,6 +15,8 @@
 <script src="{{ asset('dashboard/additionalplugins/toastr/toastr.min.js') }}"></script>
 <!-- Select2 -->
 <script src="{{ asset('dashboard/additionalplugins/select2/js/select2.min.js') }}" type="text/javascript"></script>
+<!-- Magnific popup -->
+<script type="text/javascript" src="{{ asset('dashboard/additionalplugins/magnific-popup/dist/jquery.magnific-popup.min.js') }}"></script>
 @yield('js')
 
 <!-- Template Main JS File -->
@@ -56,5 +58,11 @@
         toastr.error(error, 'Error!!!')
     </script>
 @endif
+
+<script>
+$('.image-popup').magnificPopup({
+    type: 'image',
+});
+</script>
 
 @yield('script-js')

@@ -1,5 +1,5 @@
 <!-- ======= Testimonials Section ======= -->
-<section id="testimonials" class="testimonials">
+<section id="testimonials" class="testimonials sections-bg">
     <div class="container">
         <div class="section-header">
             <h2 data-aos="zoom-in-down">{{ $content[3]->title }}</h2>

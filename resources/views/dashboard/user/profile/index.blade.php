@@ -125,6 +125,7 @@ Your Profile
             <p>Your Location : {{ $data->location() }}</p>
             <p>Birthdate : {{ $data->birthdate }}</p>
             <p>Whatsapp Number : {{ $data->phone }}</p>
+            <p>Personality Type : @if($data->personality == null)-@else{{ $data->personality }}@endif</p>
             <br>
             <p>
                 <a class="btn btn-theme" onclick="edit_data({{ session('user_id') }})" data-toggle="modal" data-target="#myModal"><i class="fa fa-gear"></i> Edit Profile</a>

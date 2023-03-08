@@ -82,6 +82,7 @@ class UserController extends Controller
                     'bck_pass' => $request->password,
                     'address_province' => $request->address_province,
                     'address_city' => $request->address_city,
+                    'personality' => $request->personality,
             
                 ));
                 // success
@@ -152,6 +153,7 @@ class UserController extends Controller
                 $user->birthdate = $birthdate;
                 $user->address_province = $request->address_province;
                 $user->address_city = $request->address_city;
+                $user->personality = $request->personality;
 
                 // Upload Foto
                 if($request->profilephoto != NULL || $request->profilephoto != ''){
@@ -240,6 +242,7 @@ class UserController extends Controller
             $user->regis_date = now();
             $user->address_province = $request->address_province;
             $user->address_city = $request->address_city;
+            $user->personality = $request->personality;
             $user->update();
 
             RoleMapping::setData($user->username,$request->optionsRadios);

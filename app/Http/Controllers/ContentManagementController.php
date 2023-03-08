@@ -54,6 +54,9 @@ class ContentManagementController extends Controller
      */
     public function store(Request $request)
     {
+        // echo "<pre>";
+        // print_r($request->all());
+        // die;
         if ($request->ajax()) {
             try{
                 if(isset($request->detail_id)){
@@ -72,14 +75,19 @@ class ContentManagementController extends Controller
                                 $path = "landingpage/assets/img/testimonials/";
                             }elseif($request->content_id == 8){
                                 $path = "landingpage/assets/img/";
+                            }elseif($request->content_id == 10){
+                                $path = "landingpage/assets/img/olimpiade/";
                             }
                             if (file_exists(public_path($path).$data->image) && $data->image != null && isset($path)) {
                                 unlink(public_path($path).$data->image);
                             }
     
-                            $filename = str_replace( array( '\'', '"', ',' , ';', '<', '>',' ','!','?','.','/'), '', $data->title);
-    
-                            $image = $filename.'.'.$request->image->getClientOriginalExtension();
+                            if($request->content_id == 10){
+                                $image = $request->image->getClientOriginalName();
+                            }else{
+                                $filename = str_replace( array( '\'', '"', ',' , ';', '<', '>',' ','!','?','.','/'), '', $data->title);
+                                $image = $filename.'.'.$request->image->getClientOriginalExtension();    
+                            }
                             $request->image->move(public_path($path), $image);
                         }else{
                             $user_id = $request->reviewer_user_id;
@@ -113,8 +121,8 @@ class ContentManagementController extends Controller
                         $image = $user->profilephoto;
                     }else{
                         $title = $request->title;
-                        $subtitle = $request->subtitle;
                         $description = $request->description;
+                        $subtitle = $request->subtitle;
                         $link = $request->link;
                         $link_text = $request->link_text;
                     }
@@ -126,15 +134,21 @@ class ContentManagementController extends Controller
                     $data->link = $link;
                     $data->link_text = $link_text;
                     $data->image = $image;
+                    $data->creator = session('user_id');
                     $data->save();
                 }else{
                     // Upload Foto
                     if($request->image != null || $request->image != ''){
-                        $path = "landingpage/assets/img/testimonials/";
+                        if($request->content_id == 10){
+                            // STORE NEW FOTO OLIMPIADE
+                            $path = "landingpage/assets/img/olimpiade/";
+                            $image = $request->image->getClientOriginalName();
+                        }else{
+                            $path = "landingpage/assets/img/testimonials/";
+                            $filename = str_replace( array( '\'', '"', ',' , ';', '<', '>',' ','!','?','.','/'), '', $request->title);    
+                            $image = $filename.'.'.$request->image->getClientOriginalExtension();
+                        }
 
-                        $filename = str_replace( array( '\'', '"', ',' , ';', '<', '>',' ','!','?','.','/'), '', $request->title);
-
-                        $image = $filename.'.'.$request->image->getClientOriginalExtension();
                         $request->image->move(public_path($path), $image);
                     }else{
                         $user_id = $request->reviewer_user_id;
@@ -158,7 +172,7 @@ class ContentManagementController extends Controller
                     }
 
                     $data = new ContentHomeDetail(array(
-                        "content_id" => 4,
+                        "content_id" => $request->content_id,
                         "title" => $request->title,
                         "subtitle" => $request->subtitle,
                         "description" => $request->description,

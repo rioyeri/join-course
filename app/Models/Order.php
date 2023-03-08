@@ -494,7 +494,6 @@ class Order extends Model
     }
 
     public static function getTextInvoice($id, $type=null){
-        // $tes = "https://api.whatsapp.com/send?phone=6285155431131&text=terdapat%20invoice%20order%20yang%20perlu%20anda%20bayarkan%20sebelum%20memulai%20kursus%20yang%20anda%20inginkan.%20Berikut%20detail%20invoicenya%20%3A%0A%0A*Nomor%20Invoice*%20%3A%0A*Jumlah%20yang%20harus%20dibayar*%20%3A%0A*Layanan*%20%3A%0A%0ALakukan%20transfer%20pembayaran%20dan%20jangan%20lupa%20screenshot%20bukti%20transfernya%20untuk%20diupload%20melalui%20link%20berikut%20%3A%0Ahttps%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbWe62bJKR5k%26t%3D732s%0A%0AJika%20memiliki%20pertanyaan%2C%20silahkan%20hubungi%20kami%20melalui%20nomor%20Whatsapp%20ini.%0A%0ATerimakasih%20%3A)%0AFlash%20Academia";
         $order = Order::where('id', $id)->first();
         $amount = OrderPayment::getRemainingPayment($id);
         $link = route('paymentOrderPage', ['order_id'=>$order->order_id, 'token'=>$order->order_token]);

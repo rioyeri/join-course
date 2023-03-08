@@ -74,6 +74,7 @@ class LoginController extends Controller
             file_put_contents($path, $fileContents);
 
             $user_exist = new User(array(
+                'username' => $username,
                 'name' => $user->name,
                 'google_id' => $user->id,
                 'profilephoto' => $avatar,

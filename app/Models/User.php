@@ -13,7 +13,7 @@ class User extends Model
     protected $table ='users';
     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'username', 'password','bck_pass','name','last_login','login_status','address','phone','idnumber','email','birthdate','birthplace','regis_date','profilephoto','google_id','address_province','address_city'
+        'username', 'password','bck_pass','name','last_login','login_status','address','phone','idnumber','email','birthdate','birthplace','regis_date','profilephoto','google_id','address_province','address_city','personality'
     ];
 
     protected $hidden = [
@@ -121,13 +121,13 @@ class User extends Model
         $searchValue = $request['search']['value']; // Search value
 
         $page = MenuMapping::getMap(session('role_id'),"USUS");
-        $users = User::select('id', 'username', 'name','last_login','phone','email','birthdate','birthplace','regis_date','profilephoto','address_province','address_city','created_at', 'updated_at');
+        $users = User::select('id', 'username', 'name','last_login','phone','email','birthdate','birthplace','regis_date','profilephoto','address_province','address_city','created_at', 'updated_at','personality');
 
         $totalRecords = $users->count();
 
         if($searchValue != ''){
             $users->where(function ($query) use ($searchValue) {
-                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('username', 'LIKE', '%'.$searchValue.'%')->orWhere('last_login', 'LIKE', '%'.$searchValue.'%')->orWhere('phone', 'LIKE', '%'.$searchValue.'%')->orWhere('email', 'LIKE', '%'.$searchValue.'%')->orWhere('birthdate', 'LIKE', '%'.$searchValue.'%')->orWhere('birthplace', 'LIKE', '%'.$searchValue.'%')->orWhere('regis_date', 'LIKE', '%'.$searchValue.'%')->orWhere('address_province', 'LIKE', '%'.$searchValue.'%')->orWhere('address_city', 'LIKE', '%'.$searchValue.'%');
+                $query->orWhere('name', 'LIKE', '%'.$searchValue.'%')->orWhere('username', 'LIKE', '%'.$searchValue.'%')->orWhere('last_login', 'LIKE', '%'.$searchValue.'%')->orWhere('phone', 'LIKE', '%'.$searchValue.'%')->orWhere('email', 'LIKE', '%'.$searchValue.'%')->orWhere('birthdate', 'LIKE', '%'.$searchValue.'%')->orWhere('birthplace', 'LIKE', '%'.$searchValue.'%')->orWhere('regis_date', 'LIKE', '%'.$searchValue.'%')->orWhere('address_province', 'LIKE', '%'.$searchValue.'%')->orWhere('address_city', 'LIKE', '%'.$searchValue.'%')->orWhere('personality', 'LIKE', '%'.$searchValue.'%');
             });
         }
 
@@ -183,6 +183,7 @@ class User extends Model
             $detail->put('phone',$phone);
             $detail->put('location', $location);
             $detail->put('birthdate',$key->birthdate);
+            $detail->put('personality', $key->personality);
             $detail->put('regis_date', $key->regis_date);
             $detail->put('last_login', $key->last_login);
             $detail->put('options', $options);

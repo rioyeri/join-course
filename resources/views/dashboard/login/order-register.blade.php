@@ -109,6 +109,13 @@
                 margin-bottom: 5%;
             }
 
+            .mix-box .col-md-8 input {
+                width: 100%;
+                border-bottom: 1px solid #000;
+                margin-left: 3%;
+                margin-top: 2px;
+            }
+
             .mix-box .col-md-6 select {
                 width: 90%;
                 border-bottom: 1px solid #000;
@@ -291,6 +298,13 @@
         }
 
         .mix-box .col-md-6 input {
+            width: 100%;
+            border-bottom: 1px solid #000;
+            margin-left: 3%;
+            margin-top: 2px;
+        }
+
+        .mix-box .col-md-8 input {
             width: 100%;
             border-bottom: 1px solid #000;
             margin-left: 3%;
@@ -513,6 +527,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-inline mix-box">
+                        <div class="col-md-4">
+                            <label style="margin-top:2px"><b>Type of Personality :</b></label>
+                            <p style="margin-top:-10px;"><a href="https://www.16personalities.com/free-personality-test" style="color:var(--color-primary)" target="_blank"> >> Take a Test << </a></p>
+                        </div>
+                        <div class="col-md-8" style="margin-left:-25px;">
+                            <input type="text" name="personality" id="personality" placeholder="Ex: INFJ-A, ESFP-T, etc." value="">
+                        </div>
+                    </div>
                     <br><br>
                     <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-user"></i> Sign Up</button>
                 </div>
@@ -538,6 +561,11 @@
         <script>
             $(document).ready(function() {
                 getProvinces();
+
+                $("#personality").keyup(function() {
+                    var val = $(this).val()
+                    $(this).val(val.toUpperCase())
+                })
             })
 
             $('.select2').select2({

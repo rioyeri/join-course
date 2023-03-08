@@ -29,7 +29,7 @@
     </div>
     <input type="hidden" id="content_id" value="{{ $data->id }}">
     @if($data->id != 1)
-        <div id="update_box" @if($data->id != 4)style="display: none;"@endif>
+        <div id="update_box" @if($data->id != 4 && $data->id != 10)style="display: none;"@endif>
             <h5 class="mb" id="title-edit"><strong>Add Detail Row : </strong></h5>
             <input type="hidden" id="detail_id" value="0">
             <div class="form-group">
@@ -73,14 +73,16 @@
                         </div>
                     </div>
                 @else
-                    <div class="form-group-sm">
-                        <label class="col-sm-3 col-sm-3 control-label">Title <span class="text-danger">*</span></label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" name="detail_title" id="detail_title" value="">
+                    @if($data->id != 10)
+                        <div class="form-group-sm">
+                            <label class="col-sm-3 col-sm-3 control-label">Title <span class="text-danger">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="detail_title" id="detail_title" value="">
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @endif
-                @if($data->id != 2 && $data->id != 6 && $data->id != 3 && $data->id != 8 && $data->id != 9)
+                @if($data->id != 2 && $data->id != 6 && $data->id != 3 && $data->id != 8 && $data->id != 9 && $data->id != 10)
                     <div class="form-group-sm">
                         <label class="col-sm-3 col-sm-3 control-label">Subtitle</label>
                         <div class="col-sm-9">
@@ -103,12 +105,14 @@
                         </div>
                     </div>
                 @else
-                    <div class="form-group-sm">
-                        <label class="col-sm-3 col-sm-3 control-label">Description</label>
-                        <div class="col-sm-9">
-                            <textarea class="form-control" name="detail_description" id="detail_description" rows="3"></textarea>
+                    @if($data->id != 10)
+                        <div class="form-group-sm">
+                            <label class="col-sm-3 col-sm-3 control-label">Description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" name="detail_description" id="detail_description" rows="3"></textarea>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @endif
                 @if($data->id != 6 && $data->id != 2 && $data->id != 9)
                     <div class="form-group-sm">
@@ -146,7 +150,7 @@
                         </div>
                     </div>
                 @endif
-                @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9)
+                @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9 && $data->id != 10)
                     <div class="form-group-sm">
                         <label class="col-sm-3 col-sm-3 control-label">Link</label>
                         <div class="col-sm-9">
@@ -154,7 +158,7 @@
                         </div>
                     </div>
                 @endif
-                @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9)
+                @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9 && $data->id != 10)
                     <div class="form-group-sm">
                         <label class="col-sm-3 col-sm-3 control-label">Link Text</label>
                         <div class="col-sm-9">
@@ -162,12 +166,12 @@
                         </div>
                     </div>
                 @endif
-                <div id="update_button" class="form-group-sm" @if($data->id == 4)style="display:none;"@endif>
+                <div id="update_button" class="form-group-sm" @if($data->id == 4 || $data->id == 10)style="display:none;"@endif>
                     <div class="col-lg-offset-3 col-lg-9">
                         <a class="btn btn-theme03" onclick="update_row()">Update Detail</a>
                     </div>
                 </div>
-                <div id="add_button" class="form-group-sm" @if($data->id != 4)style="display:none;"@endif>
+                <div id="add_button" class="form-group-sm" @if($data->id != 4 && $data->id != 10)style="display:none;"@endif>
                     <div class="col-lg-offset-3 col-lg-9">
                         <a class="btn btn-theme03" onclick="add_row()">Add Detail</a>
                     </div>
@@ -179,12 +183,12 @@
             <table width="100%" cellpadding="0" cellspacing="0" class="table table-bordered datatable dt-responsive wrap" id="table-detail">
                 <thead>
                     <th>No</th>
-                    <th>Title</th>
-                    <th @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>Subtitle</th>
-                    <th>Description</th>
+                    <th @if($data->id == 10) style="display:none;" @endif>Title</th>
+                    <th @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>Subtitle</th>
+                    <th @if($data->id == 10) style="display:none;" @endif>Description</th>
                     <th @if($data->id == 6 || $data->id == 9) style="display:none;" @endif>@if($data->id == 2) Icon @else Image @endif</th>
-                    <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>Link</th>
-                    <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>Link Text</th>
+                    <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>Link</th>
+                    <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>Link Text</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body-detail">
@@ -193,9 +197,9 @@
                         <input type="hidden" id="detail_id{{ $i }}" value="{{ $key->id }}">
                         <tr style="width:100%" id="trow{{ $i }}" class="trow" role="row">
                             <td>{{ $i }}</td>
-                            <td>{{ $key->title }}</td>
-                            <td @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>{{ $key->subtitle }}</td>
-                            <td>{{ $key->description }}</td>
+                            <td @if($data->id == 10) style="display:none;" @endif>{{ $key->title }}</td>
+                            <td @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>{{ $key->subtitle }}</td>
+                            <td @if($data->id == 10) style="display:none;" @endif>{{ $key->description }}</td>
                             <td @if($data->id == 6 || $data->id == 9) style="display:none;" @endif>
                                 @if($key->image != "")
                                     @if($data->id == 2)
@@ -210,19 +214,25 @@
                                         <input type="hidden" id="image_name{{ $i }}" value="{{ asset($path) }}">
                                         <img id="image{{ $i }}" src="{{ asset($path) }}" style="object-fit:cover; min-height: 50px; max-height:50px;">
                                     @else
-                                        @php($path = 'landingpage/assets/img/testimonials/')
+                                        @if($data->id == 9)
+                                            @php($path = 'landingpage/assets/img/testimonials/')
+                                            @php($image_style = 'object-fit:cover; min-height: 50px; max-height:50px;')
+                                        @else
+                                            @php($path = 'landingpage/assets/img/olimpiade/')
+                                            @php($image_style = 'object-fit:cover; min-height: 300px; max-height:300px;')
+                                        @endif
                                         <input type="hidden" id="image_name{{ $i }}" value="{{ asset($path.$key->image) }}">
-                                        <img id="image{{ $i }}" src="{{ asset($path.$key->image) }}" style="object-fit:cover; min-height: 50px; max-height:50px;">
+                                        <img id="image{{ $i }}" src="{{ asset($path.$key->image) }}" style="{{ $image_style }}">
                                     @endif
                                 @else
                                     NOT SET YET
                                 @endif
                             </td>
-                            <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>{{ $key->link }}</td>
-                            <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9) style="display:none;" @endif>{{ $key->link_text }}</td>
+                            <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>{{ $key->link }}</td>
+                            <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>{{ $key->link_text }}</td>
                             <td class="text-center">
                                 <a href="javascript:;" type="button" class="btn btn-primary" onclick="edit_row({{ $i }})">Edit</a>
-                                @if($data->id == 4)
+                                @if($data->id == 4 || $data->id == 10)
                                 <a href="javascript:;" type="button" class="btn btn-danger" onclick="delete_row({{ $i }})">Delete</a>
                                 @endif
                             </td>
@@ -234,7 +244,7 @@
         </div>
         @endif
     @endif
-    <div class="form-group">
+    <div class="form-group" id="element-btn-update">
         <div class="col-lg-offset-3 col-lg-9">
             <button class="btn btn-theme" type="submit">Update</button>
         </div>
@@ -252,6 +262,10 @@ $(document).ready(function(){
     function formatText (icon) {
         return $('<span><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
     };
+
+    $('.image-popup').magnificPopup({
+        type: 'image',
+    });
 })
 
 function edit_row(row){
@@ -270,12 +284,16 @@ function edit_row(row){
             if(content_id == 3){
                 $('#detail_title').val(title).change();
             }else{
-                $('#detail_title').val(title);
+                if(content_id != 10){
+                    $('#detail_title').val(title);
+                }
             }
-            $('#detail_subtitle').val(subtitle);
-            $('#detail_description').val(description);
-            $('#detail_link').val(link);
-            $('#detail_linktext').val(link_text);
+            if(content_id != 10){
+                $('#detail_subtitle').val(subtitle);
+                $('#detail_description').val(description);
+                $('#detail_link').val(link);
+                $('#detail_linktext').val(link_text);
+            }
             console.log(content_id);
             if(content_id != 6 && content_id != 9){
                 if(content_id == 2){
@@ -293,14 +311,16 @@ function edit_row(row){
             $('#detail_id').val(detail_id);
             document.getElementById('title-edit').innerHTML = "<strong>Update Detail Row : "+row+"<strong>";
             document.getElementById('update_box').style.display = 'block';
-            if(content_id == 4){
+            if(content_id == 4 || content_id == 10){
                 document.getElementById('update_button').style.display = 'block';
                 document.getElementById('add_button').style.display = 'none';
                 // BACK TO DEFAULT INPUT MANUAL
                 $("#options-manual").prop("checked", true);
-                document.getElementById('select-rev').style.display = 'none';
+                if(content_id == 4){
+                    document.getElementById('select-rev').style.display = 'none';
+                }
             }
-
+            document.getElementById("update_box").scrollIntoView();
         }
     });
 }
@@ -311,17 +331,20 @@ function update_row(){
     var detail_id = $('#detail_id').val();
 
     var title = $('#detail_title').val();
+    var description = $('#detail_description').val();
 
-    if(content_id == 2 || content_id == 6 || content_id == 8 || content_id == 9){
+    if(content_id == 2 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10){
         var subtitle = "";
     }else{
         var subtitle = $('#detail_subtitle').val();
     }
 
-    var description = $('#detail_description').val();
-
-    if(content_id != 2 && content_id != 3 && content_id != 6 && content_id != 9){
+    if(content_id != 2 && content_id != 3 && content_id != 6 && content_id != 9 || content_id == 10){
         var selector = document.getElementById('detail_image');
+        if(content_id == 10){
+            title = selector.files[0]['name'];
+            description = selector.files[0]['name'];
+        }
         var image = selector.files[0];
         if(image == undefined){
             image = "";
@@ -332,13 +355,13 @@ function update_row(){
         var image = "";
     }
 
-    if(content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9){
+    if(content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10){
         var link = "";    
     }else{
         var link = $('#detail_link').val();
     }
 
-    if(content_id == 3 || content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9){
+    if(content_id == 3 || content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10){
         var link_text = "";
     }else{
         var link_text = $('#detail_linktext').val();
@@ -384,11 +407,13 @@ function update_row(){
                     var new_link_text = data.link_text;
                 }
 
-                $(this).find('td:eq(1)').text(new_title);
-                $(this).find('td:eq(2)').text(new_subtitle);
-                $(this).find('td:eq(3)').text(new_description);
-                $(this).find('td:eq(5)').text(new_link);
-                $(this).find('td:eq(6)').text(new_link_text);
+                if(content_id != 10){
+                    $(this).find('td:eq(1)').text(new_title);
+                    $(this).find('td:eq(2)').text(new_subtitle);
+                    $(this).find('td:eq(3)').text(new_description);
+                    $(this).find('td:eq(5)').text(new_link);
+                    $(this).find('td:eq(6)').text(new_link_text);
+                }
 
                 if(content_id == 2){
                     $('#icon'+number).attr("class", "");
@@ -415,16 +440,29 @@ function update_row(){
                                         image_path = '{{ asset("dashboard/assets/users/photos/") }}';
                                     }else if(content_id == 8){
                                         image_path = 'asset("landingpage/assets/img/")';
+                                    }else if(content_id == 10){
+                                        image_path = '{{ asset("landingpage/assets/img/olimpiade/") }}';
                                     }else{
                                         image_path = '{{ asset("landingpage/assets/img/testimonials/") }}';
                                     }
-                                    field_image = $(this).find('td:eq(4)').text().replaceAll(/\s/g, '');
+                                    if(content_id == 10){
+                                        field_image = $(this).find('td:eq(1)').text().replaceAll(/\s/g, '');
+                                    }else{
+                                        field_image = $(this).find('td:eq(4)').text().replaceAll(/\s/g, '');
+                                    }
                                     
                                     if(field_image == "NOTSETYET"){
-                                        var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
-                                        var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 50px; max-height:50px;">';
-                                        content = content1.concat(content2);
-                                        $(this).find('td:eq(4)').html(content);
+                                        if(content_id == 10){
+                                            var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
+                                            var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 300px; max-height:300px;">';
+                                            content = content1.concat(content2);
+                                            $(this).find('td:eq(1)').html(content);
+                                        }else{
+                                            var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
+                                            var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 50px; max-height:50px;">';
+                                            content = content1.concat(content2);
+                                            $(this).find('td:eq(4)').html(content);
+                                        }
                                     }
 
                                     document.getElementById('image'+number).src = image_path+'/'+data.image;
@@ -438,14 +476,19 @@ function update_row(){
             }
         })
         $('#detail_id').val("");
-        if(content_id != 4){
+        if(content_id != 4 && content_id != 10){
             document.getElementById('update_box').style.display = 'none';
         }
-        if(content_id == 4){
+        if(content_id == 4 || content_id == 10){
             document.getElementById('update_button').style.display = 'none';
             document.getElementById('add_button').style.display = 'block';
             document.getElementById('title-edit').innerHTML = "<strong>Add Detail Row<strong>";
-            changeType('manual');
+            if(content_id == 10){
+                document.getElementById('image-display').src = "";
+                $('.fileupload').fileupload('clear')
+            }else{
+                changeType('manual');
+            }
         }
     }).fail(function (msg) {
         alert('Gagal menampilkan data, silahkan refresh halaman.');
@@ -516,20 +559,31 @@ function add_row(){
     var content_id = $('#content_id').val();
     var detail_id = $('#detail_id').val();
 
-    var title = $('#detail_title').val();
-    var subtitle = $('#detail_subtitle').val();    
-    var description = $('#detail_description').val();
-
     var selector = document.getElementById('detail_image');
     var image = selector.files[0];
     if(image == undefined){
         image = "";
     }
 
+    if(content_id == 10){
+        var title = selector.files[0]['name'];
+        var subtitle = null;    
+        var description = selector.files[0]['name'];
+    }else{
+        var title = $('#detail_title').val();
+        var subtitle = $('#detail_subtitle').val();    
+        var description = $('#detail_description').val();
+
+    }
+
     var link = "";
     var link_text = "";
 
-    var reviewer_user_id = $('#reviewer_user_id').val();
+    if(content_id == 10){
+        var reviewer_user_id = "";
+    }else{
+        var reviewer_user_id = $('#reviewer_user_id').val();
+    }
 
     var form_data = new FormData();
     form_data.append('content_id', content_id);
@@ -554,27 +608,52 @@ function add_row(){
     }).done(function (data) {
         console.log(data);
         var i = $('#table-detail tbody tr.trow').length + 1;
-        var append = '<tr style="width:100%" id="trow'+i+'" class="trow" role="row">';
-        append += '<input type="hidden" id="detail_id'+i+'" value="'+data.id+'">';
-        append += '<td>'+i+'</td>';
-        append += '<td>'+data.title+'</td>';
-        append += '<td>'+data.subtitle+'</td>';
-        append += '<td>'+data.description+'</td>';
-        append += '<td>';
-        if(data.image != ""){
-            path = "landingpage/assets/img/testimonials/"+data.image;
-            append += '<input type="hidden" id="image_name'+i+'" value="'+path+'">';
-            append += '<img id="image'+i+'" src="'+path+'" style="object-fit:cover; min-height: 50px; max-height:50px;">';
+        if(content_id == 10){
+            var append = '<tr style="width:100%" id="trow'+i+'" class="trow" role="row">';
+            append += '<input type="hidden" id="detail_id'+i+'" value="'+data.id+'">';
+            append += '<td>'+i+'</td>';
+            append += '<td>';
+            if(data.image != ""){
+                path = "landingpage/assets/img/olimpiade/"+data.image;
+                append += '<input type="hidden" id="image_name'+i+'" value="'+path+'">';
+                append += '<img id="image'+i+'" src="'+path+'" style="object-fit:cover; min-height:300px; max-height:300px;">';
+            }else{
+                append += 'NOT SET YET';
+            }
+            append += '</td>';
+            append += '<td class="text-center">';
+            append += '<a href="javascript:;" type="button" class="btn btn-primary" onclick="edit_row('+i+')"> Edit</a> ';
+            append += '<a href="javascript:;" type="button" class="btn btn-danger" onclick="delete_row('+i+')"> Delete</a>';
+            append += '</td></tr>';
         }else{
-            append += 'NOT SET YET';
+            var append = '<tr style="width:100%" id="trow'+i+'" class="trow" role="row">';
+            append += '<input type="hidden" id="detail_id'+i+'" value="'+data.id+'">';
+            append += '<td>'+i+'</td>';
+            append += '<td>'+data.title+'</td>';
+            append += '<td>'+data.subtitle+'</td>';
+            append += '<td>'+data.description+'</td>';
+            append += '<td>';
+            if(data.image != ""){
+                path = "landingpage/assets/img/testimonials/"+data.image;
+                append += '<input type="hidden" id="image_name'+i+'" value="'+path+'">';
+                append += '<img id="image'+i+'" src="'+path+'" style="object-fit:cover; min-height: 50px; max-height:50px;">';
+            }else{
+                append += 'NOT SET YET';
+            }
+            append += '</td>';
+            append += '<td class="text-center">';
+            append += '<a href="javascript:;" type="button" class="btn btn-primary" onclick="edit_row('+i+')"> Edit</a> ';
+            append += '<a href="javascript:;" type="button" class="btn btn-danger" onclick="delete_row('+i+')"> Delete</a>';
+            append += '</td></tr>';
         }
-        append += '</td>';
-        append += '<td class="text-center">';
-        append += '<a href="javascript:;" type="button" class="btn btn-primary" onclick="edit_row('+i+')"> Edit</a> ';
-        append += '<a href="javascript:;" type="button" class="btn btn-danger" onclick="delete_row('+i+')"> Delete</a>';
-        append += '</td></tr>';
         $('#table-body-detail').append(append);
-        changeType('manual');
+        if(content_id == 10){
+            document.getElementById('image-display').src = "";
+            $('.fileupload').fileupload('clear');
+        }else{
+            changeType('manual');
+        }
+        document.getElementById('element-btn-update').scrollIntoView();
     }).fail(function (msg) {
         alert('Gagal menampilkan data, silahkan refresh halaman.');
     });

@@ -14,6 +14,8 @@
     <link href="{{ asset('dashboard/additionalplugins/sweet-alert/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- File Upload-->
     <link rel="stylesheet" type="text/css" href="{{ asset('dashboard/lib/bootstrap-fileupload/bootstrap-fileupload.css') }}" />
+    <!-- Magnific Pop-up-->
+    <link rel="stylesheet" href="{{ asset('dashboard/additionalplugins/magnific-popup/dist/magnific-popup.css') }}"/>
     <!-- Bootstrap Icon -->
     <link href="{{ asset('landingpage/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -112,6 +114,9 @@
 
     <!-- File Upload -->
     <script type="text/javascript" src="{{ asset('dashboard/lib/bootstrap-fileupload/bootstrap-fileupload.js') }}"></script>
+
+    <!-- Magnific popup -->
+    <script type="text/javascript" src="{{ asset('dashboard/additionalplugins/magnific-popup/dist/jquery.magnific-popup.min.js') }}"></script>
 @endsection
 
 @section('script-js')
