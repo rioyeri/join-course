@@ -38,7 +38,8 @@
 
     <style>
         body{
-            background-image: url(../../dashboard/img/blog-bg.jpg);
+            /* background-image: url(../../dashboard/img/blog-bg.jpg); */
+            background-image: url(../../landingpage/assets/img/FlashEducation.jpg);
             background-size: cover;
             background-position: center;
         }

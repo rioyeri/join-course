@@ -31,8 +31,6 @@ Route::get('getDatas', 'HelperController@apigetDatas')->name('apigetDatas');
 
     Route::get('getreview/{id}', 'HelperController@apiGetReview');
 
-    Route::get('deletecontent/{id}', 'ContentManagementController@destroy');
-
     Route::get('bestteacher', 'StatisticsController@bestTeacher');
     Route::get('mostsubject', 'StatisticsController@mostSubject');
     Route::get('gradestats', 'StatisticsController@GradeStats');

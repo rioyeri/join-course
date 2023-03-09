@@ -439,7 +439,7 @@ function update_row(){
                                     if(content_id == 3){
                                         image_path = '{{ asset("dashboard/assets/users/photos/") }}';
                                     }else if(content_id == 8){
-                                        image_path = 'asset("landingpage/assets/img/")';
+                                        image_path = '{{ asset("landingpage/assets/img/") }}';
                                     }else if(content_id == 10){
                                         image_path = '{{ asset("landingpage/assets/img/olimpiade/") }}';
                                     }else{
@@ -451,7 +451,7 @@ function update_row(){
                                         field_image = $(this).find('td:eq(4)').text().replaceAll(/\s/g, '');
                                     }
                                     
-                                    if(field_image == "NOTSETYET"){
+                                    // if(field_image == "NOTSETYET"){
                                         if(content_id == 10){
                                             var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
                                             var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 300px; max-height:300px;">';
@@ -463,7 +463,7 @@ function update_row(){
                                             content = content1.concat(content2);
                                             $(this).find('td:eq(4)').html(content);
                                         }
-                                    }
+                                    // }
 
                                     document.getElementById('image'+number).src = image_path+'/'+data.image;
                                     $('#image_name'+number).val(image_path+'/'+data.image);
@@ -490,6 +490,7 @@ function update_row(){
                 changeType('manual');
             }
         }
+        document.getElementById('element-btn-update').scrollIntoView();
     }).fail(function (msg) {
         alert('Gagal menampilkan data, silahkan refresh halaman.');
     });
@@ -663,7 +664,6 @@ function delete_row(id){
     var token = $("meta[name='csrf-token']").attr("content");
     var detail_id = $('#detail_id'+id).val();
 
-    console.log(detail_id,'tes');
     if(detail_id != "" || detail_id != undefined){
         swal({
             title: 'Delete this Row?',
@@ -678,11 +678,12 @@ function delete_row(id){
             buttonsStyling: false
         }).then(function () {
             $.ajax({
-                url : "api/deletecontent/"+detail_id,
-                type : "get",
+                url : "contentmanagement/"+detail_id,
+                type : "delete",
                 dataType: 'json',
                 data : {
                     "user_id" : "{{ session('user_id') }}",
+                    "_token" : token,
                 }
             }).done(function (data) {
                 $('#trow'+id).remove();

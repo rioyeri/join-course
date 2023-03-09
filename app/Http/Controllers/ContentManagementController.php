@@ -268,14 +268,10 @@ class ContentManagementController extends Controller
     public function destroy(Request $request, $id)
     {
         $data = ContentHomeDetail::where('id', $id)->first();
-        if($data != NULL){
-            $log_id = Log::setLog('CTHOD','Delete detail segment : '.$data->content_id, $request->user_id);
-            RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data), $request->user_id);
-            $data->delete();
-            return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
-        }else{
-            return ApiFormatter::createApi(Response::HTTP_BAD_REQUEST, 'Failed');
-        }
+        $log_id = Log::setLog('CTHOD','Delete detail segment : '.$data->content_id, $request->user_id);
+        RecycleBin::moveToRecycleBin($log_id, $data->getTable(), json_encode($data), $request->user_id);
+        $data->delete();
+        return "true";
     }
 
     public function changeStatus(Request $request, $id){
