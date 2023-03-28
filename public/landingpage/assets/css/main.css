@@ -688,10 +688,33 @@ section {
   font-size: 20px;
   left: 0;
   top: -3px;
-  color: var(--color-primary);
+  /* color: var(--color-primary); */
+  color: var(--color-secondary);
 }
 
 .about .content p:last-child {
+  margin-bottom: 0;
+}
+
+.about .content-benefit ul {
+  list-style: none;
+  padding: 0;
+}
+
+.about .content-benefit ul li {
+  padding: 0 0 10px 30px;
+  position: relative;
+}
+
+.about .content-benefit ul i {
+  position: absolute;
+  font-size: 20px;
+  left: 0;
+  top: -3px;
+  color: var(--color-primary);
+}
+
+.about .content-benefit p:last-child {
   margin-bottom: 0;
 }
 
@@ -2679,7 +2702,7 @@ section {
   line-height: 0;
   margin-bottom: 25px;
   color: #fff;
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 600;
   font-family: var(--font-primary);
 }
@@ -2690,7 +2713,7 @@ section {
 }
 
 .footer .footer-info .logo span {
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 600;
   letter-spacing: 1px;
   /* color: #fff; */
@@ -2769,6 +2792,7 @@ section {
 
 .footer .footer-contact p {
   line-height: 26px;
+  font-size: 15px;
 }
 
 .footer .copyright {

@@ -7,8 +7,8 @@
         </div>
         <div class="row gy-4">
             @php($i=1)
-            @foreach($content[1]->detail as $detail)
-                <div class="{{ $content[1]->column_size_detail }} col-md-6">
+            @foreach($content[1]->detail as $key => $detail)
+                <div class="@if($key == 4 && count($content[1]->detail) == 5) col-lg-8 @else {{ $content[1]->column_size_detail }} @endif col-md-6">
                     <div class="service-item position-relative" data-aos="flip-left" data-aos-mirror="true" data-aos-offset="200" data-aos-delay="{{ 300*$i }}" data-aos-duration="1000">
                         <div class="icon">
                             <i class="{{ $detail->image }}"></i>

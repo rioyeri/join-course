@@ -55,7 +55,9 @@ class ContentHome extends Model
             $j = 1;
             $contents = '';
             $contents .= '<li> <strong>Title</strong> : '.$key->title.'</li>';
-            $contents .= '<li> <strong>Subtitle</strong> : '.$key->subtitle.'</li>';    
+            if($key->id != 9 && $key->id != 11){
+                $contents .= '<li> <strong>Subtitle</strong> : '.$key->subtitle.'</li>';    
+            }
 
             if($key->id != 1 && $key->id != 10){
                 $details = ContentHomeDetail::where('content_id', $key->id)->get();
@@ -90,7 +92,7 @@ class ContentHome extends Model
             if (array_search("CTHOU",$page)){
                 $options .= '<a class="btn btn-primary btn-block btn-round m-5" onclick="edit_data('.$key->id.')" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit</a> ';
             }
-            if($key->id != 1 && $key->id != 2 && $key->id != 3 && $key->id != 8 && $key->id != 9){
+            if($key->id != 1 && $key->id != 2 && $key->id != 3 && $key->id != 8 && $key->id != 9 && $key->id != 11){
                 if (array_search("CTHOS",$page)){
                     if($key->status == 0){
                         $options .= '<a class="btn btn-warning btn-block btn-round m-5" onclick="change_status('.$key->id.')"><i class="fa fa-power-off"></i> Non-Active</a> ';
@@ -136,6 +138,10 @@ class ContentHome extends Model
                 $column_size = "col-lg-2";
             }else{
                 $column_size = "col-lg-6";
+            }
+
+            if($content->id == 2){
+                $column_size = "col-lg-4";
             }
             foreach($contdet as $det){
                 if($det->image == null){

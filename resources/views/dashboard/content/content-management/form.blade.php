@@ -21,12 +21,14 @@
             <input type="text" class="form-control" name="title" id="title" value="@isset($data->title){{ $data->title }}@endisset">
         </div>
     </div>
+    @if($data->id != 11)
     <div class="form-group">
         <label class="col-sm-3 col-sm-3 control-label">Subtitle <span class="text-danger">*</span></label>
         <div class="col-sm-9">
             <textarea class="form-control" name="subtitle" id="subtitle" rows="3">@isset($data->subtitle){{ $data->subtitle }}@endisset</textarea>
         </div>
     </div>
+    @endif
     <input type="hidden" id="content_id" value="{{ $data->id }}">
     @if($data->id != 1)
         <div id="update_box" @if($data->id != 4 && $data->id != 10)style="display: none;"@endif>
@@ -82,7 +84,7 @@
                         </div>
                     @endif
                 @endif
-                @if($data->id != 2 && $data->id != 6 && $data->id != 3 && $data->id != 8 && $data->id != 9 && $data->id != 10)
+                @if($data->id != 2 && $data->id != 6 && $data->id != 3 && $data->id != 8 && $data->id != 9 && $data->id != 10 && $data->id != 11)
                     <div class="form-group-sm">
                         <label class="col-sm-3 col-sm-3 control-label">Subtitle</label>
                         <div class="col-sm-9">
@@ -114,7 +116,7 @@
                         </div>
                     @endif
                 @endif
-                @if($data->id != 6 && $data->id != 2 && $data->id != 9)
+                @if($data->id != 6 && $data->id != 2 && $data->id != 8 && $data->id != 9 && $data->id != 11)
                     <div class="form-group-sm">
                         <label class="control-label col-sm-3 col-sm-3">Image</label>
                         <div class="col-md-9">
@@ -150,7 +152,7 @@
                         </div>
                     </div>
                 @endif
-                @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9 && $data->id != 10)
+                @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9 && $data->id != 10 && $data->id != 11)
                     <div class="form-group-sm">
                         <label class="col-sm-3 col-sm-3 control-label">Link</label>
                         <div class="col-sm-9">
@@ -158,7 +160,7 @@
                         </div>
                     </div>
                 @endif
-                @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9 && $data->id != 10)
+                @if($data->id != 3 && $data->id != 4 && $data->id != 6 && $data->id != 8 && $data->id != 9 && $data->id != 10 && $data->id != 11)
                     <div class="form-group-sm">
                         <label class="col-sm-3 col-sm-3 control-label">Link Text</label>
                         <div class="col-sm-9">
@@ -184,11 +186,11 @@
                 <thead>
                     <th>No</th>
                     <th @if($data->id == 10) style="display:none;" @endif>Title</th>
-                    <th @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>Subtitle</th>
+                    <th @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10 || $data->id == 11) style="display:none;" @endif>Subtitle</th>
                     <th @if($data->id == 10) style="display:none;" @endif>Description</th>
-                    <th @if($data->id == 6 || $data->id == 9) style="display:none;" @endif>@if($data->id == 2) Icon @else Image @endif</th>
-                    <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>Link</th>
-                    <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>Link Text</th>
+                    <th @if($data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 11) style="display:none;" @endif>@if($data->id == 2) Icon @else Image @endif</th>
+                    <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10 || $data->id == 11) style="display:none;" @endif>Link</th>
+                    <th @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10 || $data->id == 11) style="display:none;" @endif>Link Text</th>
                     <th>Options</th>
                 </thead>
                 <tbody id="table-body-detail">
@@ -198,9 +200,9 @@
                         <tr style="width:100%" id="trow{{ $i }}" class="trow" role="row">
                             <td>{{ $i }}</td>
                             <td @if($data->id == 10) style="display:none;" @endif>{{ $key->title }}</td>
-                            <td @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>{{ $key->subtitle }}</td>
+                            <td @if($data->id == 2 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10 || $data->id == 11) style="display:none;" @endif>{{ $key->subtitle }}</td>
                             <td @if($data->id == 10) style="display:none;" @endif>{{ $key->description }}</td>
-                            <td @if($data->id == 6 || $data->id == 9) style="display:none;" @endif>
+                            <td @if($data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 11) style="display:none;" @endif>
                                 @if($key->image != "")
                                     @if($data->id == 2)
                                         <input type="hidden" id="image_name{{ $i }}" value="{{ $key->image }}">
@@ -228,8 +230,8 @@
                                     NOT SET YET
                                 @endif
                             </td>
-                            <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>{{ $key->link }}</td>
-                            <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10) style="display:none;" @endif>{{ $key->link_text }}</td>
+                            <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10 || $data->id == 11) style="display:none;" @endif>{{ $key->link }}</td>
+                            <td @if($data->id == 3 || $data->id == 4 || $data->id == 6 || $data->id == 8 || $data->id == 9 || $data->id == 10 || $data->id == 11) style="display:none;" @endif>{{ $key->link_text }}</td>
                             <td class="text-center">
                                 <a href="javascript:;" type="button" class="btn btn-primary" onclick="edit_row({{ $i }})">Edit</a>
                                 @if($data->id == 4 || $data->id == 10)
@@ -295,7 +297,7 @@ function edit_row(row){
                 $('#detail_linktext').val(link_text);
             }
             console.log(content_id);
-            if(content_id != 6 && content_id != 9){
+            if(content_id != 6 && content_id != 8 && content_id != 9 && content_id != 11){
                 if(content_id == 2){
                     $('#detail_image').val(image).change();
                 }else{
@@ -333,13 +335,13 @@ function update_row(){
     var title = $('#detail_title').val();
     var description = $('#detail_description').val();
 
-    if(content_id == 2 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10){
+    if(content_id == 2 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10 || content_id == 11){
         var subtitle = "";
     }else{
         var subtitle = $('#detail_subtitle').val();
     }
 
-    if(content_id != 2 && content_id != 3 && content_id != 6 && content_id != 9 || content_id == 10){
+    if(content_id != 2 && content_id != 3 && content_id != 6 && content_id != 8 && content_id != 9 && content_id != 11 || content_id == 10){
         var selector = document.getElementById('detail_image');
         if(content_id == 10){
             title = selector.files[0]['name'];
@@ -355,13 +357,13 @@ function update_row(){
         var image = "";
     }
 
-    if(content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10){
+    if(content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10 || content_id == 11){
         var link = "";    
     }else{
         var link = $('#detail_link').val();
     }
 
-    if(content_id == 3 || content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10){
+    if(content_id == 3 || content_id == 4 || content_id == 6 || content_id == 8 || content_id == 9 || content_id == 10 || content_id == 11){
         var link_text = "";
     }else{
         var link_text = $('#detail_linktext').val();
@@ -421,56 +423,58 @@ function update_row(){
                     document.getElementById('icon'+number).setAttribute("class", data.image);
                     $('#image_name'+number).val(data.image);
                 }else{
-                    if(data.image != "" && data.image != null){
-                        swal({
-                            title: 'Loading',
-                            allowEscapeKey: false,
-                            allowOutsideClick: false,
-                            timer: 5000,
-                            showConfirmButton: false,
-                            onOpen: () => {
-                                swal.showLoading();
-                            }
-                        }).then(
-                            () => {},
-                            (dismiss) => {
-                                if (dismiss === 'timer') {
-                                    console.log('closed by timer!!!!');
-                                    if(content_id == 3){
-                                        image_path = '{{ asset("dashboard/assets/users/photos/") }}';
-                                    }else if(content_id == 8){
-                                        image_path = '{{ asset("landingpage/assets/img/") }}';
-                                    }else if(content_id == 10){
-                                        image_path = '{{ asset("landingpage/assets/img/olimpiade/") }}';
-                                    }else{
-                                        image_path = '{{ asset("landingpage/assets/img/testimonials/") }}';
-                                    }
-                                    if(content_id == 10){
-                                        field_image = $(this).find('td:eq(1)').text().replaceAll(/\s/g, '');
-                                    }else{
-                                        field_image = $(this).find('td:eq(4)').text().replaceAll(/\s/g, '');
-                                    }
-                                    
-                                    // if(field_image == "NOTSETYET"){
-                                        if(content_id == 10){
-                                            var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
-                                            var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 300px; max-height:300px;">';
-                                            content = content1.concat(content2);
-                                            $(this).find('td:eq(1)').html(content);
-                                        }else{
-                                            var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
-                                            var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 50px; max-height:50px;">';
-                                            content = content1.concat(content2);
-                                            $(this).find('td:eq(4)').html(content);
-                                        }
-                                    // }
-
-                                    document.getElementById('image'+number).src = image_path+'/'+data.image;
-                                    $('#image_name'+number).val(image_path+'/'+data.image);
-                                    console.log(image_path+'/'+data.image);
+                    if(content_id != 11){
+                        if(data.image != "" && data.image != null){
+                            swal({
+                                title: 'Loading',
+                                allowEscapeKey: false,
+                                allowOutsideClick: false,
+                                timer: 5000,
+                                showConfirmButton: false,
+                                onOpen: () => {
+                                    swal.showLoading();
                                 }
-                            }
-                        )
+                            }).then(
+                                () => {},
+                                (dismiss) => {
+                                    if (dismiss === 'timer') {
+                                        console.log('closed by timer!!!!');
+                                        if(content_id == 3){
+                                            image_path = '{{ asset("dashboard/assets/users/photos/") }}';
+                                        }else if(content_id == 8){
+                                            image_path = '{{ asset("landingpage/assets/img/") }}';
+                                        }else if(content_id == 10){
+                                            image_path = '{{ asset("landingpage/assets/img/olimpiade/") }}';
+                                        }else{
+                                            image_path = '{{ asset("landingpage/assets/img/testimonials/") }}';
+                                        }
+                                        if(content_id == 10){
+                                            field_image = $(this).find('td:eq(1)').text().replaceAll(/\s/g, '');
+                                        }else{
+                                            field_image = $(this).find('td:eq(4)').text().replaceAll(/\s/g, '');
+                                        }
+                                        
+                                        // if(field_image == "NOTSETYET"){
+                                            if(content_id == 10){
+                                                var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
+                                                var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 300px; max-height:300px;">';
+                                                content = content1.concat(content2);
+                                                $(this).find('td:eq(1)').html(content);
+                                            }else{
+                                                var content1 = '<input type="hidden" id="image_name'+number+'" value="">';
+                                                var content2 = '<img id="image'+number+'" src="" style="object-fit:cover; min-height: 50px; max-height:50px;">';
+                                                content = content1.concat(content2);
+                                                $(this).find('td:eq(4)').html(content);
+                                            }
+                                        // }
+
+                                        document.getElementById('image'+number).src = image_path+'/'+data.image;
+                                        $('#image_name'+number).val(image_path+'/'+data.image);
+                                        console.log(image_path+'/'+data.image);
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }

@@ -52,7 +52,7 @@ class OrderPaymentController extends Controller
         }else{
             $orders = Order::where('payment_status', '!=', 1)->get();
         }
-        $accounts = PaymentAccount::all();
+        $accounts = PaymentAccount::where('status', 1)->get();
         return response()->json(view('dashboard.order.payment.form', compact('orders','accounts'))->render());
     }
 
@@ -141,7 +141,7 @@ class OrderPaymentController extends Controller
         $data = OrderPayment::where('id', $id)->first();
         $current_order_bill = Order::where('id', $data->order_id)->first()->order_bill;
         $orders = Order::all();
-        $accounts = PaymentAccount::all();
+        $accounts = PaymentAccount::where('status', 1)->get();
         return response()->json(view('dashboard.order.payment.form', compact('data','orders','accounts','current_order_bill'))->render());
     }
 
@@ -293,7 +293,7 @@ class OrderPaymentController extends Controller
         }else{
             if($count_data != 0){
                 $data = Order::where('order_id', $order_id)->where('order_token', $token)->first();
-                $accounts = PaymentAccount::all();
+                $accounts = PaymentAccount::where('status', 1)->get();
                 return view('dashboard.order.payment.single-form', compact('data','accounts'));
             }else{
                 $order_id = $order_id;

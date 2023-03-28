@@ -14,10 +14,11 @@
                     Flash<span>Academia</span>
                 </a>
                 <div class="social-links d-flex mt-4">
-                    {{-- <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a> --}}
+                    @for($i=5; $i<9; $i++)
+                        @if($company_profile[$i]->status == 1)
+                            <a href="{{ $company_profile[$i]->content }}" class="{{ $company_profile[$i]->title }}" target="_blank"><i class="bi bi-{{ $company_profile[$i]->title }}"></i></a>
+                        @endif
+                    @endfor
                 </div>
             </div>
 
