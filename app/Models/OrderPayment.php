@@ -115,7 +115,7 @@ class OrderPayment extends Model
         if($columnName == "no"){
             $orderpayment->orderBy('id', $columnSortOrder);
         }elseif($columnName == "payment_time"){
-            $orderpayment->orderBy('created_at', $columnSortOrder);
+            $orderpayment->orderBy('order_payment.created_at', $columnSortOrder);
         }else{
             $orderpayment->orderBy($columnName, $columnSortOrder);
         }

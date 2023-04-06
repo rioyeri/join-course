@@ -12,6 +12,10 @@ class ContentHomeDetail extends Model
         'content_id','title','subtitle','description','image','link','link_text','creator'
     ];
 
+    public function get_content(){
+        return $this->belongsTo('App\Models\ContentHome', 'content_id', 'id');
+    }
+
     public static function dataIndex(Request $request){
         // echo "<pre>";
         // print_r($request->all());

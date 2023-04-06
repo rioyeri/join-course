@@ -929,50 +929,61 @@
 
     function delete_data(id){
         var token = $("meta[name='csrf-token']").attr("content");
+        var result = checkBeforeDelete(id);
 
-        swal({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            confirmButtonClass: 'btn btn-success',
-            cancelButtonClass: 'btn btn-danger m-l-10',
-            buttonsStyling: false
-        }).then(function () {
-            $.ajax({
-                url: "order/"+id,
-                type: 'DELETE',
-                data: {
-                    "_token": token,
-                },
-            }).done(function (data) {
-                swal(
-                    'Deleted!',
-                    'Your data has been deleted.',
-                    'success'
-                )
-                location.reload();
-            }).fail(function (msg) {
-                swal(
-                    'Failed',
-                    'Failed to delete',
-                    'error'
-                )
+        if(result.text == ""){
+            swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-success',
+                cancelButtonClass: 'btn btn-danger m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+                $.ajax({
+                    url: "order/"+id,
+                    type: 'DELETE',
+                    data: {
+                        "_token": token,
+                    },
+                }).done(function (data) {
+                    swal(
+                        'Deleted!',
+                        'Your data has been deleted.',
+                        'success'
+                    )
+                    location.reload();
+                }).fail(function (msg) {
+                    swal(
+                        'Failed',
+                        'Failed to delete',
+                        'error'
+                    )
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+                if (dismiss === 'cancel') {
+                    swal(
+                        'Cancelled',
+                        'Your data is safe :)',
+                        'error'
+                    )
+                }
             });
-
-        }, function (dismiss) {
-            // dismiss can be 'cancel', 'overlay',
-            // 'close', and 'timer'
-            if (dismiss === 'cancel') {
-                swal(
-                    'Cancelled',
-                    'Your data is safe :)',
-                    'error'
-                )
-            }
-        })
+        }else{
+            title = result.title;
+            text = result.text;
+            swal(
+                title,
+                text,
+                'error'
+            )
+        }
     }
 
     function get_teacher(params) {
@@ -1182,6 +1193,24 @@
         }).fail(function (msg) {
             alert('Gagal menampilkan data, silahkan refresh halaman.');
         });
+    }
+
+    function checkBeforeDelete(id){
+        var result="";
+        $.ajax({
+            url: "{{ route('checkBeforeDelete') }}",
+            type: "get",
+            dataType: 'json',
+            async: false,
+            data: {
+                "id": id,
+                "type": "deleteOrder",
+            },success:function(data){
+                 result = data
+            }
+        })
+
+        return result;
     }
 </script>
 @if(session('order'))

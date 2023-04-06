@@ -158,4 +158,7 @@ Route::middleware(['checkUser'])->group(function () {
     // Order Payment Helper
     Route::post('/orderpayment/{id}/changestatus', 'OrderPaymentController@changeStatus')->name('changeStatusOrderPayment');
     Route::post('/orderpayment/exportPayment', 'OrderPaymentController@exportPayment')->name('exportPayment');
+
+    // CHEck BEFORE DELETE
+    Route::get('getCheckBeforeDelete', 'HelperController@checkBeforeDelete')->name('checkBeforeDelete');
 });

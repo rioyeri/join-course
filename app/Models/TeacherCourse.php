@@ -10,7 +10,7 @@ class TeacherCourse extends Model
 {
     protected $table ='teacher_course';
     protected $fillable = [
-        'teacher_id','course_id','status'
+        'teacher_id','course_id','creator'
     ];
 
     public function get_course(){

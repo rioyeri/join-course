@@ -11,6 +11,10 @@ class OrderDetail extends Model
         'order_id','schedule_time','link_zoom','link_drive','creator'
     ];
 
+    public function get_order(){
+        return $this->belongsTo('App\Models\Order', 'order_id', 'id');
+    }
+
     public static function getWALink($detail_id, $type){
         $order_detail = OrderDetail::where('id', $detail_id)->first();
         $order = Order::where('id', $order_detail->order_id)->first();

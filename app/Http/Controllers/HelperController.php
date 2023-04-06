@@ -17,10 +17,18 @@ use App\Models\User;
 use App\Models\ContentProfile;
 use App\Models\ContentHome;
 use App\Models\City;
+use App\Models\ContentHomeDetail;
+use App\Models\ContentPromo;
+use App\Models\ContentPromoDetail;
 use App\Models\Day;
+use App\Models\OrderDetail;
+use App\Models\OrderReport;
 use App\Models\OrderReview;
 use App\Models\Package;
 use App\Models\PackageGrade;
+use App\Models\PaymentAccount;
+use App\Models\RoleMapping;
+use App\Models\Student;
 
 class HelperController extends Controller
 {
@@ -401,5 +409,337 @@ class HelperController extends Controller
         $company_profile = ContentProfile::all();
         $keyword = "";
         return view('landingpage.content.allpackage', compact('company_profile', 'results'));
+    }
+
+    public function checkBeforeDelete(Request $request){
+        $id = $request->id;
+        $type = $request->type;
+        $text = "";
+
+        if($type=="deleteOrder"){
+            $payment = OrderPayment::where('order_id',$id)->get();
+            $i = 1;
+
+            foreach($payment as $pay){
+                $text .= "<b>- ".$pay->invoice_id."</b>";
+                if($i % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $i++;
+            }
+        }elseif($type=="deletePackage"){
+            $order = Order::where('package_id', $id)->get();
+            $promo = ContentPromo::where('package_id', $id)->get();
+            $i = 1;
+            $j = 1;
+
+            foreach($order as $ord){
+                $text .= "<b>- ".$ord->order_id."</b>";
+                if($i % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $i++;
+            }
+
+            if($promo->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($promo as $pro){
+                $text .= "<b>- [Promo] ".$pro->get_package->name."</b><br>";
+            }
+        }elseif($type=="deleteCourse"){
+            $order = Order::where('course_id', $id)->get();
+            $teacherCourse = TeacherCourse::where('course_id', $id)->get();
+            $i = 1;
+
+            foreach($order as $ord){
+                $text .= "<b>- ".$ord->order_id."</b>";
+                if($i % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $i++;
+            }
+
+            if($teacherCourse->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($teacherCourse as $pro){
+                $text .= "<b>- [Registered Teacher] ".$pro->teacher->name."</b><br>";
+            }
+        }elseif($type=="deleteStudent"){
+            $order = Order::where('student_id', $id)->get();
+            $i = 1;
+
+            foreach($order as $ord){
+                $text .= "<b>- ".$ord->order_id."</b>";
+                if($i % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $i++;
+            }
+        }elseif($type=="deleteTeacher"){
+            $order = Order::where('teacher_id', $id)->get();
+            $teacherCourse = TeacherCourse::where('teacher_id', $id)->get();
+            $teacherSchedules = TeacherSchedule::where('teacher_id', $id)->get();
+            $teacherReview = OrderReview::where('teacher_id', $id)->get();
+            $i = 1;
+            $m = 1;
+
+            foreach($order as $ord){
+                $text .= "<b>- ".$ord->order_id."</b>";
+                if($i % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $i++;
+            }
+
+            if($teacherCourse->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($teacherCourse as $cou){
+                $text .= "<b>- [Registered Course] ".$cou->get_course->name."</b><br>";
+            }
+
+            if($teacherSchedules->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($teacherSchedules as $sch){
+                $text .= "<b>- [Registered Schedule] ".$sch->get_day->day_name.', '.$sch->time_start.' - '.$sch->time_end."</b><br>";
+            }
+
+            if($teacherReview->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($teacherReview as $rev){
+                $text .= "<b>- [Review] ".$rev->get_order->order_id."</b>";
+                if($m % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $m++;
+            }
+        }elseif($type=="deletePaymentAccount"){
+            $orderpayment = OrderPayment::where('payment_method', $id)->get();
+            $i = 1;
+
+            foreach($orderpayment as $pay){
+                $text .= "<b>- ".$pay->invoice_id."</b>";
+                if($i % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $i++;
+            }
+        }elseif($type=="deleteUser"){
+            $student = Student::where('user_id', $id)->get();
+            $teacher = Teacher::where('user_id', $id)->get();
+            $order = Order::where('creator', $id)->get();
+            $orderdetail = OrderDetail::where('creator', $id)->get();
+            $orderpayment = OrderPayment::where('creator', $id)->get();
+            $course = Course::where('creator', $id)->get();
+            $package = Package::where('creator', $id)->get();
+            $paymentAccount = PaymentAccount::where('creator', $id)->get();
+            $contenthome = ContentHome::where('creator', $id)->get();
+            $contenthomedetail = ContentHomeDetail::where('creator', $id)->get();
+            $contentprofile = ContentProfile::where('creator', $id)->get();
+            $contentpromo = ContentPromo::where('creator', $id)->get();
+            $contentpromodetail = ContentPromoDetail::where('creator', $id)->get();
+            $orderreview = OrderReview::where('creator', $id)->get();
+            $orderreport = OrderReport::where('creator', $id)->get();
+            $teacherCourse = TeacherCourse::where('creator', $id)->get();
+            $teacherSchedules = TeacherSchedule::where('creator', $id)->get();
+            $userRole = RoleMapping::where('creator', $id)->get();
+            $i = 1;
+            $j = 1;
+
+            foreach($student as $stu){
+                $text .= "<b>- [as Student] ".$stu->student->name."</b><br>";
+            }
+
+            if($teacher->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($teacher as $tea){
+                $text .= "<b>- [as Student] ".$tea->teacher->name."</b><br>";
+            }
+
+            if($order->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($order as $ord){
+                $text .= "<b>- ".$ord->order_id."</b>";
+                if($i % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $i++;
+            }
+
+            if($orderdetail->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($orderdetail as $det){
+                $text .= "<b>- [Schedule] ".$det->get_order->order_id." : ".$det->schedule_time."</b><br>";
+            }
+
+            if($orderpayment->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($orderpayment as $pay){
+                $text .= "<b>- ".$pay->invoice_id."</b>";
+                if($j % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $j++;
+            }
+
+            if($course->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($course as $cou){
+                $text .= "<b>- [Course] ".$cou->name."</b><br>";
+            }
+
+            if($package->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($package as $pac){
+                $text .= "<b>- [Package] ".$pac->name."</b><br>";
+            }
+
+            if($paymentAccount->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($paymentAccount as $acc){
+                $text .= "<b>- [Payment Account] ".$acc->account_type." ".$acc->account_number." ".$acc->account_name."</b><br>";
+            }
+
+            if($contenthome->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($contenthome as $cho){
+                $text .= "<b>- [Content] ".$cho->segment."</b><br>";
+            }
+
+            if($contenthomedetail->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($contenthomedetail as $chd){
+                $text .= "<b>- [Detail Content] ".$chd->get_content->segment." : ".$chd->title."</b><br>";
+            }
+
+            if($contentprofile->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($contentprofile as $cop){
+                $text .= "<b>- [Company Profile] ".$cop->title."</b><br>";
+            }
+
+            if($contentpromo->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($contentpromo as $cpr){
+                $text .= "<b>- [Promo] ".$cpr->get_package->name."</b><br>";
+            }
+
+            if($contentpromodetail->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($contentpromodetail as $cpd){
+                $text .= "<b>- [Detail Promo] ".$cpd->get_promo->get_package->name." : ".$cpd->text."</b><br>";
+            }
+
+            if($orderreview->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($orderreview as $ore){
+                $text .= "<b>- [Order's Review] ".$ore->get_order->order_id."</b><br>";
+            }
+
+            if($orderreport->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($orderreport as $orp){
+                $text .= "<b>- [Order's Report] ".$orp->get_order->order_id."</b><br>";
+            }
+
+            if($teacherCourse->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($teacherCourse as $tec){
+                $text .= "<b>- ".$tec->teacher->name."</b><br>";
+            }
+
+            if($teacherSchedules->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($teacherSchedules as $tcs){
+                $text .= "<b>- [Registered Schedule] ".$tcs->get_day->day_name.', '.$tcs->time_start.' - '.$tcs->time_end."</b><br>";
+            }
+
+            if($userRole->count() != 0){
+                $text .= "<br><br>";
+            }
+
+            foreach($userRole as $usr){
+                $text .= "<b>- [User Role] ".$usr->username."</b><br>";
+            }
+        }elseif($type=="deleteRole"){
+            $rolesmapping = RoleMapping::where('role_id', $id)->get();
+            $i = 1;
+
+            foreach($rolesmapping as $rol){
+                $text .= "<b>- ".$rol->username."</b>";
+                if($i % 2 == 0){
+                    $text .="<br>";
+                }else{
+                    $text .="&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $i++;
+            }
+        }
+
+        $data = array(
+            'title' => "Delete these transaction below first before delete this data",
+            'text' => $text,
+        );
+
+        return response()->json($data);
     }
 }
