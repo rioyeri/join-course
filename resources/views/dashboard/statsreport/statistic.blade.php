@@ -255,13 +255,17 @@ Statistics
                 sort:value,
             },
         }).done(function (data) {
+            console.log(data)
             $("#bestTeacher").css("height","180");
             $("#graph_bestteacher").css("height", "210px");
 
             if(value == "all"){
                 $("#title-bestteacher").html("Teacher Stats");
             }else{
-                $("#title-bestteacher").html("Teacher of the "+data.data[0].month_name);
+                const d = new Date();
+                var month_name = d.toLocaleString('default', { month: 'short' })+' '+d.getFullYear();
+
+                $("#title-bestteacher").html("Teacher of the "+month_name);
             }
 
             var count = data.data.length;
@@ -308,7 +312,9 @@ Statistics
             if(value == "all"){
                 $("#title-mostsubject").html("Most Subject Stats");
             }else{
-                $("#title-mostsubject").html("Most Subject in "+data.data[0].month_name);
+                const d = new Date();
+                var month_name = d.toLocaleString('default', { month: 'short' })+' '+d.getFullYear();
+                $("#title-mostsubject").html("Most Subject in "+month_name);
             }
 
             var count = data.data.length;
@@ -354,7 +360,9 @@ Statistics
             if(value == "all"){
                 $("#title-grade").html("Grade Statistic");
             }else{
-                $("#title-grade").html("Grade Statistic in "+data.data[0].month_name);
+                const d = new Date();
+                var month_name = d.toLocaleString('default', { month: 'short' })+' '+d.getFullYear();
+                $("#title-grade").html("Grade Statistic in "+month_name);
             }
 
             var colors = [];
@@ -401,7 +409,9 @@ Statistics
             if(value == "all"){
                 $("#title-ordertype").html("Type of Order Stats");
             }else{
-                $("#title-ordertype").html("Type of Order Stats in "+data.data[0].month_name);
+                const d = new Date();
+                var month_name = d.toLocaleString('default', { month: 'short' })+' '+d.getFullYear();
+                $("#title-ordertype").html("Type of Order Stats in "+month_name);
             }
 
             var count = data.data.length;
@@ -448,7 +458,9 @@ Statistics
             if(value == "all"){
                 $("#title-package").html("Package Stats");
             }else{
-                $("#title-package").html("Package Stats in "+data.data[0].month_name);
+                const d = new Date();
+                var month_name = d.toLocaleString('default', { month: 'short' })+' '+d.getFullYear();
+                $("#title-package").html("Package Stats in "+month_name);
             }
 
             var count = data.data.length;

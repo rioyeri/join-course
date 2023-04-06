@@ -541,11 +541,9 @@ class Order extends Model
 
     public static function orderTypeStats($sort){
         $data = collect();
-        $periodic = "";
         if($sort != 'all'){
             $start = date('Y-m-01'); // hard-coded '01' for first day
             $end  = date('Y-m-t');
-            $periodic = date('M Y');    
         }
         $colors = Color::getColor()->shuffle();
         $i=0;
@@ -561,15 +559,17 @@ class Order extends Model
             }
             $count_order = $count_order->count();
 
-            $temp->put('order_type', $key);
-            $temp->put('order_count', $count_order);
-            $temp->put('color', $colors[$i]);
-            $temp->put('month_name', $periodic);
-            $data->push($temp);
-            if($i < 9){
-                $i++;
-            }else{
-                $i=0;
+            if($count_order != 0){
+                $temp->put('order_type', $key);
+                $temp->put('order_count', $count_order);
+                $temp->put('color', $colors[$i]);
+                $data->push($temp);
+                
+                if($i < 9){
+                    $i++;
+                }else{
+                    $i=0;
+                }
             }
         }
 

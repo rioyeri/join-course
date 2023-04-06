@@ -88,11 +88,9 @@ class Course extends Model
 
     public static function mostSubject($sort){
         $data = collect();
-        $periodic = "";
         if($sort != 'all'){
             $start = date('Y-m-01'); // hard-coded '01' for first day
             $end  = date('Y-m-t');
-            $periodic = date('M Y');    
         }
         $colors = Color::getColor()->shuffle();
         $i=0;
@@ -110,7 +108,6 @@ class Course extends Model
                 $temp->put('course_name', $key->name);
                 $temp->put('course_count', $count_orders);
                 $temp->put('color', $colors[$i]);
-                $temp->put('month_name', $periodic);
                 $data->push($temp);
                 if($i++ <= 9){
                     $i++;

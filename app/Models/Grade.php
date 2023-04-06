@@ -13,11 +13,9 @@ class Grade extends Model
 
     public static function gradeStats($sort){
         $data = collect();
-        $periodic = "";
         if($sort != 'all'){
             $start = date('Y-m-01'); // hard-coded '01' for first day
             $end  = date('Y-m-t');
-            $periodic = date('M Y');    
         }
         $colors = Color::getColor()->shuffle();
         $i=0;
@@ -36,7 +34,6 @@ class Grade extends Model
             $temp->put('grade_count', $count_grade);
             $temp->put('order_count', $count_order);
             $temp->put('color', $colors[$i]);
-            $temp->put('month_name', $periodic);
             $data->push($temp);
             if($i < 9){
                 $i++;

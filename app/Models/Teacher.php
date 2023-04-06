@@ -280,11 +280,9 @@ class Teacher extends Model
 
     public static function bestTeacherThisMonth($sort){
         $data = collect();
-        $periodic = "";
         if($sort != 'all'){
             $start = date('Y-m-01'); // hard-coded '01' for first day
             $end  = date('Y-m-t');
-            $periodic = date('M Y');
         }
 
         $colors = Color::getColor()->shuffle();
@@ -306,7 +304,6 @@ class Teacher extends Model
                 $temp->put('teacher_name', $shorted_name);
                 $temp->put('order_qty', $count_orders);
                 $temp->put('color', $colors[$i]);
-                $temp->put('month_name', $periodic);
                 $data->push($temp);
                 if($i++ <= 9){
                     $i++;
@@ -330,6 +327,7 @@ class Teacher extends Model
         }else{
             $result = $data;
         }
+
         return $result;
     }
 

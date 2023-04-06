@@ -34,12 +34,7 @@ class StatisticsController extends Controller
     }
 
     public function bestTeacher(Request $request){
-        if($request->sort == "all"){
-            $data = Teacher::bestTeacherThisMonth();
-        }else{
-            $month = date('m');
-            $data = Teacher::bestTeacherThisMonth($month);
-        }
+        $data = Teacher::bestTeacherThisMonth($request->sort);
         // echo json_encode($datas);
 
         if($data != NULL){
@@ -50,12 +45,7 @@ class StatisticsController extends Controller
     }
 
     public function mostSubject(Request $request){
-        if($request->sort == "all"){
-            $data = Course::mostSubject();
-        }else{
-            $month = date('m');
-            $data = Course::mostSubject($month);
-        }
+        $data = Course::mostSubject($request->sort);
 
         if($data != NULL){
             return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
@@ -65,12 +55,7 @@ class StatisticsController extends Controller
     }
 
     public function GradeStats(Request $request){
-        if($request->sort == "all"){
-            $data = Grade::gradeStats();
-        }else{
-            $month = date('m');
-            $data = Grade::gradeStats($month);
-        }
+        $data = Grade::gradeStats($request->sort);
 
         if($data != NULL){
             return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
@@ -80,12 +65,7 @@ class StatisticsController extends Controller
     }
 
     public function OrderTypeStats(Request $request){
-        if($request->sort == "all"){
-            $data = Order::orderTypeStats();
-        }else{
-            $month = date('m');
-            $data = Order::orderTypeStats($month);
-        }
+        $data = Order::orderTypeStats($request->sort);
 
         if($data != NULL){
             return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
@@ -95,12 +75,7 @@ class StatisticsController extends Controller
     }
 
     public function PackageStats(Request $request){
-        if($request->sort == "all"){
-            $data = Package::getPackageStats();
-        }else{
-            $month = date('m');
-            $data = Package::getPackageStats($month);
-        }
+        $data = Package::getPackageStats($request->sort);
 
         if($data != NULL){
             return ApiFormatter::createApi(Response::HTTP_OK, 'Success', $data);
