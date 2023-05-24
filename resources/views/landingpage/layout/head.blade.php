@@ -4,7 +4,7 @@
   <meta content="" name="description">
   <meta content="" name="keywords">
 
-  <title>Flash Academy</title>
+  <title>Flash Academia</title>
 
   <!-- Favicons -->
   <link href="{{ asset('landingpage/assets/img/favicon.png') }}" rel="icon">

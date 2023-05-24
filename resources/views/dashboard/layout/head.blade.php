@@ -9,7 +9,7 @@
     <link href="{{ asset('dashboard/img/favicon.png') }}" rel="icon">
     <link href="{{ asset('dashboard/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
-    <title>@yield('title') | Flash Academy</title>
+    <title>@yield('title') | Flash Academia</title>
 
     <!-- Magnific Pop-up-->
     <link rel="stylesheet" href="{{ asset('dashboard/additionalplugins/magnific-popup/dist/magnific-popup.css') }}"/>
