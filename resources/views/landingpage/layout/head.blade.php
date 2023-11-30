@@ -7,7 +7,7 @@
   <title>Flash Academia</title>
 
   <!-- Favicons -->
-  <link href="{{ asset('landingpage/assets/img/favicon.png') }}" rel="icon">
+  <link href="{{ asset('landingpage/assets/img/favicon.ico') }}" rel="icon" type="image/x-icon">
   <link href="{{ asset('landingpage/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
@@ -38,10 +38,105 @@
   <link href="{{ asset('landingpage/assets/css/main.css') }}" rel="stylesheet">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
+  <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@graph":[
+        {
+          "@type":"Organization",
+          "@id":"https://flashacademia.com/#organization",
+          "name":"flash Academia",
+          "url":"https://flashacademia.com/",
+          "sameAs":
+          [
+            "https://facebook.com/Flash-Academia-105087401511212/",
+            "https://www.instagram.com/flashacademia/",
+            "https://www.youtube.com/channel/UCNKhMpWSiUzCJgD3KHoxsUA?sub_confirmation=1"
+          ],
+          "logo":
+          {
+            "@type":"ImageObject",
+            "@id":"https://flashacademia.com/#logo",
+            "inLanguage":"en-US",
+            "url":"https://flashacademia.com/landingpage/assets/img/flashacademia-logo.webp",
+            "width":144,
+            "height":144,
+            "caption":"flashacademia.com"
+          },
+          "image":
+          {
+            "@id":"https://flashacademia.id/#logo"
+          }
+        },
+        {
+          "@type":"WebSite",
+          "@id":"https://flashacademia.com/#website",
+          "url":"https://flashacademia.com/",
+          "name":"flashacademia.com",
+          "description":"Flashacademia.com",
+          "publisher":
+        {
+          "@id":"https://flashacademia.com/#organization"
+        },
+        "potentialAction":
+          [
+            {
+              "@type":"SearchAction",
+              "target":"https://flashacademia.com/search/{search_term_string}",
+              "query-input":"required name=search_term_string"
+            }
+          ],
+          "inLanguage":"en-US"
+        },
+        {
+          "@type":"ImageObject",
+          "@id":"https://flashacademia.com/#primaryimage",
+          "inLanguage":"en-US",
+          "url":"https://www.flashacademia.com/landingpage/assets/img/olimpiade/3.jpg",
+          "width":251,"height":252
+        },
+        {
+          "@type":"WebPage",
+          "@id":"https://flashacademia.com/#webpage",
+          "url":"https://flashacademia.com/",
+          "name":"Flash Academia",
+          "isPartOf":
+          {
+            "@id":"https://flashacademia.com/#website"
+          },
+          "about":
+          {
+            "@id":"https://flashacademia.com/#organization"
+          },
+          "primaryImageOfPage":
+          {
+            "@id":"https://flashacademia.com/#primaryimage"
+          },
+          "inLanguage":"en-US",
+          "potentialAction":
+          [
+            {
+              "@type":"ReadAction",
+              "target":["https://flashacademia.com/"]
+            }
+          ]
+        }
+      ]
+    }
+  </script>
+
   <!-- =======================================================
   * Template Name: Impact - v1.0.0
   * Template URL: https://bootstrapmade.com/impact-bootstrap-business-website-template/
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <!-- Google tag (gtag.)9)-->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y4KW53C62C"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Y4KW53C62C');
+  </script>
 </head>

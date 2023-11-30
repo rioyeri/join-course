@@ -79,10 +79,14 @@
         text-align: center;
         line-height: 55px;
         font-size: 20px;
-        color: #008374;
+        color: #3B73C5;
         cursor: pointer;
         border: rgba(0,0,0,0);
         background-color: rgba(0,0,0,0); 
+    }
+
+    .search-input .icon:hover{
+        color:#f3da13;
     }
 
     @media (max-width: 1200px) {
@@ -109,13 +113,13 @@
                 <h2>{{ $content[0]->title }}</h2>
                 <p>{{ $content[0]->subtitle }}</p>
                 <div class="wrapper">
-                    <form action="{{ route('searching') }}" method="POST">
+                    <form id="form-search" action="{{ route('searching') }}" method="POST">
                         @csrf
                         <div class="search-input">
                             <input type="text" name="searchbox" id="searchbox" placeholder="Apa yang ingin Anda Pelajari" onkeyup="searchTeacherOrSubject()">
                             <div class="autocom-box">
                             </div>
-                            <button class="icon" type="submit"><i class="fa fa-search"></i></button>
+                            <button id="btn-submit-search" class="icon" type="submit"><i class="fa fa-search"></i></button>
                         </div>
                     </form>
                 </div>

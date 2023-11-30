@@ -247,4 +247,16 @@
             line_schedule.style.display = "none";
         }
     }
+
+    $("#form-search").submit(function(event){
+        searchbox = $('#searchbox').val();
+
+        if(searchbox == ""){
+            $("#searchbox").focus();
+            event.preventDefault();
+            return false;
+        }else{
+            document.getElementById("form").submit();
+        }
+    });
 </script>

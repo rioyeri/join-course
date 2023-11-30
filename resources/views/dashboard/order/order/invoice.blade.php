@@ -74,6 +74,14 @@
                 position:absolute;
             }
         </style>
+        <!-- Google tag (gtag.)9)-->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y4KW53C62C"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Y4KW53C62C');
+        </script>
     </head>
     <body style="margin:10px;">
         <header>

@@ -10,7 +10,7 @@
     <title>Sign In | Flash Academia</title>
 
     <!-- Favicons -->
-    <link href="{{ asset('dashboard/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('dashboard/img/favicon.ico') }}" rel="icon" type="image/x-icon">
     <link href="{{ asset('dashboard/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
     <!-- Bootstrap core CSS -->
@@ -118,6 +118,14 @@
             margin: 12% auto;
         }
     </style>
+    <!-- Google tag (gtag.)9)-->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y4KW53C62C"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Y4KW53C62C');
+    </script>
 </head>
 
 <body>
